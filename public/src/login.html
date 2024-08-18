@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+</head>
+
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
+    :root {
+        /* --body-color: #19232d;
+        --body-color: #2c2c2c;
+
+        --text-color: white;
+
+        --container-color: #d1cbcb;
+
+        --container-color: #c7c7c7;
+        --container-color: #f3ebeb;
+
+        --accent-color: #2d7ca3;
+        --accent-bright: #3c9bca;
+        --danger-color: rgb(207, 33, 33); */
+
+        --body-color: #2c2c2c;
+        --body-color-dim: #242323;
+        --text-color: rgb(207, 198, 198);
+        --container-color: #3b3a3a;
+        --accent-color: #6dc21d;
+        --accent-bright: #76e211;
+        --accent-dim: #6aa834da;
+        --active-color: rgba(0, 0, 0, 0.2);
+        --my-message-color: #5a8b1a98;
+        --friend-message-color: rgba(255, 255, 255, 0.05);
+        --blue-tick-color: rgb(136, 230, 12);
+        --blue-tick-color: rgb(230, 208, 12);
+        --chat-info-color: rgba(0, 0, 0, 0.15);
+        --accept-color: #1758a5;
+        --accepted-color: var(--accent-dim);
+    }
+
+    body {
+        font-family: "Roboto", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        background-color: var(--body-color);
+        color: var(--text-color);
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+    }
+
+    .login-wrapper {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        /* margin-top: 10vh; */
+        background-color: #1c2835;
+        background-color: var(--body-color);
+        border: 1px solid #444040;
+        box-shadow: 0px 0px 2px #bbb;
+        padding: 3%;
+        border-radius: 5px;
+        min-width: 35vw;
+    }
+
+    .login-container {
+        display: flex;
+        flex-direction: column;
+        /* justify-content: center; */
+        align-items: center;
+        width: 100%;
+        /* background-color: red; */
+    }
+
+    .user-input {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    .username-input,
+    .password-input {
+        width: 100%;
+        position: relative;
+    }
+
+    .input {
+        width: 100%;
+        padding: 2% 1%;
+        margin: 1% 0;
+        background-color: var(--body-color);
+        border: none;
+        outline: none;
+        border-bottom: 2px solid grey;
+        color: white;
+    }
+
+
+
+    .input:focus {
+        border-bottom: 2px solid var(--accent-color);
+    }
+
+    .login-button {
+        background-color: var(--accent-color);
+        color: white;
+        padding: 2.5% 15%;
+        margin: 2% 0;
+        border-radius: 2px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .login-button:hover {
+        background-color: var(--accent-bright);
+    }
+
+    .subtitle {
+        color: #bababa;
+    }
+
+    a {
+        color: var(--accent-color);
+    }
+
+    .username-input-icon,
+    .password-input-icon {
+        position: absolute;
+        right: 0;
+        top: 35%;
+        color: #bababa;
+    }
+
+    .message-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        /* background-color: red; */
+        padding: 1% 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .success-message {
+        background-image: linear-gradient(to bottom, rgba(0, 200, 200, 0.5), rgba(0, 200, 200, 0.4), rgba(0, 200, 200, 0.3), rgba(0, 200, 200, 0.1));
+
+    }
+
+    .error-message {
+        background-image: linear-gradient(to bottom, rgba(255, 0, 0, 0.5), rgba(255, 0, 0, 0.4), rgba(255, 0, 0, 0.3), rgba(255, 0, 0, 0.1));
+
+    }
+</style>
+
+<body>
+    <div class="main">
+        <div class="login-wrapper">
+            <!-- <div class="message-container"></div> -->
+            <h2 class="title"><i class="fas fa-lock"></i> Login</h2>
+
+            <h3 class="subtitle">Login with your Interact account details!</h3>
+            <div class="login-container">
+                <div class="user-input">
+                    <div class="username-input">
+                        <div class="username-input-icon fas fa-user"></div>
+                        <input type="text" class="input username-input-element" placeholder="Username"
+                            value="Shafaat" />
+                    </div>
+
+                    <div class="password-input">
+                        <div class="password-input-icon fas fa-lock"></div>
+                        <input type="password" class="input password-input-element" placeholder="Password"
+                            value="shafaat" />
+                    </div>
+                </div>
+
+                <div class="login-button">Login</div>
+            </div>
+
+            <div class="no-account">
+                Do not have an account? <a href="/signup">Sign up</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+
+    document.getElementsByClassName('username-input-element')[0].focus()
+    document.getElementsByClassName('username-input-element')[0].select()
+    let logging = false;
+    document
+        .getElementsByClassName("login-button")[0]
+        .addEventListener("click", (e) => {
+            if (!logging) {
+                document.getElementsByClassName('login-button')[0].innerHTML = "<i class='fas fa-spinner fa-spin'></i>"
+                document.getElementsByClassName('login-button')[0].style.cursor = "not-allowed"
+                logging = true;
+
+                const username = document.getElementsByClassName(
+                    "username-input-element"
+                )[0].value;
+                const password = document.getElementsByClassName(
+                    "password-input-element"
+                )[0].value;
+
+                sendPostRequest("/auth", { username, password }).then((data) => {
+                    document.getElementsByClassName('login-button')[0].innerHTML = "Login"
+                    document.getElementsByClassName('login-button')[0].style.cursor = "pointer"
+                    if (data.ok) {
+                        // displayMessage("Authentication successful", false)
+                        setTimeout(() => {
+                            window.location.href = "/";
+
+                        }, 200);
+                    } else {
+
+                        // displayMessage("Authentication Error", true)
+                    }
+
+                    logging = false;
+                })
+
+                    .catch(err => {
+                        displayMessage(err, true)
+                        document.getElementsByClassName('login-button')[0].innerHTML = "Login"
+                        document.getElementsByClassName('login-button')[0].style.cursor = "pointer"
+                        logging = false;
+                    })
+            }
+        });
+
+    async function sendPostRequest(url, data) {
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+
+            const responseData = await response.json();
+            return responseData;
+        } catch (error) {
+            throw new Error(`Request failed: ${error.message}`);
+        }
+    }
+
+    function displayMessage(message, err) {
+        document.getElementsByClassName('message-container')[0].innerHTML = message;
+        document.getElementsByClassName('message-container')[0].style.display = "flex";
+        if (err) {
+
+            document.getElementsByClassName('message-container')[0].classList.add("error-message")
+            document.getElementsByClassName('message-container')[0].classList.remove("success-message")
+        }
+        else {
+
+            document.getElementsByClassName('message-container')[0].classList.add("success-message")
+            document.getElementsByClassName('message-container')[0].classList.remove("error-message")
+        }
+    }
+</script>
+
+</html>

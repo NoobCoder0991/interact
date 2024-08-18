@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatSphere</title>
+
+    <link rel="stylesheet" href="../src/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+    <script src="/socket.io/socket.io.js"></script>
+
+</head>
+
+<body>
+
+    <div class="error-message-wrapper">
+
+        <div class="error-message">
+
+            This is a test error message!
+        </div>
+
+        <div class="cross-button"
+            onclick="document.getElementsByClassName('error-message-wrapper')[0].style.display='none'">
+            <i class="fas fa-times"></i>
+        </div>
+    </div>
+    <div class="navbar">
+
+        <div class="settings">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="logo">
+            <i class="fas fa-comments"></i>
+            ChatSphere
+        </div>
+
+        <div class="nav-options">
+            <div class="nav-option nav-active-option">
+                <span class="fas fa-home"></span>
+                &nbsp;
+                <span>Home</span>
+            </div>
+            <div class="nav-option">
+                <span class="fas fa-comment"></span>
+                &nbsp;
+
+                <span>Rooms</span>
+            </div>
+            <div class="nav-option">
+                <span class="fas fa-random"></span>
+                &nbsp;
+
+                <span>Random</span>
+            </div>
+            <div class="nav-option">
+                <span class="fas fa-bell"></span>
+                &nbsp;
+
+                <span>Notifications</span>
+            </div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="recent-messages-wrapper">
+            <div class="search-chats">
+                <input type="text" class="input chat-search-input" placeholder="Search...">
+            </div>
+
+            <div class="recent-messages-container">
+
+
+                <div class="loading-chats">
+                    Loading your chats
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="welcome-page">
+            <h2 class="center">
+
+                <div class="fas fa-comments"></div>
+                <div>Welcome to ChatSphere</div>
+            </h2>
+
+
+            <p>Chat with millions of users privately</p>
+
+
+            <p>&copy; 2024 ChatSphere</p>
+
+        </div>
+
+        <div class="chat-wrapper">
+
+
+
+
+            <div class="friend-profile-info">
+                <div style="height: 100%; display: flex;justify-content: center;align-items: center;">
+
+                    <div class="friend-profile-picture">
+                        <img src="../assets/images/default-profile-male.avif" alt="" class="profile-image-element">
+                    </div>
+
+                    <div class="friend-info">
+                        <div class="friend-username"></div>
+                        <div class="friend-connection-status"></div>
+                    </div>
+                </div>
+
+                <div class="friend-contact-options">
+                    <div class="friend-contact-option video-call">
+
+                        <i class="fas fa-video"></i>
+
+                    </div>
+                    <div class="friend-contact-option audio-call">
+
+                        <i class="fas fa-phone"></i>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+            <div class="empty-chat">
+                <h3>Chat with this user is Empty</h3>
+                <h2 class="say-hi">
+                    <i class="fas fa-hand"></i>
+                    Say Hi
+                </h2>
+            </div>
+
+
+            <!-- <div class="chat-info">chats are end to end encrypted</div> -->
+            <div class="chat-container">
+
+
+            </div>
+
+            <div class="chat-input-wrapper">
+                <div class="chat-input emoji-input">
+                    <i class="fas fa-smile"></i>
+                </div>
+                <div class="chat-input file-input">
+                    <i class="fas fa-file"></i>
+                </div>
+                <div class="chat-input text-input">
+                    <div class="fas fa-paper-plane send-message-icon"></div>
+                    <input type="text" class="input message-input-element" placeholder="Message">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+
+
+
+<script>
+
+    var socket;
+    try {
+        socket = io()
+
+    }
+
+    catch (err) {
+        console.log("Error occured on the client side:", err)
+
+        displayErrorMessage("An error occured on the client side!")
+    }
+
+
+    var currentFriendId;
+    var myid;
+
+
+    sendPostRequest('/chats', {})
+        .then(data => {
+
+            document.getElementsByClassName("loading-chats")[0].style.display = 'none'
+            let chats = data.data;
+            for (let i = 0; i < chats.length; i++) {
+                let chatContainer = createRecentMessage(chats[i])
+                document.getElementsByClassName('recent-messages-container')[0].appendChild(chatContainer)
+            }
+        })
+
+    async function sendMessage(sender, receiver, message) {
+
+
+        writeDummyMessage(message, true);
+
+        let response = await sendPostRequest('/send-message', { sender, receiver })
+            .then(data => {
+                console.log("message sent")
+            })
+
+    }
+    function writeDummyMessage(message, myMessage) {
+        let messageContainer = document.createElement('div')
+        messageContainer.classList.add('message')
+        if (myMessage) {
+
+            messageContainer.classList.add('my-message')
+        }
+        else {
+
+            messageContainer.classList.add('friend-message')
+        }
+
+        let date = new Date();
+        let hrs = date.getHours()
+        let mins = date.getMinutes()
+
+        let htm = `  <div class="message-content">
+                        ${message}
+                    </div>
+                    <div class="message-time">
+
+                        <div class="hrs">${hrs}</div>:
+                        <div class="mins">${mins}</div>
+                    </div>`
+
+        messageContainer.innerHTML = htm
+
+        let chatContainer = document.getElementsByClassName('chat-container')[0]
+
+        chatContainer.appendChild(messageContainer)
+
+        chatContainer.scrollTop = chatContainer.scrollHeight
+
+    }
+
+
+    async function sendPostRequest(url, data) {
+        try {
+
+
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+
+            const responseData = await response.json();
+            return responseData;
+        } catch (error) {
+            throw new Error(`Request failed: ${error.message}`);
+        }
+    }
+
+
+
+    function createRecentMessage(data) {
+        let recentMessageChat = document.createElement('div')
+        recentMessageChat.classList.add('recent-message-chat');
+        let htm = `<div class="user-profile-picture"><img src="../assets/images/default-profile-male.avif" alt="" class="profile-image-element"><div class="connection-status online"></div>    </div>    <div class="user-info">    <div class="user-name">        <div class="username">${data.username}</div>        <div class="last-online">          Online      </div>    </div>    <div class="last-message">        <div class="last-message-status">            <div class="message-ticks">                <i class="fas fa-check message-tick blue-tick"></i>                <i class="fas fa-check message-tick blue-tick"></i>            </div>        </div>        <div class="last-message-content"></div>    </div></div>`
+
+        recentMessageChat.innerHTML = htm;
+
+
+
+        recentMessageChat.addEventListener('click', e => {
+
+            document.getElementsByClassName("message-input-element")[0].focus()
+
+            let activeMessage = document.getElementsByClassName("recent-active-message");
+            if (activeMessage.length) {
+                activeMessage[0].classList.remove('recent-active-message')
+            }
+
+            recentMessageChat.classList.add("recent-active-message")
+
+
+            fetchChats(data.userid)
+                .then(data => {
+                    if (data.ok) {
+
+                        document.getElementsByClassName("chat-container")[0].innerHTML = ""
+                        let myUserid = data.data.myUserid;
+                        let friendUserid = data.data.friendUserid;
+                        let myUsername = data.data.myUsername
+                        let friendUsername = data.data.friendUsername
+                        let messages = data.data.messages
+
+                        currentFriendId = friendUserid
+                        myid = myUserid
+                        if (messages.length) {
+                            document.getElementsByClassName('welcome-page')[0].style.display = 'none'
+                            document.getElementsByClassName('chat-wrapper')[0].style.display = 'flex'
+                            document.getElementsByClassName('chat-container')[0].style.display = 'flex'
+                            document.getElementsByClassName('empty-chat')[0].style.display = 'none'
+
+
+                            for (message of messages) {
+
+                                if (message.sender == myUserid) {
+
+                                    writeDummyMessage(message.message, true)
+                                }
+                                else {
+                                    writeDummyMessage(message.message, false)
+
+                                }
+                            }
+                        }
+
+                        else {
+
+                            document.getElementsByClassName('welcome-page')[0].style.display = 'none'
+                            document.getElementsByClassName('chat-wrapper')[0].style.display = 'flex'
+                            document.getElementsByClassName('empty-chat')[0].style.display = 'flex'
+
+                        }
+
+                        let messageInput = document.getElementsByClassName('message-input-element')[0]
+
+                        document.getElementsByClassName('friend-username')[0].innerHTML = friendUsername
+                        document.getElementsByClassName('friend-connection-status')[0].innerHTML = "Online"
+                        messageInput.placeholder = "Message " + friendUsername;
+
+
+
+                    }
+                })
+
+
+        })
+
+        return recentMessageChat;
+
+    }
+
+    async function fetchChats(userid) {
+        let chats = await sendPostRequest('/messages', { userid })
+        return chats;
+
+    }
+    // for testing purpost
+    var messageInput = document.getElementsByClassName("message-input-element")[0];
+
+    messageInput.addEventListener('keydown', e => {
+        if (e.key == 'Enter') {
+            sendMessage(myid, currentFriendId, messageInput.value)
+            messageInput.value = ""
+        }
+    })
+
+
+    function displayErrorMessage(message) {
+        document.getElementsByClassName('error-message')[0].innerHTML = message
+        document.getElementsByClassName('error-message-wrapper')[0].style.display = 'flex'
+    }
+</script>
+
+
+</html>

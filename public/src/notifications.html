@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interact</title>
+
+    <link rel="stylesheet" id="css-file" href="../src/index-light.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+</head>
+
+<body>
+    <div class="error-message-wrapper">
+        <div class="error-message">This is a test error message!</div>
+
+        <div class="cross-button"
+            onclick="document.getElementsByClassName('error-message-wrapper')[0].style.display='none'">
+            <i class="fas fa-times"></i>
+        </div>
+    </div>
+    <div class="navbar">
+
+        <div class="mobile-options">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="logo">
+            <!-- <i class="fas fa-paper-plane"></i> -->
+            <img src="../assets/images/chat.png" alt="" class="logo-image" />
+            <div class="logo-title">Interact</div>
+        </div>
+
+        <div class="nav-options">
+            <div class="nav-option nav-active-option">
+                <span class="fas fa-home"></span>
+                &nbsp;
+                <span class="nav-option-content">Home</span>
+            </div>
+            <div class="nav-option">
+                <span class="fas fa-comment"></span>
+                &nbsp;
+
+                <span class="nav-option-content">Rooms</span>
+            </div>
+            <div class="nav-option">
+                <span class="fas fa-random"></span>
+                &nbsp;
+
+                <span class="nav-option-content">Random</span>
+            </div>
+            <div class="nav-option">
+                <div class="notification-ring fas fa-circle"></div>
+                <span class="fas fa-bell"></span>
+                &nbsp;
+
+                <span class="nav-option-content">
+                    Notifications
+                </span>
+            </div>
+
+        </div>
+
+        <div class="search-people">
+            <input type="text" placeholder="Search People" class="search-people-element"
+                oninput="searchFriends(this.value)">
+            <div class="search-people-cross-button fas fa-times"
+                onclick="document.getElementsByClassName('search-people-element')[0].value='';this.style.display='none';document.getElementsByClassName('friend-search-container')[0].style.display='none'">
+            </div>
+            <div class=" friend-search-container">
+
+                <div class="search-query">
+                    search results for <query></query>
+                </div>
+
+                <div class="searched-friend">
+                    <div class="searched-friend-profile-image">K</div>
+                    <div class="searched-friend-profile-info">
+                        <div class="searched-friend-profile-name">Khusbhu</div>
+                        <div class="searched-friend-profile-gender">Female</div>
+                    </div>
+
+                    <div class="add-friend">
+                        Add Friend
+                    </div>
+                </div>
+                <div class="searched-friend">
+                    <div class="searched-friend-profile-image">K</div>
+                    <div class="searched-friend-profile-info">
+                        <div class="searched-friend-profile-name">Khusbhu</div>
+                        <div class="searched-friend-profile-gender">Female</div>
+                    </div>
+                </div>
+                <div class="searched-friend">
+                    <div class="searched-friend-profile-image">K</div>
+                    <div class="searched-friend-profile-info">
+                        <div class="searched-friend-profile-name">Khusbhu</div>
+                        <div class="searched-friend-profile-gender">Female</div>
+                    </div>
+                </div>
+                <div class="searched-friend">
+                    <div class="searched-friend-profile-image">K</div>
+                    <div class="searched-friend-profile-info">
+                        <div class="searched-friend-profile-name">Khusbhu</div>
+                        <div class="searched-friend-profile-gender">Female</div>
+                    </div>
+                </div>
+                <div class="searched-friend">
+                    <div class="searched-friend-profile-image">K</div>
+                    <div class="searched-friend-profile-info">
+                        <div class="searched-friend-profile-name">Khusbhu</div>
+                        <div class="searched-friend-profile-gender">Female</div>
+                    </div>
+                </div>
+                <div class="searched-friend">
+                    <div class="searched-friend-profile-image">K</div>
+                    <div class="searched-friend-profile-info">
+                        <div class="searched-friend-profile-name">Khusbhu</div>
+                        <div class="searched-friend-profile-gender">Female</div>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+
+        <div class="profile" onclick="toggleProfileSideBar()">
+            <div class="fas fa-user"></div>
+            <div class="nav-username"></div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="profile-info-wrapper">
+            <div class="profile-info-container">
+                <div class="profile-info">
+                    <div class="profile-image">
+                        <img src="../assets/images/default-profile-male.avif" class="profile-image-element-alt"
+                            alt="" />
+                    </div>
+
+                    <div class="username-title">Azhar</div>
+                </div>
+                <div class="profile-options">
+                    <div class="profile-option">
+                        <div class="profile-option-icon fas fa-users friends"></div>
+                        <div class="profile-option-name">Friends</div>
+                    </div>
+                    <div class="profile-option">
+                        <div class="profile-option-icon fas fa-crown premium"></div>
+                        <div class="profile-option-name">Premium</div>
+                    </div>
+                    <div class="profile-option">
+                        <div class="profile-option-icon fas fa-life-ring support"></div>
+                        <div class="profile-option-name">Support</div>
+                    </div>
+                    <div class="profile-option">
+                        <div class="profile-option-icon fas fa-address-book contact"></div>
+                        <div class="profile-option-name">Contact</div>
+                    </div>
+                    <div class="profile-option">
+                        <div class="profile-option-icon fas fa-comment feedback"></div>
+                        <div class="profile-option-name">Feedback</div>
+                    </div>
+                    <div class="profile-option">
+                        <div class="profile-option-icon fas fa-code code"></div>
+                        <div class="profile-option-name">Code</div>
+                    </div>
+                </div>
+
+                <div class="secondary-profile-options">
+                    <div class="secondary-profile-option">
+                        <div class="secondary-profile-option-icon fas fa-cog"></div>
+                        <div class="secondary-profile-option-name">Settings</div>
+                    </div>
+                    <div class="secondary-profile-option" onclick="logout()">
+                        <div class="secondary-profile-option-icon fas fa-sign-out"></div>
+                        <div class="secondary-profile-option-name">Logout</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="recent-messages-wrapper">
+            <div class="search-chats">
+                <input type="text" class="input chat-search-input" placeholder="Search Chats" />
+            </div>
+
+            <div class="loading-chats">
+                Loading your chats
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+
+
+
+            <div class="chat-search-container">
+
+
+
+            </div>
+
+            <div class="recent-messages-container">
+                <div class="no-chats"
+                    onclick="this.style.display='none';document.getElementsByClassName('chat-search-input')[0].focus()">
+                    <div class="no-chats-icon">
+                        <h1 class="fas fa-user-friends"></h1>
+                    </div>
+                    <div class="no-chats-description">You do not have any friends!</div>
+
+                    <div class="get-started">Find Someone</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="welcome-page">
+            <h2 class="center" style="height: 15%">
+                <div class="logo">
+                    <img src="../assets/images/chat.png" alt="" class="logo-image" />
+                </div>
+                <div>Welcome to Interact</div>
+            </h2>
+            <div class="welcome-page-description">
+                Chat with millions of users privately and for free. Chats are end to
+                end encrypted using 256 bit encryption.
+            </div>
+            <br />
+        </div>
+
+        <div class="chat-wrapper">
+            <div class="typing">
+                <i class="typing-circle fas fa-circle"></i>
+                <i class="typing-circle fas fa-circle"></i>
+                <i class="typing-circle fas fa-circle"></i>
+            </div>
+
+            <div class="friend-profile-info">
+                <div style="
+              height: 100%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            ">
+                    <div class="friend-info">
+                        <div class="friend-username"></div>
+                        <div class="friend-connection-status"></div>
+                    </div>
+                </div>
+
+                <div class="friend-contact-options">
+                    <div class="friend-contact-option search">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="friend-contact-option video-call">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <div class="friend-contact-option audio-call">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="friend-contact-option more-options">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="empty-chat">
+                <h3>Chat with this user is Empty</h3>
+                <h2 class="say-hi">
+                    <i class="fas fa-hand"></i>
+                    Say Hello
+                </h2>
+            </div>
+
+            <div class="message-menu-wrapper">
+                <div class="message-menu-container">
+                    <div class="message-menu-option">
+                        <div class="message-menu-icon fas fa-reply"></div>
+                        <div class="message-menu-content">Reply</div>
+
+                    </div>
+                    <div class="message-menu-option">
+                        <div class="message-menu-icon fas fa-copy"></div>
+                        <div class="message-menu-content">Copy Text</div>
+
+                    </div>
+                    <div class="message-menu-option">
+                        <div class="message-menu-icon fas fa-share"></div>
+                        <div class="message-menu-content">Forward</div>
+
+                    </div>
+                    <div class="message-menu-option">
+
+                        <div class="message-menu-icon fas fa-trash  "></div>
+                        <div class="message-menu-content">Delete</div>
+
+                    </div>
+                    <div class="message-menu-option">
+
+                        <div class="message-menu-icon fas fa-check-circle  "></div>
+                        <div class="message-menu-content">Select</div>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="chat-container">
+                <div class="message-background">
+
+                </div>
+
+            </div>
+
+            <div class="reply-message-wrapper">
+                <div class="reply-message">
+                    <div class="reply-message-info">
+                        <div class="friend-name">Azhar</div>
+                        <div class="reply-message-content">
+                            You are replying to this message
+                        </div>
+                    </div>
+
+                    <div class="reply-cancel-button"
+                        onclick="document.getElementsByClassName('reply-message-wrapper')[0].style.display='none'">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-input-wrapper">
+                <div class="chat-input emoji-input">
+                    <i class="fas fa-smile"></i>
+                </div>
+                <div class="chat-input file-input">
+                    <i class="fas fa-file"></i>
+                </div>
+                <div class="chat-input text-input">
+                    <input type="text" class="input message-input-element" placeholder="Message" />
+                </div>
+                <div class="fas fa-paper-plane send-message-icon"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-options-mobile">
+        <div class="nav-option-mobile nav-active-option-mobile home-mobile">
+            <div class="fas fa-home"></div>
+            <div>Home</div>
+        </div>
+        <div class="nav-option-mobile rooms-mobile">
+            <div class="fas fa-comment"></div>
+            <div>Rooms</div>
+        </div>
+        <div class="nav-option-mobile random-mobile">
+            <div class="fas fa-random"></div>
+            <div>Random</div>
+        </div>
+        <div class="nav-option-mobile notifications-mobile">
+            <div class="fas fa-bell"></div>
+            <div>Notifications</div>
+        </div>
+    </div>
+</body>
+
+<script>
+    var theme = localStorage.getItem("theme");
+
+    theme = 'modern'
+    if (theme) {
+        document.getElementById("css-file").href = `../src/index-${theme}.css`;
+    } else {
+        if (
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches
+        ) {
+            document.getElementById("css-file").href = `../src/index-dark.css`;
+        } else {
+            document.getElementById("css-file").href = `../src/index-light.css`;
+        }
+    }
+
+    var receivedMessageNotify = new Audio(
+        "../assets/sounds/received-message-notify.mp3"
+    );
+    var sentMessageNotify = new Audio(
+        "../assets/sounds/sent-message-notify.mp3"
+    );
+
+    const host = window.location.hostname;
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const port = window.location.port ? `:${window.location.port}` : "";
+
+    const ws = new WebSocket(`${protocol}//${host}${port}/home`);
+
+    ws.onopen = () => {
+        console.log("Connected to websocket");
+    };
+
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.data && data.data.type == "send") {
+            const message = data.data;
+            let index = userInfo.friends.indexOf(message.sender);
+            let index1 = userInfo.friends.indexOf(message.receiver);
+            let activeElement;
+
+            if (index != -1) {
+                activeElement = document.getElementsByClassName(
+                    "recent-message-chat"
+                )[index];
+            } else if (index1 != -1) {
+                activeElement = document.getElementsByClassName(
+                    "recent-message-chat"
+                )[index1];
+            } else {
+                throw new Error("Something is wrong");
+            }
+            activeElement.getElementsByClassName(
+                "last-message-content"
+            )[0].textContent = trimToMaxLength(message.message, 50);
+            activeElement.getElementsByClassName("last-message-time")[0].innerHTML =
+                formatTime(message.time.hours, message.time.mins);
+
+            if (message.sender == myid) {
+                console.log("My own message");
+                writeDummyMessage(
+                    message.message,
+                    message.time,
+                    message.sender == myid
+                );
+                sentMessageNotify.play();
+                let container = document.getElementsByClassName(
+                    "recent-messages-container"
+                )[0];
+                // const activeElement = document.getElementsByClassName("recent-active-message")[0];
+                activeElement.getElementsByClassName(
+                    "last-message-content"
+                )[0].textContent = trimToMaxLength(message.message, 50);
+                const index = Array.from(
+                    document.getElementsByClassName("recent-message-chat")
+                ).indexOf(activeElement);
+                container.insertBefore(activeElement, container.firstChild);
+                // moveToFront(userInfo.friends, index)
+                // ws.send(JSON.stringify({ type: 'chat-opened', recepient: message.sender }))
+            } else if (message.sender == currentFriendId) {
+                writeDummyMessage(
+                    message.message,
+                    message.time,
+                    message.sender == myid
+                );
+                receivedMessageNotify.play();
+                ws.send(
+                    JSON.stringify({ type: "chat-opened", recepient: message.sender })
+                );
+                let container = document.getElementsByClassName(
+                    "recent-messages-container"
+                )[0];
+                activeElement.style.opacity = "0";
+                container.insertBefore(activeElement, container.firstChild);
+                activeElement.style.opacity = "1";
+                scrollToChild(container, activeElement);
+                moveToFront(userInfo.friends, index ? index : index1);
+                activeElement.getElementsByClassName(
+                    "last-message-status"
+                )[0].style.display = "none";
+            } else {
+                let element = document.getElementsByClassName("new-messages")[index];
+
+                let currentUnreadMessages =
+                    element.innerHTML == "" ? 0 : parseInt(element.innerHTML);
+                element.innerHTML = currentUnreadMessages + 1;
+                element.style.display = "flex";
+
+                let container = document.getElementsByClassName(
+                    "recent-messages-container"
+                )[0];
+                activeElement.style.opacity = "0";
+                activeElement.classList.add('blinky-chat')
+                container.insertBefore(activeElement, container.firstChild);
+                activeElement.style.opacity = "1";
+                scrollToChild(container, activeElement);
+                moveToFront(userInfo.friends, index ? index : index1);
+                activeElement.getElementsByClassName(
+                    "last-message-status"
+                )[0].style.display = "none";
+            }
+        } else if (data.type == "message-received") {
+            sentMessageNotify.play();
+
+            console.log("data", data);
+            const index = data.index;
+
+            let messageElement =
+                document.getElementsByClassName("my-message")[index];
+            let messageStatus =
+                messageElement.getElementsByClassName("message-status")[0];
+            messageStatus.getElementsByClassName("not-sent")[0].style.display =
+                "none";
+            messageStatus.getElementsByClassName("message-tick")[0].style.display =
+                "flex";
+
+            const activeElement = document.getElementsByClassName(
+                "recent-active-message"
+            )[0];
+
+            activeElement.getElementsByClassName(
+                "last-message-status"
+            )[0].style.display = "flex";
+            activeElement
+                .getElementsByClassName("message-tick")[0]
+                .classList.remove("blue-tick");
+        } else if (data.type == "chat-opened") {
+            console.log("chat-opened");
+            const recepient = data.recepient;
+
+            if (recepient == currentFriendId) {
+                const activeElement = document.getElementsByClassName(
+                    "recent-active-message"
+                )[0];
+                activeElement.getElementsByClassName(
+                    "last-message-status"
+                )[0].style.display = "flex";
+                activeElement
+                    .getElementsByClassName("message-tick")[0]
+                    .classList.add("blue-tick");
+                let messageTicks = document
+                    .getElementsByClassName("chat-container")[0]
+                    .getElementsByClassName("message-tick");
+                for (let i = 0; i < messageTicks.length; i++) {
+                    messageTicks[i].classList.add("blue-tick");
+                }
+            }
+        }
+
+        if (data.type == "typing") {
+            console.log("typing");
+            const recepient = data.recepient;
+            if (recepient == currentFriendId) {
+                if (data.typeStatus == true) {
+                    createTypingSymbol();
+                } else {
+                    removeTypingSymbol();
+                }
+            }
+        }
+    };
+
+    var currentFriendId;
+    var myid;
+    var userInfo;
+    var sideBarVisible = false;
+    var typing = false;
+
+    sendPostRequest("/fetch-info", {})
+        .then((data) => {
+            if (data.ok) {
+                userInfo = data.data;
+
+                console.log('userinfo', userInfo)
+                myid = userInfo.userid;
+                document.getElementsByClassName("nav-username")[0].innerHTML =
+                    userInfo.username;
+
+                if (userInfo.requests_received) {
+                    const requests = userInfo.requests_received;
+                    if (requests.find(obj => obj.seen == false)) {
+                        document.getElementsByClassName('notification-ring')[0].style.opacity = '1'
+                    }
+                }
+
+                sendPostRequest("/chats", {}).then((data) => {
+                    document.getElementsByClassName("loading-chats")[0].style.display =
+                        "none";
+                    let chats = data.data;
+                    if (chats.length == 0) {
+                        document.getElementsByClassName("no-chats")[0].style.display =
+                            "flex";
+                    }
+
+                    for (let i = 0; i < chats.length; i++) {
+                        createRecentMessage(chats[i]);
+                    }
+                });
+
+
+            }
+        })
+        .catch((err) => {
+            console.log("Error:", err);
+        });
+
+    function createRecentMessage(data) {
+        const recentMessageChat = createUserCard(data);
+        document
+            .getElementsByClassName("recent-messages-container")[0]
+            .appendChild(recentMessageChat);
+        if (data.unreadCount) {
+            recentMessageChat.getElementsByClassName(
+                "new-messages"
+            )[0].innerHTML = data.unreadCount;
+            recentMessageChat.getElementsByClassName(
+                "new-messages"
+            )[0].style.display = "flex";
+
+            recentMessageChat.classList.add('blinky-chat')
+        }
+        recentMessageChat.addEventListener("click", (e) => {
+
+            if (data.userid != currentFriendId) {
+
+                DisplayChats(data.userid, recentMessageChat);
+            }
+
+
+        });
+
+        return recentMessageChat;
+    }
+    // for testing purpost
+    var messageInput = document.getElementsByClassName(
+        "message-input-element"
+    )[0];
+
+    var searchChatsInput = document.getElementsByClassName('chat-search-input')[0];
+
+    searchChatsInput.addEventListener('input', e => {
+
+        if (searchChatsInput.value == "") {
+
+            console.log("Now close")
+            document.getElementsByClassName('chat-search-container')[0].innerHTML = ""
+            document.getElementsByClassName('chat-search-container')[0].style.display = 'none'
+            document.getElementsByClassName('recent-messages-container')[0].style.display = 'flex'
+        }
+
+        else {
+
+            searchChats(searchChatsInput.value)
+        }
+
+
+    })
+
+
+    let typingSignalSend = false;
+    let typingTimer;
+    messageInput.addEventListener("input", (e) => {
+        if (!typingSignalSend) {
+            ws.send(
+                JSON.stringify({
+                    type: "typing",
+                    typeStatus: true,
+                    recepient: currentFriendId,
+                })
+            );
+            console.log("Typing start sent");
+            typingSignalSend = true;
+        }
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(() => {
+            ws.send(
+                JSON.stringify({
+                    type: "typing",
+                    typeStatus: false,
+                    recepient: currentFriendId,
+                })
+            );
+            console.log("Typing stop sent");
+            typingSignalSend = false;
+        }, 1000);
+    });
+
+    messageInput.addEventListener("keydown", async (e) => {
+        if (e.key == "Enter") {
+            DisplaySentMessage(messageInput.value);
+
+        }
+    });
+
+    var messageSendButton =
+        document.getElementsByClassName("send-message-icon")[0];
+    messageSendButton.addEventListener("click", async (e) => {
+        if (messageInput.value.trim() != "") {
+            DisplaySentMessage(messageInput.value)
+
+        }
+    });
+    document
+        .getElementsByClassName("say-hi")[0]
+        .addEventListener("click", async (e) => {
+            DisplaySentMessage("Hello")
+        });
+
+    function displayErrorMessage(message) {
+        document.getElementsByClassName("error-message")[0].innerHTML =
+            message;
+        document.getElementsByClassName(
+            "error-message-wrapper"
+        )[0].style.display = "flex";
+    }
+
+    window.addEventListener("popstate", function (event) {
+        if (event.state && event.state.contentId) {
+            loadChats(event.state.contentId, event.state.index);
+        } else {
+            document.getElementsByClassName("chat-wrapper")[0].style.display =
+                "none";
+            document.getElementsByClassName("welcome-page")[0].style.display =
+                "flex";
+            let activeMessages = document.getElementsByClassName(
+                "recent-active-message"
+            );
+            let len = activeMessages.length;
+            for (let i = 0; i < len; i++) {
+                activeMessages[0].classList.remove("recent-active-message");
+            }
+
+            currentFriendId = null;
+        }
+    });
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key == "Escape") {
+            window.location.href = '/home'
+        }
+    });
+
+    window.addEventListener('click', e => {
+        if (!document.getElementsByClassName('message-menu-wrapper')[0].contains(e.target)) {
+            document.getElementsByClassName('message-menu-wrapper')[0].style.display = 'none'
+            document.getElementsByClassName('chat-container')[0].style.overflow = 'auto'
+        }
+    })
+
+    async function sendPostRequest(url, data) {
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+
+            const responseData = await response.json();
+            return responseData;
+        } catch (error) {
+            throw new Error(`Request failed: ${error.message}`);
+        }
+    }
+
+    async function sendMessage(sender, receiver, message, date) {
+        let time = {
+            year: date.getFullYear(),
+            month: date.getMonth() + 1,
+            day: date.getDate(),
+            hours: date.getHours(),
+            mins: date.getMinutes(),
+        };
+        let index = writeDummyMessage(message, time, true, false, false, false);
+        ws.send(
+            JSON.stringify({
+                type: "send",
+                sender: myid,
+                receiver: currentFriendId,
+                message,
+                time,
+                index,
+                status: 0,
+            })
+        );
+    }
+
+    function writeDummyMessage(
+        message,
+        date,
+        myMessage,
+        sent,
+        delivered,
+        seen
+    ) {
+        let messageContainer = document.createElement("div");
+        messageContainer.classList.add("message");
+        if (myMessage) {
+            messageContainer.classList.add("my-message");
+        } else {
+            messageContainer.classList.add("friend-message");
+        }
+
+        let htm = `  <div class="message-content">
+                        ${message}
+                    </div>
+
+                    <div class="message-info">
+
+                        <div class="message-time">
+
+                        <div class="hrs">${date.hours >= 10 ? date.hours : "0" + date.hours
+            }</div>:
+                        <div class="mins">${date.mins >= 10 ? date.mins : "0" + date.mins
+            }</div>
+                    </div>
+                    <div class="message-status">
+                        <i class="fas fa-paper-plane not-sent" style= display:${sent == true ? "none" : "flex"
+            }></i>
+                        <i class="fas fa-check-circle message-tick ${seen == true ? "blue-tick" : ""
+            }" style=display:${sent == false ? "none" : "flex"}></i>
+                    </div>
+
+                    </div>
+                    
+                    `;
+
+        messageContainer.innerHTML = htm;
+
+        let chatContainer = document.getElementsByClassName("chat-container")[0];
+
+        chatContainer.appendChild(messageContainer);
+
+        let index = Array.from(
+            document.getElementsByClassName("my-message")
+        ).indexOf(messageContainer);
+
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        messageContainer.addEventListener('contextmenu', e => {
+            e.preventDefault()
+            const messageMenu = document.getElementsByClassName('message-menu-wrapper')[0];
+            const container = document.getElementsByClassName('chat-container')[0];
+            const messageMenuRect = messageMenu.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            const refrenceRect = document.getElementsByClassName('main')[0].getBoundingClientRect()
+            messageMenu.style.display = 'flex'
+
+            if (containerRect.bottom - e.clientY >= messageMenuRect.height) {
+                messageMenu.style.top = e.clientY - refrenceRect.top + 'px'
+
+            }
+            else {
+                console.log("Overflow Y")
+                messageMenu.style.top = e.clientY - refrenceRect.top - messageMenuRect.height + 'px'
+            }
+
+            if (containerRect.right - e.clientX >= messageMenuRect.width) {
+                messageMenu.style.left = e.clientX - refrenceRect.left + 'px'
+
+            }
+            else {
+                console.log("Overflow X ")
+
+                console.log("initial", e.clientX - refrenceRect.left)
+                console.log("final", e.clientX - refrenceRect.left - messageMenuRect.width)
+                messageMenu.style.left = e.clientX - refrenceRect.left - messageMenuRect.width + 'px'
+
+            }
+
+
+
+            container.style.overflow = 'hidden'
+        })
+
+
+
+
+        return index;
+    }
+
+    function createUserCard(data) {
+        const color = data.color;
+        const container = document.createElement("div");
+        container.className = "recent-message-chat";
+        let messages = data.messages;
+        let lastMessage;
+        if (messages) {
+            messages = messages.messages;
+            lastMessage = trimToMaxLength(messages[messages.length - 1].message);
+        } else {
+            lastMessage = "";
+        }
+
+        container.innerHTML = `
+        <div class="user-profile-picture">
+            <div class="profile-image-element" style="background-color:${color}">
+                        ${data.username[0].toUpperCase()}
+                    </div>
+                    <div class="connection-status online"></div>
+                </div>
+                <div class="user-info">
+                    <div class="user-name">
+                        <div class="username">${data.username}</div>
+                    </div>
+                    <div class="last-message">
+                        <div class="last-message-status">
+                            <i class="message-tick fas fa-check-circle">   
+                            </i>
+                        </div>
+                        <div class="last-message-content">${lastMessage}</div>
+                    </div>
+
+                    </div>
+                    <div class='test'>
+                            <div class='last-message-time'></div>
+                            <div class="new-messages"></div>
+                    </div>
+            `;
+
+        if (messages && messages.length) {
+            let lastMessage = messages[messages.length - 1];
+
+            if (lastMessage.sender == myid) {
+                console.log("Last message status", lastMessage.status);
+                if (lastMessage.status == 0) {
+                    const element = container.getElementsByClassName(
+                        "last-message-status"
+                    )[0];
+                    element.style.display = "flex";
+                } else if (lastMessage.status == 1) {
+                    const element = container.getElementsByClassName(
+                        "last-message-status"
+                    )[0];
+                    element.style.display = "flex";
+                    element.classList.add("blue-tick");
+                }
+            }
+
+            let lastMessageTime = getRelativeDate(lastMessage.time);
+            if (lastMessageTime == "Today") {
+                container.getElementsByClassName("last-message-time")[0].innerHTML =
+                    formatTime(lastMessage.time.hours, lastMessage.time.mins);
+            } else {
+                container.getElementsByClassName("last-message-time")[0].innerHTML =
+                    lastMessageTime;
+            }
+        }
+
+        return container;
+    }
+
+    async function loadChats(friendId, index) {
+
+        const container = document.getElementsByClassName('recent-messages-container')[0];
+        document.getElementsByClassName("message-input-element")[0].focus();
+        let activeMessage = container.getElementsByClassName(
+            "recent-active-message"
+        );
+        if (activeMessage.length) {
+            activeMessage[0].classList.remove("recent-active-message");
+        }
+        container
+            .getElementsByClassName("recent-message-chat")
+        [index].classList.add("recent-active-message");
+        let data = await fetchChats(friendId);
+        if (data.ok) {
+            document.getElementsByClassName("chat-container")[0].innerHTML = "";
+            document.getElementsByClassName(
+                "chat-container"
+            )[0].style.scrollBehavior = "auto";
+            let myUserid = data.data.myUserid;
+            let friendUserid = data.data.friendUserid;
+            let myUsername = data.data.myUsername;
+            let friendUsername = data.data.friendUsername;
+            let messages = data.data.messages;
+            currentFriendId = friendUserid;
+            myid = myUserid;
+            if (messages.length) {
+                if (window.innerWidth <= 900) {
+                    document.getElementsByClassName(
+                        "recent-messages-wrapper"
+                    )[0].style.display = "none";
+                    document.getElementsByClassName(
+                        "nav-options-mobile"
+                    )[0].style.display = "none";
+                }
+                document.getElementsByClassName("welcome-page")[0].style.display =
+                    "none";
+                document.getElementsByClassName("chat-wrapper")[0].style.display =
+                    "flex";
+                document.getElementsByClassName("chat-container")[0].style.display =
+                    "flex";
+                document.getElementsByClassName("empty-chat")[0].style.display =
+                    "none";
+
+                let chatInfo = document.createElement("div");
+                chatInfo.classList.add("chat-info");
+                chatInfo.innerHTML =
+                    "<i class='fas fa-lock'></i> Messages to this chat are end to end encrypted. Stop worrying about the security!";
+                document
+                    .getElementsByClassName("chat-container")[0]
+                    .appendChild(chatInfo);
+                const unreadElement = document.createElement("div");
+                unreadElement.classList.add("unread");
+                let currentDate;
+                let dateNow = new Date();
+                let unread = false;
+                for (message of messages) {
+                    if (
+                        !unread &&
+                        message.status == 0 &&
+                        message.sender == currentFriendId
+                    ) {
+                        unread = true;
+                        unreadElement.innerHTML = "unread messages";
+                        document
+                            .getElementsByClassName("chat-container")[0]
+                            .appendChild(unreadElement.cloneNode(true));
+                    }
+
+                    let date = formatDate(message.time);
+                    if (currentDate == undefined || currentDate != date) {
+                        let dateContainer = chatInfo.cloneNode(true);
+
+                        let messageDate = getRelativeDate(message.time);
+
+                        dateContainer.innerHTML = messageDate;
+
+                        document
+                            .getElementsByClassName("chat-container")[0]
+                            .appendChild(dateContainer);
+                    }
+
+                    if (message.sender == myUserid) {
+                        writeDummyMessage(
+                            message.message,
+                            message.time,
+                            true,
+                            true,
+                            message.state == 0,
+                            message.status == 1
+                        );
+                    } else {
+                        writeDummyMessage(message.message, message.time, false);
+                    }
+
+                    currentDate = date;
+                }
+            } else {
+                document.getElementsByClassName("welcome-page")[0].style.display =
+                    "none";
+                document.getElementsByClassName("chat-wrapper")[0].style.display =
+                    "flex";
+                document.getElementsByClassName("empty-chat")[0].style.display =
+                    "flex";
+                document.getElementsByClassName("chat-container")[0].style.display =
+                    "none";
+            }
+
+            document.getElementsByClassName(
+                "chat-container"
+            )[0].style.scrollBehavior = "smooth";
+
+            let messageInput = document.getElementsByClassName(
+                "message-input-element"
+            )[0];
+
+            document.getElementsByClassName("friend-username")[0].innerHTML =
+                friendUsername;
+            document.getElementsByClassName(
+                "friend-connection-status"
+            )[0].innerHTML = "last seen recently";
+            messageInput.placeholder = "Message " + friendUsername;
+            messageInput.focus();
+        }
+    }
+
+    function DisplayChats(userid, element) {
+        let parentContainer = document.getElementsByClassName('recent-messages-container')[0]
+        let index = Array.from(
+            parentContainer.getElementsByClassName("recent-message-chat")
+        ).indexOf(element);
+        parentContainer.getElementsByClassName("new-messages")[index].innerHTML =
+            "";
+        parentContainer.getElementsByClassName("new-messages")[
+            index
+        ].style.display = "none";
+        element.classList.remove('blinky-chat')
+        loadChats(userid, index).then((data) => {
+            ws.send(
+                JSON.stringify({
+                    type: "chat-opened",
+                    recepient: currentFriendId,
+                })
+            );
+            history.pushState(
+                { contentId: currentFriendId, index: index },
+                "",
+                `/chat/${currentFriendId}`
+            );
+        });
+    }
+
+    async function fetchChats(userid) {
+        let chats = await sendPostRequest("/messages", { userid });
+        return chats;
+    }
+
+    function formatDate(date) {
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+        let str = "";
+        date.day >= 10 ? (str += date.day) : (str += "0" + date.day);
+        str += " ";
+        // date.month >= 10 ? (str += date.month) : (str += "0" + date.month);
+        str += months[date.month]
+        str += " ";
+        date.year >= 10 ? (str += date.year) : (str += "0" + date.year);
+
+        return str;
+    }
+
+    function trimToMaxLength(str, maxLength = 30) {
+        if (str.length <= maxLength) {
+            return str;
+        }
+        return str.substring(0, maxLength) + "...";
+    }
+
+    function moveToFront(array, index) {
+        // Check if the index is valid
+        if (index < 0 || index >= array.length) {
+            console.error("Invalid index");
+            return array;
+        }
+
+        // Remove the element from the specified index
+        const element = array.splice(index, 1)[0];
+
+        // Add the element to the front of the array
+        array.unshift(element);
+
+        return array;
+    }
+
+    function compareTimes(time1, time2) {
+        return time1.year > time2.year ? 1 : 0;
+        return time1.month > time2.month ? 1 : 0;
+        return time1.day > time2.day ? 1 : 0;
+        return time1.hours > time2.hours ? 1 : 0;
+        return time1.mins > time2.mins ? 1 : 0;
+
+        return 1;
+    }
+
+    function toggleProfileSideBar() {
+        if (sideBarVisible) {
+            document.getElementsByClassName(
+                "profile-info-wrapper"
+            )[0].style.display = "none";
+            sideBarVisible = false;
+        } else {
+            document.getElementsByClassName(
+                "profile-info-wrapper"
+            )[0].style.display = "flex";
+            sideBarVisible = true;
+        }
+    }
+
+    async function logout() {
+        await sendPostRequest("/logout", {});
+        window.location.reload();
+    }
+
+    function removeUnreadMessagesTag() {
+        let unreadMessagesTag = document
+            .getElementsByClassName("chat-container")[0]
+            .getElementsByClassName("unread");
+        if (unreadMessagesTag.length) {
+            unreadMessagesTag[0].style.display = "none";
+        }
+    }
+
+    function createTypingSymbol() {
+        const typingElement = document.getElementsByClassName("typing")[0];
+        const chatContainer =
+            document.getElementsByClassName("chat-container")[0];
+        chatContainer.appendChild(typingElement);
+
+        typingElement.style.display = "flex";
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function removeTypingSymbol() {
+        const typingElement = document.getElementsByClassName("typing")[0];
+        typingElement.style.display = "none";
+        console.log("Typing stopped");
+    }
+
+    function getDayName(day) {
+        const days = [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+        ];
+        return days.at(day);
+    }
+
+    function getRelativeDate(date) {
+        const currentDate = new Date();
+        if (
+            date.year != currentDate.getFullYear() ||
+            date.month != currentDate.getMonth() + 1
+        ) {
+            return formatDate(date);
+        }
+
+        let difference = currentDate.getDate() - date.day;
+        const currentDayIndex = currentDate.getDay();
+        if (difference < 0) {
+            throw new Error("Invalid date");
+        } else if (difference >= 7) {
+            return formatDate(date);
+        }
+
+        switch (difference) {
+            case 0:
+                return "Today";
+            case 1:
+                return "Yesterday";
+            default:
+                return getDayName(currentDayIndex - difference);
+        }
+    }
+
+    function formatTime(hours, mins) {
+        let str = "";
+        hours < 10 ? (str += "0" + hours) : (str += hours);
+        str += ":";
+        mins < 10 ? (str += "0" + mins) : (str += mins);
+
+        return str;
+    }
+
+    function scrollToChild(parent, child) {
+        if (child) {
+            child.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }
+
+    function messageOptionsMenu() {
+        console.log("Hello world");
+    }
+
+    function searchChats(query) {
+
+        let str = query.trim();
+        if (!str.length) {
+            return;
+        }
+
+        document.getElementsByClassName('chat-search-container')[0].innerHTML = ""
+        let usernames = [];
+        const parentElement = document.getElementsByClassName('recent-messages-container')[0]
+        let usernameElements = parentElement.getElementsByClassName('username');
+
+        for (let i = 0; i < usernameElements.length; i++) {
+            usernames.push(usernameElements[i].textContent.toLowerCase())
+
+        }
+
+        const matchedUsernameIndices = findClosestUsernames(usernames, str);
+        console.log(matchedUsernameIndices)
+
+        if (matchedUsernameIndices.length) {
+            for (let usernameIndex of matchedUsernameIndices) {
+
+                console.log("username index", usernameIndex)
+
+                let originalElement = parentElement.getElementsByClassName('recent-message-chat')[usernameIndex]
+                const elementIndex = Array.from(parentElement.getElementsByClassName('recent-message-chat')).indexOf(originalElement);
+                const userid = userInfo.friends[elementIndex];
+
+                let clonedElement = originalElement.cloneNode(true);
+
+
+
+
+
+
+                document.getElementsByClassName('chat-search-container')[0].appendChild(clonedElement);
+                clonedElement.addEventListener('click', e => {
+                    DisplayChats(userid, originalElement)
+                })
+            }
+        }
+
+        else {
+            document.getElementsByClassName('chat-search-container')[0].innerHTML = "<div class='no-results'><i class='fas fa-search-minus'></i> &nbsp;No results</div>"
+        }
+        document.getElementsByClassName('recent-messages-container')[0].style.display = 'none'
+        document.getElementsByClassName('chat-search-container')[0].style.display = 'flex'
+    }
+
+    async function DisplaySentMessage(message) {
+
+        if (message != "") {
+            const messageInput = document.getElementsByClassName('message-input-element')[0]
+            const date = new Date();
+            await sendMessage(
+                myid,
+                currentFriendId,
+                message,
+                date
+            );
+            let container = document.getElementsByClassName(
+                "recent-messages-container"
+            )[0];
+
+            const activeElement = container.getElementsByClassName(
+                "recent-active-message"
+            )[0];
+            activeElement.getElementsByClassName(
+                "last-message-status"
+            )[0].style.display = "none";
+            activeElement.getElementsByClassName(
+                "last-message-content"
+            )[0].textContent = trimToMaxLength(messageInput.value, 50);
+            activeElement.getElementsByClassName(
+                "last-message-time"
+            )[0].innerHTML = formatTime(date.getHours(), date.getMinutes());
+            const index = Array.from(
+                container.getElementsByClassName("recent-message-chat")
+            ).indexOf(activeElement);
+            container.insertBefore(activeElement, container.firstChild);
+            scrollToChild(container, activeElement);
+
+            moveToFront(userInfo.friends, index);
+            messageInput.value = "";
+            removeUnreadMessagesTag();
+            document.getElementsByClassName('chat-search-container')[0].innerHTML = ""
+            document.getElementsByClassName('chat-search-container')[0].style.display = 'none'
+            document.getElementsByClassName('recent-messages-container')[0].style.display = 'flex'
+            document.getElementsByClassName('chat-search-input')[0].value = ""
+
+            messageInput.focus();
+        }
+
+    }
+
+    function levenshtein(a, b) {
+        const matrix = [];
+
+        // Increment along the first column of each row
+        for (let i = 0; i <= b.length; i++) {
+            matrix[i] = [i];
+        }
+
+        // Increment each column in the first row
+        for (let j = 0; j <= a.length; j++) {
+            matrix[0][j] = j;
+        }
+
+        // Fill in the rest of the matrix
+        for (let i = 1; i <= b.length; i++) {
+            for (let j = 1; j <= a.length; j++) {
+                if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                    matrix[i][j] = matrix[i - 1][j - 1];
+                } else {
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j - 1] + 1, // substitution
+                        matrix[i][j - 1] + 1, // insertion
+                        matrix[i - 1][j] + 1 // deletion
+                    );
+                }
+            }
+        }
+
+        return matrix[b.length][a.length];
+    }
+
+    // function findClosestUsernames(usernames, testUsername) {
+    //     const distances = usernames.map((username, index) => ({
+    //         index,
+    //         distance: levenshtein(username, testUsername)
+    //     }));
+
+    //     distances.sort((a, b) => a.distance - b.distance);
+
+    //     // const threshold = Math.min(...distances.map(entry => entry.distance)) + 2; // Adjust threshold as needed
+    //     const threshold = 4;
+
+    //     const closestMatches = distances
+    //         .filter(entry => entry.distance <= threshold)
+    //         .map(entry => entry.index);
+
+    //     return closestMatches;
+    // }
+
+
+    function findClosestUsernames(usernames, testUsername) {
+        let matches = [];
+        for (let i = 0; i < usernames.length; i++) {
+            if (usernames[i].includes(testUsername)) {
+                matches.push(i)
+            }
+        }
+
+        return matches;
+    }
+
+
+    async function searchFriends(query) {
+
+        let str = query.trim();
+        let container = document.getElementsByClassName('friend-search-container')[0]
+
+        if (!str.length) {
+            container.style.display = 'none'
+            document.getElementsByClassName('search-people-cross-button')[0].style.display = 'none'
+
+        }
+
+        else {
+            container.innerHTML = "<div style='align-self:center;padding:1vw;'>Searching...</div> "
+            let response = await sendPostRequest('/search-friend', { query })
+            if (response.ok) {
+
+                container.innerHTML = ""
+                const searchResult = response.searchResult
+
+                for (let userInfo of searchResult) {
+                    let element = createSearchedFriendCard(userInfo)
+                    container.appendChild(element)
+                }
+
+                if (searchResult.length == 0) {
+                    container.innerHTML = "<div style='align-self:center;padding:1vw;'>Couldn't find anything related to your search!</div> "
+
+                }
+                container.style.display = 'flex'
+                document.getElementsByClassName('search-people-cross-button')[0].style.display = 'flex'
+            }
+            else {
+
+            }
+
+
+
+        }
+
+    }
+
+
+
+    function createSearchedFriendCard(info) {
+
+        let searchedFriend = document.createElement('div');
+        searchedFriend.classList.add('searched-friend');
+
+        searchedFriend.innerHTML = `<div class='searched-friend-profile-image' style='background-color:${info.color}'>${info.username[0].toUpperCase()}</div> <div class='searched-friend-profile-info' ><div class='searched-friend-profile-name'>${info.username}</div><div class='searched-friend-profile-gender'>${info.gender}</div></div >`
+
+        const addFriend = document.createElement('div');
+        addFriend.classList.add('add-friend')
+
+        if (info.isFriend == false) {
+            addFriend.innerHTML = '<i class="fas fa-user-plus"></i> Add Friend'
+
+
+            addFriend.addEventListener('click', async (e) => {
+                addFriend.innerHTML = 'Sending...'
+                await sendPostRequest('/friend-request', { userid: info.userid })
+                addFriend.innerHTML = '<i class="fas fa-check"></i> Sent'
+            })
+
+        }
+
+        else {
+            addFriend.innerHTML = '<i class="fas fa-comment"></i> Message'
+
+        }
+        searchedFriend.appendChild(addFriend)
+
+        return searchedFriend;
+
+
+
+
+    }
+
+</script>
+
+</html>

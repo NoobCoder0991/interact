@@ -1,0 +1,327 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Interact</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+
+</head>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+
+    :root {
+        /* --dark-mode-body-color: #383a3d;
+        --dark-mode-text-color: #ECF0F1;
+        --dark-mode-container-color: #333;
+
+        --body-color: #e7eaee;
+        --body-color: #2c2c2c;
+
+        --text-color: #333333;
+        --container-color: #c7c7c7;
+
+        --accent-color: #45a049;
+        --accent-color: #17212B;
+        --accent-color: #2d7ca3;
+
+        --danger-color: rgb(207, 33, 33); */
+        --body-color: #2c2c2c;
+        --body-color-dim: #242323;
+        --text-color: rgb(207, 198, 198);
+        --container-color: #3b3a3a;
+        --accent-color: #6dc21d;
+        --accent-bright: #76e211;
+        --accent-dim: #6aa834da;
+        --active-color: rgba(0, 0, 0, 0.2);
+        --my-message-color: #5a8b1a98;
+        --friend-message-color: rgba(255, 255, 255, 0.05);
+        --blue-tick-color: rgb(136, 230, 12);
+        --blue-tick-color: rgb(230, 208, 12);
+        --chat-info-color: rgba(0, 0, 0, 0.15);
+        --accept-color: #1758a5;
+        --accepted-color: var(--accent-dim);
+
+    }
+
+    body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        font-family: "Roboto", sans-serif;
+    }
+
+    .logo {
+        background-color: var(--accent-color);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 30vh;
+        position: relative;
+    }
+
+
+
+    .main {
+        background-color: var(--body-color);
+        color: white;
+        height: 100%;
+        display: flex;
+        /* justify-content: center; */
+        padding: 5%;
+        align-items: center;
+        flex-direction: column;
+    }
+
+
+    .title {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .description {
+        display: flex;
+        flex-direction: column;
+        justify-self: center;
+        align-items: center;
+        text-align: center;
+        color: #9e9494;
+    }
+
+    .start-messaging {
+        background-color: var(--accent-color);
+        padding: 0.5% 2%;
+        border-radius: 2px;
+        cursor: pointer;
+        user-select: none;
+        margin-top: 3%;
+    }
+
+    .message-animation {
+        background-color: #19232d;
+        background-color: var(--body-color);
+        height: 25vh;
+    }
+
+    .logo-image {
+        height: 80%;
+    }
+
+    @media screen and (max-width:900px) {
+        .start-messaging {
+            padding: 2% 10%;
+        }
+
+    }
+</style>
+
+<body>
+
+    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+
+
+    <div class="logo">
+        <img src="../assets/images/good-logo.png" alt="" class="logo-image">
+        <div class="title">
+            <h1>
+                &nbsp;Interact
+            </h1>
+        </div>
+
+    </div>
+
+    <div class="main">
+
+        <div class="description">
+            <div>
+
+                Welcome to the official Interact website.
+            </div>
+            <div>
+
+                Stop worrying about <i class="fas fa-bolt"></i> speed and <i class="fas fa-lock"></i> security.
+            </div>
+        </div>
+
+        <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"
+            type="module"></script>
+
+        <dotlottie-player src="https://lottie.host/6b4a49e0-8889-4602-a045-d4edd2fb6fff/XsHy3AGsYi.json"
+            background="transparent" speed="1" class="message-animation" loop autoplay></dotlottie-player>
+
+
+        <div class="start-messaging" onclick="window.location.href='/login'">
+            Start Messaging
+        </div>
+    </div>
+
+</body>
+
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to ChatMate</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+
+        :root {
+
+            --body-color: #2c2c2c;
+            --body-color-dim: #242323;
+            --text-color: rgb(207, 198, 198);
+            --container-color: #3b3a3a;
+            --accent-color: #6dc21d;
+            --accent-bright: #76e211;
+            --accent-dim: #6aa834da;
+            --active-color: rgba(0, 0, 0, 0.2);
+            --my-message-color: #5a8b1a98;
+            --friend-message-color: rgba(255, 255, 255, 0.05);
+            --blue-tick-color: rgb(136, 230, 12);
+            --blue-tick-color: rgb(230, 208, 12);
+            --chat-info-color: rgba(0, 0, 0, 0.15);
+            --accept-color: #1758a5;
+            --accepted-color: var(--accent-dim);
+
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: "Roboto", sans-serif;
+            background-color: var(--body-color);
+            color: white;
+        }
+
+        header {
+            /* background-color: #008cba; */
+            /* background-color: var(--accent-color); */
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        header nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .hero {
+            /* background-color: #e7e7e7; */
+            background-color: var(--body-color);
+            padding: 50px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 40px;
+        }
+
+        .hero .cta {
+            padding: 15px 30px;
+            background-color: var(--accent-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+        }
+
+        .features {
+            display: flex;
+            justify-content: space-around;
+            padding: 50px 20px;
+            flex-wrap: wrap;
+        }
+
+        .feature {
+            max-width: 300px;
+            text-align: center;
+        }
+
+        .feature img {
+            max-width: 100px;
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            background-color: var(--body-color);
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="/home">Home</a>
+            <a href="#">Features</a>
+            <a href="/signup">Sign Up</a>
+            <a href="/login">Login</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Welcome to Interact</h1>
+        <p>Connect with your friends instantly. Chat anytime, anywhere.</p>
+        <a href="/home" class="cta">Get Started</a>
+    </section>
+
+    <section class="features">
+        <div class="feature">
+            <img src="../assets/images/instant-message.png" alt="Real-Time Messaging">
+            <h3>Real-Time Messaging</h3>
+            <p>Send and receive messages instantly with no delays.</p>
+        </div>
+        <div class="feature">
+            <img src="../assets/images/secure_messaging.png" alt="Secure">
+            <h3>Secure</h3>
+            <p>End-to-end encryption to keep your conversations private.</p>
+        </div>
+        <div class="feature">
+            <img src="../assets/images/group.png" alt="Group Chats">
+            <h3>Group Chats</h3>
+            <p>Create and manage groups easily for all your friends and family.</p>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 2024 Interact. All rights reserved.</p>
+        <p>
+            <a href="#">Privacy Policy</a> |
+            <a href="#">Terms of Service</a> |
+            <a href="#">Contact Us</a>
+        </p>
+    </footer>
+</body>
+
+</html>

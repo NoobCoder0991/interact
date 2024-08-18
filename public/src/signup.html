@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register on Interact</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+</head>
+
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
+    :root {
+        /* --body-color: #19232d;
+        --body-color: #2c2c2c;
+
+        --text-color: white;
+
+        --container-color: #d1cbcb;
+
+        --container-color: #c7c7c7;
+        --container-color: #f3ebeb;
+
+        --accent-color: #2d7ca3;
+        --accent-bright: #3c9bca;
+
+        --danger-color: rgb(207, 33, 33); */
+
+        --body-color: #2c2c2c;
+        --body-color-dim: #242323;
+        --text-color: rgb(207, 198, 198);
+        --container-color: #3b3a3a;
+        --accent-color: #6dc21d;
+        --accent-bright: #76e211;
+        --accent-dim: #6aa834da;
+        --active-color: rgba(0, 0, 0, 0.2);
+        --my-message-color: #5a8b1a98;
+        --friend-message-color: rgba(255, 255, 255, 0.05);
+        --blue-tick-color: rgb(136, 230, 12);
+        --blue-tick-color: rgb(230, 208, 12);
+        --chat-info-color: rgba(0, 0, 0, 0.15);
+        --accept-color: #1758a5;
+        --accepted-color: var(--accent-dim);
+    }
+
+    body {
+        font-family: "Roboto", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        background-color: var(--body-color);
+        color: var(--text-color);
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+    }
+
+    .register-wrapper {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        /* align-items: center; */
+        /* background-color: #1c2835; */
+        border: 1px solid #444040;
+        box-shadow: 0px 0px 2px #bbb;
+        border-radius: 5px;
+        padding: 3%;
+        min-width: 35vw;
+    }
+
+    .register-container {
+        display: flex;
+        flex-direction: column;
+        /* justify-content: center; */
+        align-items: center;
+        width: 100%;
+        /* background-color: red; */
+    }
+
+    .user-input {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    .username-input,
+    .password-input {
+        width: 100%;
+        position: relative;
+    }
+
+    .input {
+        width: 100%;
+        padding: 2% 1%;
+        margin: 1% 0;
+        background-color: var(--body-color);
+        border: none;
+        outline: none;
+        border-bottom: 2px solid grey;
+        color: white;
+    }
+
+    .input:focus {
+        border-bottom: 2px solid var(--accent-color);
+    }
+
+    .register-button {
+        background-color: var(--accent-color);
+        color: white;
+        padding: 2.5% 15%;
+        margin: 2% 0;
+        border-radius: 2px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .register-button:hover {
+        background-color: var(--accent-bright);
+    }
+
+    .subtitle {
+        color: #bababa;
+    }
+
+    a {
+        color: var(--accent-color);
+    }
+
+    .username-input-icon,
+    .password-input-icon {
+        position: absolute;
+        right: 0;
+        top: 35%;
+        color: #bababa;
+    }
+
+    .message-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        /* background-color: red; */
+        padding: 1% 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .success-message {
+        background-image: linear-gradient(to bottom, rgba(0, 200, 200, 0.5), rgba(0, 200, 200, 0.4), rgba(0, 200, 200, 0.3), rgba(0, 200, 200, 0.1));
+
+    }
+
+    .error-message {
+        background-image: linear-gradient(to bottom, rgba(255, 0, 0, 0.5), rgba(255, 0, 0, 0.4), rgba(255, 0, 0, 0.3), rgba(255, 0, 0, 0.1));
+
+    }
+
+    .gender-input {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 2%;
+        width: 100%;
+    }
+
+    .gender-option {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--body-color);
+        padding: 1%;
+        width: 20%;
+        /* margin: 0 1%; */
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .selected-gender-option {
+        background-color: var(--accent-bright);
+    }
+
+    .loader {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 1.3%;
+        background-color: var(--accent-color);
+        animation: load 2s linear infinite;
+        display: none;
+    }
+
+    @keyframes load {
+        0% {
+            left: 0;
+            right: 100%;
+        }
+
+        50% {
+            left: 0;
+            right: 0;
+
+        }
+
+        100% {
+
+            left: 100%;
+            right: 0;
+        }
+
+    }
+</style>
+
+<body>
+    <div class="main">
+        <div class="register-wrapper">
+
+            <div class="loader"></div>
+            <div class="message-container"></div>
+            <h2 class="title">
+                Register</h2>
+
+            <h3 class="subtitle">Register on Interact and enjoy secure messaging!</h3>
+            <div class="register-container">
+                <div class="user-input">
+                    <div class="username-input">
+                        <div class="username-input-icon fas fa-user"></div>
+                        <input type="text" class="input username-input-element" placeholder="Username" />
+                    </div>
+
+                    <div class="password-input">
+                        <div class="password-input-icon fas fa-lock"></div>
+                        <input type="password" class="input password-input-element" placeholder="Password" />
+                    </div>
+
+
+                    <div class="gender-input">
+
+
+                        <div class="gender-option male selected-gender-option"
+                            onclick="document.getElementsByClassName('selected-gender-option')[0].classList.remove('selected-gender-option');this.classList.add('selected-gender-option');gender='male'">
+                            Male</div>
+                        <div class="gender-option female"
+                            onclick="document.getElementsByClassName('selected-gender-option')[0].classList.remove('selected-gender-option');this.classList.add('selected-gender-option');gender='female'">
+                            Female</div>
+                    </div>
+
+                </div>
+
+                <div class="register-button">Register</div>
+            </div>
+
+            <div class="no-account">
+                Already have an account? <a href="/login">Login</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+
+
+    var logging = false;
+    var gender = "male";
+    // displayMessage("Username already exists", true)
+
+    const registerButton = document.getElementsByClassName("register-button")[0];
+    const usernameInputElement = document.getElementsByClassName("username-input-element")[0]
+    const passwordInputElement = document.getElementsByClassName("password-input-element")[0]
+
+    registerButton.addEventListener('click', e => {
+        if (!logging) {
+
+            const username = usernameInputElement.value;
+            const password = passwordInputElement.value;
+            if (username.trim() == '' || password.trim() == '') {
+                displayMessage("Username of password can not be empty!", true)
+            }
+
+            else {
+                document.getElementsByClassName('loader')[0].style.display = 'flex'
+                logging = true;
+
+                sendPostRequest('/register', { username, password, gender })
+                    .then(data => {
+                        if (data.ok) {
+                            displayMessage("Account creates successfully!", false)
+                            document.getElementsByClassName('loader')[0].style.display = 'none'
+                            logging = false;
+                        }
+                        else {
+                            document.getElementsByClassName('loader')[0].style.display = 'none'
+                            displayMessage(data.errMessage, true)
+                            logging = false;
+                        }
+                    })
+
+                    .catch(err => {
+                        document.getElementsByClassName('loader')[0].style.display = 'none'
+                        displayMessage("Something went wrong!", true)
+                        logging = false;
+                    })
+            }
+
+        }
+
+    })
+
+
+
+    async function sendPostRequest(url, data) {
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+
+            const responseData = await response.json();
+            return responseData;
+        } catch (error) {
+            throw new Error(`Request failed: ${error.message}`);
+        }
+    }
+
+    function displayMessage(message, err) {
+        document.getElementsByClassName('message-container')[0].innerHTML = message;
+        document.getElementsByClassName('message-container')[0].style.display = "flex";
+        if (err) {
+
+            document.getElementsByClassName('message-container')[0].classList.add("error-message")
+            document.getElementsByClassName('message-container')[0].classList.remove("success-message")
+        }
+        else {
+
+            document.getElementsByClassName('message-container')[0].classList.add("success-message")
+            document.getElementsByClassName('message-container')[0].classList.remove("error-message")
+        }
+    }
+</script>
+
+</html>
