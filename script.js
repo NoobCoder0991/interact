@@ -10,7 +10,7 @@ const app = express();
 const hf = require("./helper_funcitons")
 const fuse = require("./fuse")
 const { upload, uploadToGridFS } = require("./upload");
-const { ObjectId } = require("mongodb");
+const { ObjectId, Double } = require("mongodb");
 const { send } = require('process');
 const notifcations = require("./notifications")
 
@@ -397,6 +397,7 @@ app.post('/register', async (req, res) => {
             await db.collection('users').insertOne({ userid, username, password })
 
             await db.collection('user_data').insertOne({ userid, gender, friends: [], username, color })
+            await db.collection('devices').insertOne({ userid })
 
             res.send({ ok: true })
         }
