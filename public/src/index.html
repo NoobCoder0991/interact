@@ -4,11 +4,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Interact</title>
 
     <link rel="icon" type="image/png" href="../assets/images/good-logo.png">
 
-    <link rel="stylesheet" id="css-file" href="../src/index-green.css" />
+    <link rel="stylesheet" id="css-file" href="../src/index-light.css" />
     <!-- <link rel="stylesheet" id="css-file" href="../src/index-light.css" /> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
@@ -94,7 +95,9 @@
             <div class="search-people-cross-button fas fa-times " style="display: none;"
                 onclick="document.getElementsByClassName('search-people-element')[0].value='';this.style.display='none';document.getElementsByClassName('friend-search-container')[0].style.display='none'">
             </div>
-            <div class="friend-search-container"></div>
+            <div class="friend-search-container">
+                Hello world, this is Ameca.
+            </div>
         </div>
 
         <div class="search-people-mobile">
@@ -1069,19 +1072,19 @@
     <div class="nav-options-mobile">
         <div class="nav-option-mobile nav-active-option-mobile home-mobile" onclick="goHome()">
             <div class="fas fa-home"></div>
-            <!-- <div>Home</div> -->
+            <div>Home</div>
         </div>
         <div class="nav-option-mobile rooms-mobile">
             <div class="fas fa-comment"></div>
-            <!-- <div>Rooms</div> -->
+            <div>Rooms</div>
         </div>
         <div class="nav-option-mobile random-mobile">
             <div class="fas fa-random"></div>
-            <!-- <div>Random</div> -->
+            <div>Random</div>
         </div>
         <div class="nav-option-mobile notifications-mobile" onclick="fetchNotifications()">
             <div class="fas fa-bell"></div>
-            <!-- <div>Notifications</div> -->
+            <div>Notifications</div>
         </div>
     </div>
 </body>
@@ -1090,6 +1093,21 @@
 
 
 <script>
+
+    //setting theme according to user prefernce or sysstem theme
+
+    var theme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (theme) {
+        document.getElementById('css-file').setAttribute('href', `../src/index-${theme}.css`)
+    }
+    else {
+        const defaultTheme = systemPrefersDark ? 'dark' : 'light';
+        document.getElementById('css-file').setAttribute('href', `../src/index-${defaultTheme}.css`)
+
+    }
+
 
     var selectedFile;
     var selectedFormData;
@@ -1556,7 +1574,9 @@
     var messageInput = document.getElementsByClassName(
         "message-input-element"
     )[0];
-
+    messageInput.addEventListener('focus', e => {
+        e.preventDefault();
+    })
     var searchChatsInput =
         document.getElementsByClassName("chat-search-input")[0];
 
