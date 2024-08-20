@@ -96,7 +96,6 @@
                 onclick="document.getElementsByClassName('search-people-element')[0].value='';this.style.display='none';document.getElementsByClassName('friend-search-container')[0].style.display='none'">
             </div>
             <div class="friend-search-container">
-                Hello world, this is Ameca.
             </div>
         </div>
 
@@ -1736,9 +1735,6 @@
                 .getElementsByClassName("message-menu-wrapper")[0]
                 .contains(e.target)
         ) {
-            // document.getElementsByClassName(
-            //     "message-menu-wrapper"
-            // )[0].style.display = "none";
             document.getElementsByClassName(
                 "message-menu-wrapper"
             )[0].classList.remove('show');
@@ -1747,6 +1743,13 @@
                 "auto";
             selectedMessageIndex = null;
         }
+        if (!document.getElementById('emoji-picker').contains(e.target) && !document.getElementById('open-picker').contains(e.target)) {
+            document.getElementById('emoji-picker').style.display = 'none'
+        }
+        if (!document.getElementById('file-picker').contains(e.target) && !document.getElementsByClassName('open-file-picker')[0].contains(e.target)) {
+            document.getElementById('file-picker').style.display = 'none'
+        }
+
     });
 
     async function sendPostRequest(url, data) {

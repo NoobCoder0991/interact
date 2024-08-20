@@ -95,7 +95,6 @@ body {
     height: 6vh;
     padding: 0 1%;
     position: relative;
-    position: sticky;
 
 }
 
@@ -227,6 +226,7 @@ body {
     height: 100%;
     overflow-y: hidden;
     display: flex;
+    position: relative;
     flex: 1;
     padding-top: env(safe-area-inset-top);
 
@@ -297,7 +297,7 @@ query {
     background-color: var(--body-color);
     z-index: 100;
     border-radius: 5px;
-
+    box-sizing: border-box;
     display: none;
 }
 

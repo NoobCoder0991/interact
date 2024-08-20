@@ -98,7 +98,8 @@ body {
     height: 6vh;
     padding: 0 1%;
     position: relative;
-    position: sticky;
+    /* position: sticky; */
+    overflow: visible;
 
 }
 
@@ -153,7 +154,7 @@ body.light-mode .profile {
     height: 80%;
     transition: 0.2s;
     width: 100%;
-    color: white;
+    color: var(--sharp-color);
     border-radius: 5px;
 }
 
@@ -328,7 +329,7 @@ body.light-mode query {
     background-color: var(--body-color);
     z-index: 20;
     border-radius: 5px;
-
+    box-sizing: border-box;
     display: none;
 }
 
@@ -375,6 +376,7 @@ body.light-mode .searched-friend:hover {
     margin-right: 2%;
     position: relative;
     background-color: blueviolet;
+    color: white;
 
 }
 
@@ -944,6 +946,7 @@ body.light-mode .accepted {
     outline: none;
     padding: 1.5% 1%;
     border-radius: 5px;
+    color: var(--sharp-color);
 }
 
 body.light-mode .input {
@@ -2421,10 +2424,8 @@ body.light-mode .delete-message-option {
     animation: 0.2s test;
 }
 
-body.light-mode #emoji-picker {
-
-    background-color: var(--body-color-light-mode);
-    border: 3px solid var(--dark-container-color-light-mode);
+#emoji-picker.hide {
+    display: none;
 }
 
 #file-picker {
