@@ -959,7 +959,7 @@ body.light-mode .empty-chat {
     position: relative;
     display: flex;
     flex-direction: column;
-    /* height: 100%; */
+    flex-grow: 1;
     overflow: auto;
     scroll-behavior: auto;
     scrollbar-width: none;
