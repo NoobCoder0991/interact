@@ -9,17 +9,97 @@
 
     <link rel="icon" type="image/png" href="../assets/images/good-logo.png">
 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css" rel="stylesheet">
     <link rel="stylesheet" id="css-file" href="../src/index-light.css" />
     <!-- <link rel="stylesheet" id="css-file" href="../src/index-light.css" /> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://unpkg.com/prettier@2.8.8/standalone.js"></script>
+    <script src="https://unpkg.com/prettier@2.8.8/parser-babel.js"></script> <!-- Parser for JavaScript -->
+
 
 </head>
-<style>
-</style>
+
 
 <body>
+
+
+    <div class="code-wrapper hide">
+        <div class="code-inner-wrapper">
+
+            <div class=" input-output-container">
+                <div class="writing-code" contenteditable="true">
+                    //write or paste your code here
+                </div>
+
+                <div class="code-preview">
+                    <pre><code class="language-cpp  "></code></pre>
+                </div>
+
+            </div>
+            <div class="code-send-container">
+                <div class="code-cancel-button"
+                    onclick="document.getElementsByClassName('code-wrapper')[0].classList.add('hide');">
+                    <i class="fas fa-times"></i>
+                </div>
+                <div class="code-send-button" onclick="sendCode()">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <script>
+        let writingCode = document.querySelector('.writing-code');
+        let codePreview = document.querySelector('.code-preview code');
+
+        function formatAndHighlightCode() {
+            let text = writingCode.innerText;
+            codePreview.textContent = text;
+            hljs.highlightElement(codePreview);
+
+            // Format the code using Prettier
+            let formattedCode;
+            try {
+                formattedCode = prettier.format(codePreview.innerText, {
+                    // parser: "babel",
+                    plugins: prettierPlugins,
+                    singleQuote: true,
+                    tabWidth: 2,
+                    semi: true
+                });
+
+            } catch (error) {
+                console.log("Error occured", error)
+
+            }
+
+
+            // Update the code preview with formatted code
+            if (formattedCode) {
+
+                codePreview.textContent = formattedCode.trim();
+                hljs.highlightElement(codePreview);
+            }
+            else {
+
+
+            }
+
+            // Highlight the formatted code
+        }
+
+        formatAndHighlightCode()
+
+
+        // Add event listener for input changes
+        writingCode.addEventListener('input', formatAndHighlightCode);
+    </script>
+
 
 
     <div class="delete-message-wrapper">
@@ -1039,9 +1119,10 @@
                             <button class="upload-button" type="submit">Upload File</button>
                         </form>
                         <form id="camera">
-                            <label for="" onclick="document.getElementById('file-picker').style.display='none'">
-                                <div class="input-icon"><i class="fas fa-camera"></i></div>
-                                <div>Camera</div>
+                            <label for=""
+                                onclick="document.getElementById('file-picker').style.display='none';document.getElementsByClassName('code-wrapper')[0].classList.toggle('hide')">
+                                <div class="input-icon"><i class="fas fa-code"></i></div>
+                                <div>Code</div>
                             </label>
                         </form>
                         <form id="poll">
@@ -1332,7 +1413,7 @@
             }
             activeElement.getElementsByClassName(
                 "last-message-content"
-            )[0].textContent = message.message;
+            )[0].innerHTML = message.message;
             activeElement.getElementsByClassName("last-message-time")[0].innerHTML =
                 formatTime(message.time.hours, message.time.mins);
 
@@ -2315,24 +2396,12 @@
         let lastMessageContent = "";
         if (lastMessage) {
             if (lastMessage.type == 'send') {
-                lastMessageContent = lastMessage.message
+                lastMessageContent = escapeHtml(lastMessage.message)
             }
             else if (lastMessage.type == 'file') {
                 lastMessageContent = '<i class="fas fa-file-alt"></i> ' + `${lastMessage.message.length ? lastMessage.message : lastMessage.file_details.name}`
             }
         }
-        // if (messages) {
-        //     messages = messages.messages;
-        //     let l = (messages[messages.length - 1]);
-        //     if (l.type == 'send') {
-        //         lastMessage = l.message;
-        //     }
-        //     else if (l.type == 'file') {
-        //         lastMessage = '<i class="fas fa-file-alt"></i> ' + (l.message || l.file_details.name)
-        //     }
-        // } else {
-        //     lastMessage = "";
-        // }
 
         container.innerHTML = `
         <div class="user-profile-picture">
@@ -2350,7 +2419,7 @@
                             <i class="message-tick fas fa-check-circle">   
                             </i>
                         </div>
-                        <div class="last-message-content">${lastMessageContent}</div>
+                        <div class="last-message-content">${(lastMessageContent)}</div>
                     </div>
                     <div class="typing-indicator-2">typing...</div>
 
@@ -2750,7 +2819,7 @@
         )[0].style.display = "flex";
     }
 
-    async function DisplaySentMessage(message) {
+    async function DisplaySentMessage(message, code) {
         if (message != "") {
             const messageInput = document.getElementsByClassName(
                 "message-input-element"
@@ -2770,9 +2839,18 @@
             activeElement.getElementsByClassName(
                 "last-message-status"
             )[0].classList.remove('blue-tick');
-            activeElement.getElementsByClassName(
-                "last-message-content"
-            )[0].textContent = messageInput.value;
+            if (code) {
+
+                activeElement.getElementsByClassName(
+                    "last-message-content"
+                )[0].innerHTML = "<i class='fas fa-code'></i> code";
+            }
+            else {
+                activeElement.getElementsByClassName(
+                    "last-message-content"
+                )[0].innerHTML = message;
+
+            }
             activeElement.getElementsByClassName("last-message-time")[0].innerHTML =
                 formatTime(date.getHours(), date.getMinutes());
             const index = Array.from(
@@ -3528,6 +3606,29 @@
     }
 
 
+    function sendCode() {
+        let text = cleanHtml(document.getElementsByClassName('code-preview')[0].innerHTML);
+
+        if (text.trim().length) {
+            DisplaySentMessage(text, true);
+            document.getElementsByClassName('code-wrapper')[0].classList.add('hide')
+        }
+    }
+
+    function escapeHtml(html) {
+        const text = document.createTextNode(html);
+        const div = document.createElement('div');
+        div.appendChild(text);
+        return div.innerHTML;
+    }
+    function cleanHtml(html) {
+
+        // Remove extra spaces and line breaks
+        return html
+            .replace(/(\s*\n\s*)+/g, '\n') // Replace multiple newlines with a single newline
+            .replace(/\s{2,}/g, ' ')       // Replace multiple spaces with a single space
+            .trim();                       // Remove leading and trailing spaces
+    }
 
 
 
