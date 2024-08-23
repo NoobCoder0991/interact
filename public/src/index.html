@@ -1567,6 +1567,8 @@
     var selectedMessageIndex;
     var messageSelection = false;
     var selectedMessages = [];
+    var streamingResponse = false;
+    var streamingIndex = -1;
 
     sendPostRequest("/fetch-info", {})
         .then((data) => {
@@ -1918,16 +1920,78 @@
         const messageData = {
             type: "send", sender: myid, receiver: currentFriendId, message, time, index, status: 0, replyIndex
         }
+
+        if (receiver == -1) {
+            //ai message
+            streamingResponse = true;
+            let response = await fetch('/message-ai', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(messageData),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+            sentMessageNotify.play()
+            const activeElement = document.getElementsByClassName(
+                "recent-active-message"
+            )[0];
+            const thisMessage = document.getElementsByClassName('my-message')[index];
+            thisMessage.getElementsByClassName('not-sent')[0].style.display = 'none'
+            thisMessage.getElementsByClassName('message-tick')[0].style.display = 'flex'
+            thisMessage.getElementsByClassName('message-tick')[0].classList.add('blue-tick')
+
+            activeElement.getElementsByClassName(
+                "last-message-status"
+            )[0].style.display = "flex";
+            activeElement.getElementsByClassName('last-message-status')[0].style.display = 'flex';
+            activeElement
+                .getElementsByClassName("message-tick")[0]
+                .classList.add("blue-tick");
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let result = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                result = decoder.decode(value, { stream: true });
+                result = result.replace(/\n/g, '<br>')
+
+                if (currentFriendId == -1) {
+                    if (streamingIndex == -1) {
+                        let date = new Date();
+                        writeTextMessage(result, { hours: date.getHours(), mins: date.getMinutes() }, false);
+                        let friendMessages = document.getElementsByClassName('friend-message');
+                        streamingIndex = friendMessages.length - 1;
+                    }
+                    else {
+                        document.getElementsByClassName('friend-message')[streamingIndex].getElementsByClassName('message-content')[0].innerHTML += result;
+                    }
+                }
+            }
+
+            streamingResponse = false;
+            streamingIndex = -1;
+
+
+            return;
+
+
+        }
         sendPostRequest("/message", messageData)
             .then(data => {
+                const activeElement = document.getElementsByClassName(
+                    "recent-active-message"
+                )[0];
+                const thisMessage = document.getElementsByClassName('my-message')[index];
                 if (data.ok) {
-                    const thisMessage = document.getElementsByClassName('my-message')[index];
                     thisMessage.getElementsByClassName('not-sent')[0].style.display = 'none'
                     thisMessage.getElementsByClassName('message-tick')[0].style.display = 'flex'
-
-                    const activeElement = document.getElementsByClassName(
-                        "recent-active-message"
-                    )[0];
 
                     activeElement.getElementsByClassName(
                         "last-message-status"
@@ -1935,6 +1999,18 @@
                     activeElement
                         .getElementsByClassName("message-tick")[0]
                         .classList.remove("blue-tick");
+
+                    sentMessageNotify.play()
+
+                }
+                else {
+
+                    createChatErrorMessage(data.errMessage)
+                    thisMessage.getElementsByClassName('not-sent')[0].style.display = 'none'
+                    thisMessage.getElementsByClassName('failed')[0].style.display = 'flex'
+
+
+
                 }
             })
     }
@@ -2025,8 +2101,9 @@
             }</div>
                     </div>
                     <div class="message-status">
-                        <i class="fas fa-circle-notch fa-spin not-sent" style= display:${sent == true ? "none" : "flex"
-            }></i>
+                        <i class="fas fa-circle-notch fa-spin not-sent" style= display:${sent == true ? "none" : "flex"}></i>
+                        <i class="fa-solid fa-circle-xmark circle-icon failed" style="display:none"></i>
+
                         <i class="fas fa-check-circle message-tick ${seen == true ? "blue-tick" : ""
             }" style=display:${sent == false ? "none" : "flex"}></i>
                     </div>
@@ -2254,8 +2331,8 @@
             }</div>
                     </div>
                     <div class="message-status">
-                        <i class="fas fa-circle-notch fa-spin not-sent" style= display:${sent == true ? "none" : "flex"
-            }></i>
+                        <i class="fas fa-circle-notch fa-spin not-sent" style= display:${sent == true ? "none" : "flex"}></i>
+                        <i class="fa-solid fa-circle-xmark circle-icon failed" style="display:none"></i>
                         <i class="fas fa-check-circle message-tick ${seen == true ? "blue-tick" : ""
             }" style=display:${sent == false ? "none" : "flex"}></i>
                     </div>
@@ -2406,7 +2483,7 @@
         container.innerHTML = `
         <div class="user-profile-picture">
             <div class="profile-image-element" style="background-color:${color}">
-                        ${data.username[0].toUpperCase()}
+                        ${data.userid == -1 ? '<i class = "fas fa-robot"></i>' : data.username[0].toUpperCase()}
                     </div>
                     <div class="connection-status online"></div>
                 </div>
@@ -2820,10 +2897,11 @@
     }
 
     async function DisplaySentMessage(message, code) {
-        if (message != "") {
+        if (message != "" && streamingResponse == false) {
             const messageInput = document.getElementsByClassName(
                 "message-input-element"
             )[0];
+            messageInput.value = ""
             const date = new Date();
             await sendMessage(myid, currentFriendId, message, date, selectedMessageIndex);
             let container = document.getElementsByClassName(
@@ -3630,6 +3708,14 @@
             .trim();                       // Remove leading and trailing spaces
     }
 
+    function createChatErrorMessage(message) {
+        let chatErrorMessage = document.createElement('div');
+        chatErrorMessage.classList.add('chat-error-message');
+        chatErrorMessage.innerHTML = message;
+
+        document.getElementsByClassName('chat-container')[0].appendChild(chatErrorMessage)
+
+    }
 
 
 

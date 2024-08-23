@@ -14,6 +14,8 @@ const { ObjectId, Double } = require("mongodb");
 const { send } = require('process');
 const notifcations = require("./notifications")
 
+const ai = require("./ai")
+
 // Middleware to parse JSON and URL-encoded bodies
 app.use(express.static(join(__dirname, '/public')));
 app.use(express.json());
@@ -200,6 +202,7 @@ wss.on('connection', async (ws, request) => {
         //sending message
         app.post('/message', async (req, res) => {
             const data = req.body;
+
             hf.reorderFriends(data.sender, data.receiver)
             hf.reorderFriends(data.receiver, data.sender)
 
@@ -242,6 +245,63 @@ wss.on('connection', async (ws, request) => {
 
             res.send({ ok: true })
         })
+
+        app.post('/message-ai', async (req, res) => {
+            const data = req.body;
+
+
+            if (data.receiver == -1) {
+
+                hf.reorderFriends(data.sender, data.receiver)
+                hf.reorderFriends(data.receiver, data.sender)
+                data.status = 1;
+
+                let databaseQuery = { participants: { $all: [data.sender, data.receiver] } };
+                let update = { $push: { messages: data } }
+                let currentConvo = await db.collection('chats').findOne(databaseQuery);
+                if (currentConvo) {
+
+                    await db.collection('chats').updateOne(databaseQuery, update)
+                }
+
+                else {
+                    let newConversation = { participants: [data.sender, data.receiver], messages: [data] }
+                    await db.collection('chats').insertOne(newConversation)
+                }
+                // AI
+                const query = data.message;
+                let responseMessage = "";
+                res.setHeader('Content-Type', 'text/plain');
+                res.setHeader('Transfer-Encoding', 'chunked');
+
+                try {
+                    // Stream the response from the AI function
+                    for await (const chunk of ai.getAIResponse(query)) {
+                        responseMessage += chunk;
+                        res.write(chunk); // Add a newline for better separation of chunks
+                    }
+
+
+                    //save the response in the databse
+                    let responseData = { ...data };
+                    responseData.sender = data.receiver;
+                    responseData.receiver = data.sender
+                    responseData.message = responseMessage;
+
+                    await db.collection('chats').updateOne(databaseQuery, { $push: { messages: responseData } })
+
+                    res.end(); // End the response when all chunks are sent
+                } catch (error) {
+                    console.log(error);
+                    res.status(500).send({ ok: false, errMessage: 'Error processing the request' });
+                }
+
+                return; // Ensure no further code executes if the condition is true
+            }
+
+            res.status(400).send({ ok: false, errMessage: 'Invalid request' });
+        });
+
         // File upload route
         app.post('/upload', upload.single('file'), async (req, res) => {
             const { db, gfs } = await database.handleDatabase('ChatApp')

@@ -1059,6 +1059,7 @@ body.light-mode .chat-background {
     overflow: hidden;
     /* Hide overflowing content */
     margin-bottom: 5px;
+    line-height: 1.5;
 
 
 }
@@ -2880,6 +2881,28 @@ pre {
     /* Break long words and URLs */
     overflow-wrap: break-word;
     /* Break words at the end of a line */
+}
+
+.chat-error-message {
+    display: flex;
+    align-self: center;
+    position: absolute;
+    bottom: 5px;
+    padding: 5px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+
+}
+
+.failed {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: orangered;
+    margin-left: 5px;
+    font-size: small;
 }
 
 @media screen and (max-width:900px) {
