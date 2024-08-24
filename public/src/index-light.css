@@ -702,7 +702,7 @@ body.light-mode .loading-user-name {
     font-size: small;
     text-wrap: nowrap;
     overflow: hidden;
-    max-width: 20vw;
+    max-width: 17vw;
     color: var(--faint-color);
     text-overflow: ellipsis;
 
@@ -1065,7 +1065,7 @@ body.light-mode .chat-background {
 }
 
 .message-container {
-    display: flex;
+    display: block;
     padding: 3px 5px;
 }
 
@@ -1080,6 +1080,7 @@ body.light-mode .chat-background {
 .my-message .file-container {
 
     background-color: var(--my-file-container);
+    background-color: #adb96fad;
 }
 
 body.light-mode .my-message .file-container {
@@ -1314,9 +1315,14 @@ body.light-mode .message {
 
 .my-message {
     background-color: var(--my-message-color);
+    background-color: #adac8d;
+    background-color: #aacf4491;
+    /* background-color: #b3c09f; */
     /* background-color: #AED581; */
     /* background-color: #9CCC65; */
-    color: white;
+    /* color: var(--sharp-color); */
+    /* color: white; */
+    color: var(--sharp-color);
     justify-self: flex-end;
     border-top-right-radius: 0;
     justify-self: flex-end;
@@ -1433,12 +1439,10 @@ body.light-mode .chat-input-wrapper {
     border-bottom-right-radius: 0;
     color: var(--sharp-color);
     border: none;
+    resize: none;
+    font-size: initial;
 }
 
-body.light-mode .message-input-element {
-
-    color: var(--sharp-color-light-mode);
-}
 
 .send-message-icon {
     font-size: large;
@@ -1582,9 +1586,9 @@ body.light-mode .friend-connection-status {
 
 .message-info {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
-    margin-left: 20px;
+    margin-left: 30px;
     align-self: flex-end;
 }
 
@@ -1595,6 +1599,7 @@ body.light-mode .friend-connection-status {
 .welcome-page {
     display: flex;
     justify-content: center;
+    text-align: center;
     align-items: center;
     flex-direction: column;
     width: 100%;

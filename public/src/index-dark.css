@@ -998,7 +998,7 @@ body.light-mode .chat-background {
 }
 
 .message-container {
-    display: flex;
+    display: block;
     padding: 3px 5px;
 }
 
@@ -1361,6 +1361,8 @@ body.light-mode .chat-input-wrapper {
     border-bottom-right-radius: 0;
     color: var(--sharp-color);
     border: none;
+    resize: none;
+    font-size: initial;
 }
 
 body.light-mode .message-input-element {
@@ -1510,9 +1512,9 @@ body.light-mode .friend-connection-status {
 
 .message-info {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
-    margin-left: 20px;
+    margin-left: 30px;
     align-self: flex-end;
 }
 
@@ -1524,6 +1526,7 @@ body.light-mode .friend-connection-status {
     display: flex;
     justify-content: center;
     align-items: center;
+    text-align: center;
     flex-direction: column;
     width: 100%;
     height: 100%;

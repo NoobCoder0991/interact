@@ -35,7 +35,7 @@
                 </div>
 
                 <div class="code-preview">
-                    <pre><code class="language-cpp  "></code></pre>
+                    <pre><code class=""></code></pre>
                 </div>
 
             </div>
@@ -66,7 +66,7 @@
             let formattedCode;
             try {
                 formattedCode = prettier.format(codePreview.innerText, {
-                    // parser: "babel",
+                    parser: "babel",
                     plugins: prettierPlugins,
                     singleQuote: true,
                     tabWidth: 2,
@@ -1142,7 +1142,7 @@
                     </div>
                 </div>
                 <div class="chat-input text-input">
-                    <input type="text" class="input message-input-element" placeholder="Message" />
+                    <textarea type="text" class="input message-input-element" placeholder="Message" rows="1"></textarea>
                 </div>
                 <div class="fas fa-paper-plane send-message-icon"></div>
             </div>
@@ -1569,6 +1569,7 @@
     var selectedMessages = [];
     var streamingResponse = false;
     var streamingIndex = -1;
+    var autoScroll = true;
 
     sendPostRequest("/fetch-info", {})
         .then((data) => {
@@ -1656,6 +1657,16 @@
     var messageInput = document.getElementsByClassName(
         "message-input-element"
     )[0];
+    messageInput.addEventListener('input', () => {
+        const text = messageInput.value;
+        const lines = text.split('\n').length;
+        // Set the maximum size in characters and lines
+        const maxHeight = 5;
+        // Calculate the new size based on the content
+        const newRows = Math.min(lines, maxHeight);
+        // Set the new size attributes
+        messageInput.rows = newRows;
+    });
     messageInput.addEventListener('focus', e => {
         e.preventDefault();
     })
@@ -1923,60 +1934,79 @@
 
         if (receiver == -1) {
             //ai message
-            streamingResponse = true;
-            let response = await fetch('/message-ai', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(messageData),
-            });
 
-            if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
-            }
-            sentMessageNotify.play()
-            const activeElement = document.getElementsByClassName(
-                "recent-active-message"
-            )[0];
-            const thisMessage = document.getElementsByClassName('my-message')[index];
-            thisMessage.getElementsByClassName('not-sent')[0].style.display = 'none'
-            thisMessage.getElementsByClassName('message-tick')[0].style.display = 'flex'
-            thisMessage.getElementsByClassName('message-tick')[0].classList.add('blue-tick')
+            try {
+                streamingResponse = true;
+                let response = await fetch('/message-ai', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(messageData),
+                });
 
-            activeElement.getElementsByClassName(
-                "last-message-status"
-            )[0].style.display = "flex";
-            activeElement.getElementsByClassName('last-message-status')[0].style.display = 'flex';
-            activeElement
-                .getElementsByClassName("message-tick")[0]
-                .classList.add("blue-tick");
+                if (!response.ok) {
+                    createChatErrorMessage('Could not reach the server')
+                    // throw new Error(`Error: ${response.statusText}`);
+                }
+                sentMessageNotify.play()
+                const activeElement = document.getElementsByClassName(
+                    "recent-active-message"
+                )[0];
+                const thisMessage = document.getElementsByClassName('my-message')[index];
+                thisMessage.getElementsByClassName('not-sent')[0].style.display = 'none'
+                thisMessage.getElementsByClassName('message-tick')[0].style.display = 'flex'
+                thisMessage.getElementsByClassName('message-tick')[0].classList.add('blue-tick')
 
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            let result = '';
+                activeElement.getElementsByClassName(
+                    "last-message-status"
+                )[0].style.display = "flex";
+                activeElement.getElementsByClassName('last-message-status')[0].style.display = 'flex';
+                activeElement
+                    .getElementsByClassName("message-tick")[0]
+                    .classList.add("blue-tick");
 
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                result = decoder.decode(value, { stream: true });
-                result = result.replace(/\n/g, '<br>')
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let result = '';
 
-                if (currentFriendId == -1) {
-                    if (streamingIndex == -1) {
-                        let date = new Date();
-                        writeTextMessage(result, { hours: date.getHours(), mins: date.getMinutes() }, false);
-                        let friendMessages = document.getElementsByClassName('friend-message');
-                        streamingIndex = friendMessages.length - 1;
-                    }
-                    else {
-                        document.getElementsByClassName('friend-message')[streamingIndex].getElementsByClassName('message-content')[0].innerHTML += result;
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    result = decoder.decode(value, { stream: true });
+                    // result = result.replace(/\n/g, '<br>')
+                    // result = getGoodHTML(result)
+
+                    if (currentFriendId == -1) {
+                        if (streamingIndex == -1) {
+                            let date = new Date();
+                            writeTextMessage(result, { hours: date.getHours(), mins: date.getMinutes() }, false);
+                            let friendMessages = document.getElementsByClassName('friend-message');
+                            streamingIndex = friendMessages.length - 1;
+                            if (autoScroll) {
+
+                                scrollToBottom()
+                            }
+                        }
+                        else {
+                            document.getElementsByClassName('friend-message')[streamingIndex].getElementsByClassName('message-content')[0].innerHTML += getGoodHTML(escapeHtml(result));
+                            if (autoScroll) {
+
+                                scrollToBottom()
+                            }
+                        }
                     }
                 }
+
+                streamingResponse = false;
+                streamingIndex = -1;
+
+            } catch (error) {
+
+                createChatErrorMessage('Failed to fetch.')
+
             }
 
-            streamingResponse = false;
-            streamingIndex = -1;
 
 
             return;
@@ -1989,7 +2019,7 @@
                     "recent-active-message"
                 )[0];
                 const thisMessage = document.getElementsByClassName('my-message')[index];
-                if (data.ok) {
+                if (data && data.ok) {
                     thisMessage.getElementsByClassName('not-sent')[0].style.display = 'none'
                     thisMessage.getElementsByClassName('message-tick')[0].style.display = 'flex'
 
@@ -2005,7 +2035,7 @@
                 }
                 else {
 
-                    createChatErrorMessage(data.errMessage)
+                    createChatErrorMessage("Connection to server lost.")
                     thisMessage.getElementsByClassName('not-sent')[0].style.display = 'none'
                     thisMessage.getElementsByClassName('failed')[0].style.display = 'flex'
 
@@ -2089,7 +2119,7 @@
             </div>
             <div class="message-container">
                 <div class="message-content">
-                    ${convertLinksToAnchors(message)}
+                    ${(message)}
                </div>
                    <div class="message-info">
 
@@ -2319,7 +2349,7 @@
             </div>
             <div class="message-container">
                 <div class="message-content">
-                           ${convertLinksToAnchors(message)}
+                           ${processMessageContent(message)}
                </div>
                    <div class="message-info">
 
@@ -2901,7 +2931,14 @@
             const messageInput = document.getElementsByClassName(
                 "message-input-element"
             )[0];
-            messageInput.value = ""
+            console.log("Erasing")
+
+            // Optionally, you can use a slight delay
+            setTimeout(() => {
+                messageInput.value = ""
+                messageInput.rows = 1;
+            }, 0);
+
             const date = new Date();
             await sendMessage(myid, currentFriendId, message, date, selectedMessageIndex);
             let container = document.getElementsByClassName(
@@ -3238,7 +3275,7 @@
 
     function scrollChatContainer() {
         const chatContainer = document.getElementsByClassName('chat-container')[0];
-        if (chatContainer.scrollHeight - chatContainer.scrollTop === chatContainer.clientHeight) {
+        if (isScrolledToMax(chatContainer)) {
             document.getElementsByClassName('chat-end')[0].style.display = 'none'
         }
         else {
@@ -3717,6 +3754,57 @@
 
     }
 
+    function getGoodHTML(text) {
+        return text.replace(/\n/g, '<br>').replace(/ {2}/g, '&nbsp;&nbsp;')
+    }
+
+
+    function encloseCodeInHtml(text) {
+        // Regular expression to match code blocks enclosed by triple backticks
+        const codeBlockRegex = /```([\s\S]*?)```/g;
+
+        // Replace code blocks with <pre><code></code></pre>
+        const htmlText = text.replace(codeBlockRegex, (match, code) => {
+            // Optionally, you can add a class for syntax highlighting, e.g., `language-cpp`
+            return `<pre><code>${code.trim()}</code></pre>`;
+        });
+
+        return htmlText;
+    }
+
+
+    let container = document.getElementsByClassName('chat-container')[0];
+
+    let lastScrollTop = container.scrollTop;
+
+    container.addEventListener('scroll', e => {
+        let currentScrollTop = container.scrollTop;
+        if (currentScrollTop < lastScrollTop) {
+            autoScroll = false;
+        }
+
+    })
+
+
+    function isScrolledToMax(element) {
+        return element.scrollTop + element.clientHeight >= element.scrollHeight;
+    }
+
+
+    function processMessageContent(message) {
+
+
+        message = (escapeHtml(message));
+        message = message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        message = message.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+        return getGoodHTML(message);
+
+    }
+
+    function highlightCode(code, language) {
+        const languageName = 'python'; // Default to plaintext if no language is specified
+        return hljs.highlight(code, { language: languageName }).value;
+    }
 
 
 </script>
