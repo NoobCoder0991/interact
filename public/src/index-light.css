@@ -2845,6 +2845,37 @@ body.light-mode .message-link {
     background-color: var(--body-color);
 }
 
+pre {
+    background-color: var(--body-color);
+    display: flex;
+    flex-direction: column;
+}
+
+code {
+    padding: 5px 10px;
+    font-family: "Fira Code", monospace;
+    font-optical-sizing: auto;
+    font-size: small;
+}
+
+.code-tools {
+    display: flex;
+    background-color: grey;
+    color: white;
+    padding: 5px 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.copy-code {
+    cursor: pointer;
+}
+
+.hljs-params {
+    color: #ab9df2;
+}
+
+
 .hljs {
     background: none;
     color: var(--faint-color);

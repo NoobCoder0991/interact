@@ -1968,19 +1968,20 @@
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
-                let result = '';
+                let result;
+                let totalMessageResult = '';
 
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
                     result = decoder.decode(value, { stream: true });
-                    // result = result.replace(/\n/g, '<br>')
-                    // result = getGoodHTML(result)
+
+                    totalMessageResult += result;
 
                     if (currentFriendId == -1) {
                         if (streamingIndex == -1) {
                             let date = new Date();
-                            writeTextMessage(result, { hours: date.getHours(), mins: date.getMinutes() }, false);
+                            writeTextMessage(totalMessageResult, { hours: date.getHours(), mins: date.getMinutes() }, false);
                             let friendMessages = document.getElementsByClassName('friend-message');
                             streamingIndex = friendMessages.length - 1;
                             if (autoScroll) {
@@ -1989,7 +1990,7 @@
                             }
                         }
                         else {
-                            document.getElementsByClassName('friend-message')[streamingIndex].getElementsByClassName('message-content')[0].innerHTML += getGoodHTML(escapeHtml(result));
+                            document.getElementsByClassName('friend-message')[streamingIndex].getElementsByClassName('message-content')[0].innerHTML = (processMessageContent(totalMessageResult));
                             if (autoScroll) {
 
                                 scrollToBottom()
@@ -3791,19 +3792,54 @@
     }
 
 
+    // function processMessageContent(message) {
+
+
+    //     message = (escapeHtml(message));
+    //     message = message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    //     message = message.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+    //     return getGoodHTML(message);
+
+    // }
+
     function processMessageContent(message) {
 
+        let fragments = message.split('```');
+        let html = "";
 
-        message = (escapeHtml(message));
-        message = message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        message = message.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-        return getGoodHTML(message);
+        for (let i = 0; i < fragments.length; i++) {
+
+            if (i % 2 == 1) {
+                //inside backticks
+                const highlighted = highlightCode(fragments[i]);
+                const lang = highlighted.language
+                html += `<pre> <div class = 'code-tools'> <div>${lang}</div> <div class="copy-code"> <i class="fas fa-copy"></i> Copy code</div> </div><code>` + highlighted.value + "</code></pre>";
+            }
+            else {
+                html += getGoodHTML(escapeHtml(fragments[i]));
+            }
+        }
+
+        return getGoodHTML(html);
+
 
     }
 
-    function highlightCode(code, language) {
-        const languageName = 'python'; // Default to plaintext if no language is specified
-        return hljs.highlight(code, { language: languageName }).value;
+    function highlightCode(code) {
+        const languageName = ''; // Default to plaintext if no language is specified
+        return hljs.highlightAuto(code)
+    }
+
+
+    function copyHTML(html, element) {
+        navigator.clipboard.write(getGoodHTML(escapeHtml(html)))
+            .then(data => {
+                element.innerHTML = '<i class="fas fa-check"></i> Copied';
+                setTimeout(() => {
+
+                    element.innerHTML = '<i class="fas fa-copy"></i> Copy code';
+                }, 1000);
+            })
     }
 
 

@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap');
 
 :root {
 
@@ -2772,6 +2773,35 @@ body.light-mode .message-link {
     background-color: var(--body-color);
 }
 
+pre {
+    background-color: var(--body-color);
+    display: flex;
+    flex-direction: column;
+}
+
+code {
+    padding: 5px 10px;
+    font-family: "Fira Code", monospace;
+    font-optical-sizing: auto;
+    font-size: small;
+}
+
+.code-tools {
+    display: flex;
+    background-color: #252525;
+    padding: 5px 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.copy-code {
+    cursor: pointer;
+}
+
+.hljs-params {
+    color: #ab9df2;
+}
+
 .hljs {
     background: none;
     color: var(--faint-color);
@@ -2783,7 +2813,7 @@ body.light-mode .message-link {
 }
 
 .hljs-title {
-    color: var(--accent-bright);
+    color: #a9dc76;
 }
 
 .hljs-literal {
