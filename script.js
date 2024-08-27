@@ -276,7 +276,7 @@ wss.on('connection', async (ws, request) => {
 
                 try {
                     // Stream the response from the AI function
-                    for await (const chunk of ai.getAIResponse(query)) {
+                    for await (const chunk of ai.getAIResponse(data.sender, query)) {
                         responseMessage += chunk;
                         res.write(chunk); // Add a newline for better separation of chunks
                     }
