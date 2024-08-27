@@ -1990,7 +1990,9 @@
                             }
                         }
                         else {
-                            document.getElementsByClassName('friend-message')[streamingIndex].getElementsByClassName('message-content')[0].innerHTML = (processMessageContent(totalMessageResult));
+                            const messageContainer = document.getElementsByClassName('friend-message')[streamingIndex];
+                            messageContainer.getElementsByClassName('message-content')[0].innerHTML = (processMessageContent(totalMessageResult));
+                            enableCodeCopy(messageContainer)
                             if (autoScroll) {
 
                                 scrollToBottom()
@@ -2490,9 +2492,27 @@
 
 
         });
-
-
+        enableCodeCopy(messageContainer);
         return index;
+    }
+
+
+    function enableCodeCopy(parent) {
+        let copyCodeElements = parent.getElementsByClassName('copy-code');
+        for (let i = 0; i < copyCodeElements.length; i++) {
+            copyCodeElements[i].addEventListener('click', e => {
+                const code = parent.getElementsByTagName('code')[i];
+                navigator.clipboard.writeText(code.innerText)
+                    .then(data => {
+                        copyCodeElements[i].innerHTML = '<i class="fas fa-check"></i> Copied';
+                        setTimeout(() => {
+
+                            copyCodeElements[i].innerHTML = '<i class="fas fa-copy"></i> Copy code';
+                        }, 1000);
+                    })
+            })
+        }
+
     }
 
     function createUserCard(data) {
@@ -3814,6 +3834,7 @@
                 const highlighted = highlightCode(fragments[i]);
                 const lang = highlighted.language
                 html += `<pre> <div class = 'code-tools'> <div>${lang}</div> <div class="copy-code"> <i class="fas fa-copy"></i> Copy code</div> </div><code>` + highlighted.value + "</code></pre>";
+
             }
             else {
                 html += getGoodHTML(escapeHtml(fragments[i]));
