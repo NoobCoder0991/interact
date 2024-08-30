@@ -255,6 +255,33 @@ body {
 
 }
 
+.loading-chats-failed {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    overflow: hidden;
+    flex-direction: column;
+    transition: 1s;
+}
+
+.loading-chats-failed>div {
+    margin-bottom: 10px;
+}
+
+.loading-chats-failed.hide {
+    display: none;
+
+}
+
+.button {
+    padding: 10px 25px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
 .notifications-container {
 
     position: relative;
@@ -427,7 +454,7 @@ query {
     margin-bottom: 1vh;
     position: relative;
     border-radius: 1vh;
-
+    width: auto;
 }
 
 .loading-chat {
@@ -923,6 +950,7 @@ body.light-mode .chat-search-input {
     flex-direction: column;
     flex-grow: 1;
     height: 100%;
+    width: 100%;
     background-color: var(--body-color-dim);
 
 }
@@ -1015,6 +1043,7 @@ body.light-mode .chat-background {
 .my-message .file-container {
 
     background-color: var(--my-file-container);
+    background-color: rgba(123, 163, 70, 0.719);
 }
 
 body.light-mode .my-message .file-container {
@@ -1127,7 +1156,7 @@ body.light-mode .chat-end {
     display: grid;
     align-items: center;
     position: relative;
-    padding: 5px 1%;
+    padding: 5px 10px;
     margin: 0;
 }
 
@@ -1246,6 +1275,8 @@ body.light-mode .message {
 
 .my-message {
     background-color: var(--my-message-color);
+    background-color: rgba(139, 204, 55, 0.616);
+    background-color: #aacf4491;
     color: white;
     justify-self: flex-end;
     border-top-right-radius: 0;
@@ -1258,6 +1289,7 @@ body.light-mode .my-message {
 
 .friend-message {
     background-color: var(--friend-message-color);
+    background-color: var(--my-message-color);
     border-top-left-radius: 0;
     justify-self: flex-start;
 }
@@ -2848,14 +2880,20 @@ pre {
 
 .chat-error-message {
     display: flex;
+    justify-content: center;
+    align-items: center;
     align-self: center;
-    position: absolute;
-    bottom: 5px;
-    padding: 5px;
+    text-align: center;
+    max-width: 95%;
+    padding: 10px 10px;
+    margin: 20px 0;
     background-color: #f8d7da;
+    z-index: 1000;
     color: #721c24;
     border: 1px solid #f5c6cb;
     border-radius: 4px;
+
+
 
 }
 

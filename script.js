@@ -54,7 +54,6 @@ app.post('/test-notification', async (req, res) => {
 
 //subscribing the push notifcations user
 app.post('/subscribe', async (req, res) => {
-    console.log("subscribing...")
     const { db, gfs } = await database.handleDatabase('ChatApp');
     const sessionId = req.session.sessionId;
     const user = await db.collection('session_tokens').findOne({ session_id: sessionId });
@@ -248,8 +247,6 @@ wss.on('connection', async (ws, request) => {
 
         app.post('/message-ai', async (req, res) => {
             const data = req.body;
-
-
             if (data.receiver == -1) {
 
                 hf.reorderFriends(data.sender, data.receiver)
@@ -277,23 +274,30 @@ wss.on('connection', async (ws, request) => {
                 try {
                     // Stream the response from the AI function
                     for await (const chunk of ai.getAIResponse(data.sender, query)) {
-                        responseMessage += chunk;
-                        res.write(chunk); // Add a newline for better separation of chunks
+                        if (chunk.length) {
+
+                            responseMessage += chunk;
+                            res.write(chunk); // Add a newline for better separation of chunks
+                        }
                     }
 
+                    if (responseMessage.length == 0) {
+                        res.status(500).send({ ok: false, errMessage: "API didn't respond" })
+                        res.end();
+                    }
+                    else {
 
-                    //save the response in the databse
-                    let responseData = { ...data };
-                    responseData.sender = data.receiver;
-                    responseData.receiver = data.sender
-                    responseData.message = responseMessage;
-
-                    await db.collection('chats').updateOne(databaseQuery, { $push: { messages: responseData } })
+                        let responseData = { ...data };
+                        responseData.sender = data.receiver;
+                        responseData.receiver = data.sender
+                        responseData.message = responseMessage;
+                        await db.collection('chats').updateOne(databaseQuery, { $push: { messages: responseData } })
+                    }
 
                     res.end(); // End the response when all chunks are sent
                 } catch (error) {
                     console.log(error);
-                    res.status(500).send({ ok: false, errMessage: 'Error processing the request' });
+                    res.status(500).send({ ok: false, errMessage: error });
                 }
 
                 return; // Ensure no further code executes if the condition is true
@@ -351,7 +355,6 @@ wss.on('connection', async (ws, request) => {
         });
 
         ws.on('close', (code, reason) => {
-            console.log(`web socket disconnected: Error: ${code}, ${reason}`)
             onlineUsers[ws.userid] = onlineUsers[ws.userid].filter(element => element != ws)
 
         })

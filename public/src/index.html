@@ -11,7 +11,6 @@
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css" rel="stylesheet">
     <link rel="stylesheet" id="css-file" href="../src/index-light.css" />
-    <!-- <link rel="stylesheet" id="css-file" href="../src/index-light.css" /> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
@@ -376,6 +375,12 @@
 
                 </div>
 
+            </div>
+
+            <div class="loading-chats-failed hide">
+
+                <div>There was an error loading your chats.</div>
+                <button class="button">Retry</button>
             </div>
 
             <div class="chat-search-container"></div>
@@ -1172,6 +1177,8 @@
 
 
 
+
+
 <script>
 
     //setting theme according to user prefernce or sysstem theme
@@ -1623,12 +1630,21 @@
                         }
                     }
 
-                });
+                })
+                    .catch(error => {
+
+
+                        document.getElementsByClassName("loading-chats")[0].style.display =
+                            "none";
+                        document.getElementsByClassName('loading-chats-failed')[0].classList.remove('hide')
+
+                    });
 
             }
         })
         .catch((err) => {
             console.log("Error:", err);
+
         });
 
     function createRecentMessage(data) {
@@ -1946,7 +1962,9 @@
                 });
 
                 if (!response.ok) {
-                    createChatErrorMessage('Could not reach the server')
+                    console.log(response);
+                    createChatErrorMessage("There was an error fetching the response")
+                    return;
                     // throw new Error(`Error: ${response.statusText}`);
                 }
                 sentMessageNotify.play()
@@ -1971,35 +1989,44 @@
                 let result;
                 let totalMessageResult = '';
 
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    result = decoder.decode(value, { stream: true });
+                try {
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        result = decoder.decode(value, { stream: true });
 
-                    totalMessageResult += result;
+                        totalMessageResult += result;
 
-                    if (currentFriendId == -1) {
-                        if (streamingIndex == -1) {
-                            let date = new Date();
-                            writeTextMessage(totalMessageResult, { hours: date.getHours(), mins: date.getMinutes() }, false);
-                            let friendMessages = document.getElementsByClassName('friend-message');
-                            streamingIndex = friendMessages.length - 1;
-                            if (autoScroll) {
+                        if (currentFriendId == -1) {
+                            if (streamingIndex == -1) {
+                                let date = new Date();
+                                writeTextMessage(totalMessageResult, { hours: date.getHours(), mins: date.getMinutes() }, false);
+                                let friendMessages = document.getElementsByClassName('friend-message');
+                                streamingIndex = friendMessages.length - 1;
+                                if (autoScroll) {
 
-                                scrollToBottom()
+                                    scrollToBottom()
+                                }
                             }
-                        }
-                        else {
-                            const messageContainer = document.getElementsByClassName('friend-message')[streamingIndex];
-                            messageContainer.getElementsByClassName('message-content')[0].innerHTML = (processMessageContent(totalMessageResult));
-                            enableCodeCopy(messageContainer)
-                            if (autoScroll) {
+                            else {
+                                const messageContainer = document.getElementsByClassName('friend-message')[streamingIndex];
+                                messageContainer.getElementsByClassName('message-content')[0].innerHTML = (processMessageContent(totalMessageResult));
+                                enableCodeCopy(messageContainer)
+                                if (autoScroll) {
 
-                                scrollToBottom()
+                                    scrollToBottom()
+                                }
                             }
                         }
                     }
+
+                } catch (error) {
+
+                    chatErrorMessage("hello")
+
                 }
+
+
 
                 streamingResponse = false;
                 streamingIndex = -1;
@@ -2038,13 +2065,16 @@
                 }
                 else {
 
-                    createChatErrorMessage("Connection to server lost.")
+                    createChatErrorMessage("Could not send message. Check your internet connection.")
                     thisMessage.getElementsByClassName('not-sent')[0].style.display = 'none'
                     thisMessage.getElementsByClassName('failed')[0].style.display = 'flex'
 
 
 
                 }
+            })
+            .catch(err => {
+                createChatErrorMessage(err);
             })
     }
 
@@ -2690,6 +2720,7 @@
                     unreadElement.innerHTML = `${unreadCount} unread messages`;
 
                 }
+
             } else {
                 document.getElementsByClassName("welcome-page")[0].style.display =
                     "none";
@@ -2723,8 +2754,7 @@
         let index = Array.from(
             parentContainer.getElementsByClassName("recent-message-chat")
         ).indexOf(element);
-        parentContainer.getElementsByClassName("new-messages")[index].innerHTML =
-            "";
+        parentContainer.getElementsByClassName("new-messages")[index].innerHTML = "";
         parentContainer.getElementsByClassName("new-messages")[
             index
         ].style.display = "none";
@@ -2741,7 +2771,11 @@
                 "",
                 `/chat/${currentFriendId}`
             );
-        });
+        })
+            .catch(err => {
+
+
+            });
     }
 
     async function fetchChats(userid) {

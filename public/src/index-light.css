@@ -281,6 +281,36 @@ body.light-mode .nav-active-option:hover {
 
 }
 
+.loading-chats-failed {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    overflow: hidden;
+    flex-direction: column;
+    transition: 1s;
+}
+
+.loading-chats-failed>div {
+    margin-bottom: 10px;
+}
+
+.loading-chats-failed.hide {
+    display: none;
+
+}
+
+.button {
+    padding: 10px 25px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    background-color: var(--sharp-color);
+    color: white;
+
+}
+
 .notifications-container {
 
     position: relative;
@@ -987,6 +1017,7 @@ body.light-mode .chat-search-input {
     flex-direction: column;
     flex-grow: 1;
     height: 100%;
+    width: 100%;
     background-color: var(--body-color-dim);
 
 }
@@ -1193,7 +1224,7 @@ body.light-mode .chat-end {
     display: grid;
     align-items: center;
     position: relative;
-    padding: 5px 1%;
+    padding: 5px 10px;
     margin: 0;
 }
 
@@ -1317,11 +1348,6 @@ body.light-mode .message {
     background-color: var(--my-message-color);
     background-color: #adac8d;
     background-color: #aacf4491;
-    /* background-color: #b3c09f; */
-    /* background-color: #AED581; */
-    /* background-color: #9CCC65; */
-    /* color: var(--sharp-color); */
-    /* color: white; */
     color: var(--sharp-color);
     justify-self: flex-end;
     border-top-right-radius: 0;
@@ -2921,11 +2947,15 @@ pre {
 
 .chat-error-message {
     display: flex;
+    justify-content: center;
+    align-items: center;
     align-self: center;
-    position: absolute;
-    bottom: 5px;
-    padding: 5px;
+    text-align: center;
+    max-width: 95%;
+    padding: 10px 10px;
+    margin: 20px 0;
     background-color: #f8d7da;
+    z-index: 1000;
     color: #721c24;
     border: 1px solid #f5c6cb;
     border-radius: 4px;
