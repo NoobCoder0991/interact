@@ -22,13 +22,13 @@ async function* getAIResponse(userid, query) {
 
         // Stream the response from the inference API
         for await (const chunk of inference.chatCompletionStream({
-            model: "meta-llama/Meta-Llama-3-8B-Instruct",
+            // model: "meta-llama/Meta-Llama-3-8B-Instruct",
+            model: 'mistralai/Mistral-Nemo-Instruct-2407',
             messages: messages,
             max_tokens: 500,
         })) {
             // Extract and yield content from each chunk
             const content = chunk.choices[0]?.delta?.content || "";
-            process.stdout.write(content)
             if (content) {
                 yield content;
             }
