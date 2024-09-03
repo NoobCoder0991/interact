@@ -16,24 +16,35 @@ const client = new MongoClient(uri, {
     }
 }
 );
-async function handleDatabase(database) {
+
+let db, gfs;
+async function initializeDatabase() {
     try {
         // Connect the client to the server (optional starting in v4.7)
         await client.connect();
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
 
-        const db = client.db(database);
-        const gfs = new GridFSBucket(db, { bucketName: 'uploads' })
-        return { db, gfs }
+        db = client.db("ChatApp");
+        gfs = new GridFSBucket(db, { bucketName: 'uploads' })
+
 
     }
     catch (err) {
         console.log("Error", err)
     }
+
+}
+
+function getDatabase() {
+    if (!db) {
+        throw new Error("Database not initialized. Try running initializeDatabase().")
+    }
+
+    return { db, gfs };
 }
 
 
-module.exports = { handleDatabase }
+module.exports = { initializeDatabase, getDatabase }
 
 

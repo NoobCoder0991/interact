@@ -1,4 +1,3 @@
-const database = require("./database")
 function moveToFront(array, index) {
     // Check if the index is valid
     if (index < 0 || index >= array.length) {
@@ -17,9 +16,8 @@ function moveToFront(array, index) {
 }
 
 
-async function reorderFriends(sender, receiver) {
+async function reorderFriends(db, sender, receiver) {
 
-    const { db, gfs } = await database.handleDatabase("ChatApp")
 
     const userData = await db.collection('user_data').findOne({ userid: sender }, { projection: { _id: 0, userid: 0, username: 0 } });
     const friendArr = userData.friends
