@@ -4,19 +4,12 @@ const { HfInference } = require("@huggingface/inference");
 const inference = new HfInference(process.env.HUGGING_FACE_API_TOKEN);
 
 
-async function* getAIResponse(userid, query) {
+async function* getAIResponse(db, userid, query) {
     try {
-        // Initialize messages array
-        // const { db, gfs } = await database.handleDatabase("ChatApp");
-        // const databaseQuery = { participants: { $all: [userid, -1] } };
+        const userData = await db.collection("user_data").findOne({ userid }, { projection: { _id: 0, username: 1 } });
 
-        // const chats = await db.collection('chats').findOne(databaseQuery, { projection: { _id: 0, messages: 1 } });
-        // const messages = chats.messages.map((msg) => ({
-        //     role: (msg.sender == -1) ? 'assistant' : 'user',
-        //     content: msg.message
-
-        // }))
         const messages = [];
+        messages.push({ role: "system", content: `Client Name : ${userData.username}` })
         messages.push({ role: 'user', content: query });
 
 
@@ -30,16 +23,17 @@ async function* getAIResponse(userid, query) {
             // Extract and yield content from each chunk
             const content = chunk.choices[0]?.delta?.content || "";
             if (content) {
-                yield content;
+                yield { ok: true, content };
             }
         }
+
     } catch (error) {
         if (error.name == "AbortError") {
             console.error("Request timed out");
         }
         else {
             console.error("Error occurred while fetching AI response:", error);
-            yield "Error occured "; // Yield an empty string or a specific error message if needed
+            yield { ok: false, errMessage: error }; // Yield an empty string or a specific error message if needed
 
         }
     }

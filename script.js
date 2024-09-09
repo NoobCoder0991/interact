@@ -280,11 +280,18 @@ initializeDatabase().then(() => {
 
                     try {
                         // Stream the response from the AI function
-                        for await (const chunk of ai.getAIResponse(data.sender, query)) {
-                            if (chunk.length) {
+                        for await (const chunk of ai.getAIResponse(db, data.sender, query)) {
+                            if (chunk) {
+                                if (chunk.ok) {
+                                    responseMessage += chunk.content;
+                                    res.write(chunk.content);
 
-                                responseMessage += chunk;
-                                res.write(chunk); // Add a newline for better separation of chunks
+                                }
+                                else {
+                                    res.send({ ok: false, errMessage: chunk.errMessage });
+                                    res.end();
+                                }
+
                             }
                         }
 
@@ -509,6 +516,7 @@ initializeDatabase().then(() => {
 
             if (user) {
                 const userInfo = await db.collection('user_data').findOne({ userid: user.userid }, { projection: { _id: 0, userid: 1, gender: 1, friends: 1, username: 1, color: 1, notifications: 1 } })
+
                 res.send({ ok: true, data: userInfo })
             }
         }

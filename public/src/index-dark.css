@@ -149,15 +149,13 @@ body {
     width: 100%;
     color: white;
     border-radius: 5px;
+    transition: border-color 0.3s;
 }
-
-
 
 .search-people-element:focus {
 
     border: 1px solid var(--sharp-color);
 }
-
 
 .search-people-cross-button {
     cursor: pointer;
@@ -453,7 +451,6 @@ query {
     padding: 2vh;
     margin-bottom: 1vh;
     position: relative;
-    border-radius: 1vh;
     width: auto;
 }
 
@@ -727,6 +724,7 @@ body.light-mode .last-message-time {
 .not-sent {
     margin: 0 0.2vw;
     font-size: small;
+    width: 15px;
     display: none;
 }
 
@@ -830,7 +828,7 @@ body.light-mode .loading-profile-image-element {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 1%;
+    padding: 1% 0;
     min-width: 30vw;
     border-right: 1px solid var(--container-color);
 }
@@ -993,10 +991,18 @@ body.light-mode .empty-chat {
     overflow: auto;
     scroll-behavior: auto;
     scrollbar-width: none;
+    display: none;
 }
 
-.chat-container.hide {
-    display: none;
+.chat-container-wrapper {
+    height: 100%;
+    overflow: auto;
+    scroll-behavior: auto;
+    scrollbar-width: none;
+}
+
+.active-chat-container {
+    display: flex;
 }
 
 .chat-background {
@@ -1197,6 +1203,7 @@ body.light-mode .replying-to {
 
 .my-message .replying-to {
     background-color: var(--my-file-container);
+    background-color: #4f5f38;
 }
 
 body.light-mode .my-message .replying-to {
@@ -1550,6 +1557,7 @@ body.light-mode .friend-connection-status {
     align-items: center;
     margin-left: 30px;
     align-self: flex-end;
+
 }
 
 .message-content {
@@ -1589,8 +1597,8 @@ body.light-mode .welcome-page {
     align-self: center;
     background-color: var(--body-color);
     color: var(--sharp-color);
-    padding: 1% 0%;
-    width: 95%;
+    padding: 5px 10px;
+    /* width: 95%; */
     margin: 2% 0;
     border-radius: 8px;
     position: sticky;
@@ -1606,9 +1614,8 @@ body.light-mode .chat-info {
 
 .date-info {
     background-color: rgba(0, 0, 0, 0);
+    background-color: #161515;
     color: var(--sharp-color);
-    padding: 5px 0%;
-    width: 100%;
 }
 
 body.light-mode .date-info {
@@ -1834,7 +1841,7 @@ body.light-mode .profile-option {
     color: var(--sharp-color);
     padding: 0.5%;
     margin: 2% 0;
-    border-radius: 5px;
+    border-bottom: 1px solid var(--sharp-color);
     text-align: center;
 }
 
@@ -2577,19 +2584,31 @@ body.light-mode .active-content:hover {
     display: none;
 }
 
+.file-send-wrapper {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    z-index: 10000;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: none;
+}
+
 .file-send-container {
     display: flex;
     flex-direction: column;
     position: absolute;
     background-color: var(--dark-sharp-color);
-    padding: 1%;
+    /* padding: 1%; */
     bottom: 100%;
     left: 0;
+    bottom: 0;
+    /* right: 0; */
     width: min(500px, 100%);
     max-height: 500px;
     z-index: 100;
     box-shadow: 0px 0px 2px var(--border-color-light);
-    display: none;
 }
 
 body.light-mode .file-send-container {
@@ -2904,6 +2923,10 @@ pre {
     color: orangered;
     margin-left: 5px;
     font-size: small;
+}
+
+a {
+    color: var(--accent-bright);
 }
 
 @media screen and (max-width:900px) {

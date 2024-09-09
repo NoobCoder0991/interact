@@ -23,6 +23,23 @@
 
 
 <body>
+    <!-- <svg width="20" height="20" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="95" stroke="white" stroke-width="5" fill="#333" />
+
+        <line id="hour-hand" x1="100" y1="100" x2="100" y2="60" stroke="white" stroke-width="6">
+            <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="10s"
+                repeatCount="indefinite" transform-origin="100 100" />
+        </line>
+
+        <line id="minute-hand" x1="100" y1="100" x2="100" y2="40" stroke="white" stroke-width="4">
+            <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="1s"
+                repeatCount="indefinite" transform-origin="100 100" />
+        </line>
+
+        <circle cx="100" cy="100" r="10" fill="white" />
+    </svg> -->
+
+
 
 
     <div class="code-wrapper hide">
@@ -414,6 +431,32 @@
 
         <div class="chat-wrapper hide">
 
+            <div class="file-send-wrapper">
+
+                <div class="file-send-container">
+                    <div id="preview">
+                        <!-- <img src="../assets/images/chat-background.png" alt=""> -->
+                    </div>
+                    <div class="file-content-inner">
+                        <img src="" alt="" class="file-icon">
+                        <div class='file-details'>
+                            <div class='file-name'></div>
+                            <div class='file-size'></div>
+                        </div>
+
+
+                    </div>
+                    <div class="file-caption">
+                        <div class="caption-input">
+
+                            <input type="text" class="input caption-input-element" placeholder="Caption(optional)">
+                        </div>
+                        <div class="file-send-button fas fa-paper-plane" onclick="preSendFile()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <div class="friend-profile-info">
                 <div style="
@@ -505,8 +548,8 @@
             </div>
             <div class="chat-end fas fa-arrow-down"
                 onclick="scrollToBottom();document.getElementsByClassName('message-input-element')[0].focus()"></div>
-            <div class="chat-container hide" onscroll="scrollChatContainer()">
-                <div class="chat-background"></div>
+
+            <div class="chat-container-wrapper">
 
             </div>
 
@@ -529,28 +572,7 @@
 
                 <div class="chat-input">
                     <div id="open-picker" class="fas fa-smile"></div>
-                    <div class="file-send-container">
-                        <div id="preview">
-                            <!-- <img src="../assets/images/chat-background.png" alt=""> -->
-                        </div>
-                        <div class="file-content-inner">
-                            <img src="" alt="" class="file-icon">
-                            <div class='file-details'>
-                                <div class='file-name'></div>
-                                <div class='file-size'></div>
-                            </div>
 
-
-                        </div>
-                        <div class="file-caption">
-                            <div class="caption-input">
-
-                                <input type="text" class="input caption-input-element" placeholder="Caption(optional)">
-                            </div>
-                            <div class="file-send-button fas fa-paper-plane" onclick="preSendFile()">
-                            </div>
-                        </div>
-                    </div>
                     <div id="emoji-picker" style="display: none;">
                         <div class="contents">
                             <div class="content active-content">😀</div>
@@ -1106,7 +1128,7 @@
                     <div id="file-picker" style="display: none;">
 
                         <form id="uploadPhoto" enctype="multipart/form-data">
-                            <input type="file" name="file" id="photoInput" />
+                            <input type="file" accept="image/*, video/*" name="file" id="photoInput" />
                             <label for="photoInput"
                                 onclick="selectedInput='photoInput';document.getElementById('file-picker').style.display='none'">
                                 <div class="input-icon"><i class="fas fa-image"></i></div>
@@ -1174,11 +1196,6 @@
     </div>
 </body>
 
-
-
-
-
-
 <script>
 
     //setting theme according to user prefernce or sysstem theme
@@ -1212,7 +1229,7 @@
         selectedFormData = formData
         let extensions = fileDetails.name.split('.');
         const extension = extensions[extensions.length - 1]
-        const fileSendContainer = document.getElementsByClassName('file-send-container')[0];
+        const fileSendContainer = document.getElementsByClassName('file-send-wrapper')[0];
         fileSendContainer.getElementsByClassName('file-name')[0].textContent = fileDetails.name;
         fileSendContainer.getElementsByClassName('file-size')[0].textContent = getStandardSize(fileDetails.size) + ', ' + map2[extension];
         fileSendContainer.getElementsByClassName('file-icon')[0].src = `../assets/images/${map[extension] || 'unknown'}-icon.png`
@@ -1249,8 +1266,8 @@
                 container.getElementsByClassName("recent-message-chat")
             ).indexOf(activeElement);
             container.insertBefore(activeElement, container.firstChild);
-            moveToFront(userInfo.friends, index);
             scrollToChild(container, activeElement);
+            moveToFront(userInfo.friendUsernames, index);
             removeUnreadMessagesTag();
             document.getElementsByClassName("chat-search-container")[0].innerHTML =
                 "";
@@ -1367,7 +1384,8 @@
 
             }
             else if (data.sender == currentFriendId) {
-                writeFileMessage(data.file_details, data.message, data.time, false, false, false, false, data.replyIndex, true)
+                const parentContainer = document.getElementsByClassName(`chat-container-${data.sender}`)[0];
+                writeFileMessage(parentContainer, data.file_details, data.message, data.time, false, false, false, false, data.replyIndex, true)
                 downloadFileFromServer(data.fileId, data.file_details.name, data.file_details.type)
                 receivedMessageNotify.play();
                 ws.send(
@@ -1379,10 +1397,29 @@
                 container.insertBefore(activeElement, container.firstChild);
                 scrollToChild(container, activeElement);
                 moveToFront(userInfo.friends, index ? index : index1);
+                moveToFront(userInfo.friendUsernames, index ? index : index1);
                 activeElement.getElementsByClassName(
                     "last-message-status"
                 )[0].style.display = "none";
             } else {
+                const parentContainer = document.getElementsByClassName(`chat-container-${data.sender}`)[0];
+                if (parentContainer) {
+                    const unreadContainer = parentContainer.getElementsByClassName('unread');
+                    if (unreadContainer.length) {
+                        console.log("here")
+                        const unreadCount = parseInt(unreadContainer[0].textContent);
+                        unreadContainer[0].textContent = unreadCount + 1 + " unread messages";
+                    }
+                    else {
+                        const unreadContainer = document.createElement('div');
+                        unreadContainer.className = 'unread';
+                        unreadContainer.textContent = `1 unread messages`
+                        parentContainer.appendChild(unreadContainer);
+                    }
+
+                    writeFileMessage(parentContainer, data.file_details, data.message, data.time, false, false, false, false, data.replyIndex, triggerDownload = false)
+                    downloadFileFromServer(data.fileId, data.file_details.name, data.file_details.type)
+                }
                 let element = document.getElementsByClassName("new-messages")[index];
                 let currentUnreadMessages =
                     element.innerHTML == "" ? 0 : parseInt(element.innerHTML);
@@ -1396,6 +1433,7 @@
                 container.insertBefore(activeElement, container.firstChild);
                 scrollToChild(container, activeElement);
                 moveToFront(userInfo.friends, index ? index : index1);
+                moveToFront(userInfo.friendUsernames, index ? index : index1);
                 activeElement.getElementsByClassName(
                     "last-message-status"
                 )[0].style.display = "none";
@@ -1425,11 +1463,7 @@
                 formatTime(message.time.hours, message.time.mins);
 
             if (message.sender == myid) {
-                writeTextMessage(
-                    message.message,
-                    message.time,
-                    message.sender == myid,
-                    true, false, false, message.replyIndex
+                writeTextMessage(message.message, message.time, message.sender == myid, true, false, false, message.replyIndex
 
                 );
                 sentMessageNotify.play();
@@ -1446,12 +1480,8 @@
                 }
                 container.insertBefore(activeElement, container.firstChild);
             } else if (message.sender == currentFriendId) {
-                writeTextMessage(
-                    message.message,
-                    message.time,
-                    message.sender == myid,
-                    false, false, false, message.replyIndex
-                );
+                const parentContainer = document.getElementsByClassName(`chat-container-${message.sender}`)[0];
+                writeTextMessage(parentContainer, message.message, message.time, message.sender == myid, false, false, false, message.replyIndex);
                 receivedMessageNotify.play();
                 ws.send(
                     JSON.stringify({ type: "chat-opened", recepient: message.sender })
@@ -1462,12 +1492,29 @@
                 container.insertBefore(activeElement, container.firstChild);
                 scrollToChild(container, activeElement);
                 moveToFront(userInfo.friends, index ? index : index1);
+                moveToFront(userInfo.friendUsernames, index ? index : index1);
                 activeElement.getElementsByClassName(
                     "last-message-status"
                 )[0].style.display = "none";
             } else {
-                let element = document.getElementsByClassName("new-messages")[index];
+                const parentContainer = document.getElementsByClassName(`chat-container-${message.sender}`)[0];
+                if (parentContainer) {
+                    const unreadContainer = parentContainer.getElementsByClassName('unread');
+                    if (unreadContainer.length) {
+                        console.log("heler")
+                        const unreadCount = parseInt(unreadContainer[0].textContent);
+                        unreadContainer[0].textContent = unreadCount + 1 + " unread messages";
+                    }
+                    else {
+                        const unreadContainer = document.createElement('div');
+                        unreadContainer.className = 'unread';
+                        unreadContainer.textContent = `1 unread messages`
+                        parentContainer.appendChild(unreadContainer);
+                    }
+                    writeTextMessage(parentContainer, message.message, message.time, message.sender == myid, false, false, false, message.replyIndex);
+                }
 
+                let element = document.getElementsByClassName("new-messages")[index];
                 let currentUnreadMessages =
                     element.innerHTML == "" ? 0 : parseInt(element.innerHTML);
                 element.innerHTML = currentUnreadMessages + 1;
@@ -1480,6 +1527,7 @@
                 container.insertBefore(activeElement, container.firstChild);
                 scrollToChild(container, activeElement);
                 moveToFront(userInfo.friends, index ? index : index1);
+                moveToFront(userInfo.friendUsernames, index ? index : index1);
                 activeElement.getElementsByClassName(
                     "last-message-status"
                 )[0].style.display = "none";
@@ -1626,6 +1674,14 @@
                         document.getElementsByClassName("recent-messages-container")[0].style.display =
                             "flex";
                         for (let i = 0; i < chats.length; i++) {
+                            if (userInfo.friendUsernames) {
+
+                                userInfo.friendUsernames.push(chats[i].username);
+                            }
+                            else {
+
+                                userInfo.friendUsernames = [chats[i].username]
+                            }
                             createRecentMessage(chats[i]);
                         }
                     }
@@ -1732,7 +1788,6 @@
 
     messageInput.addEventListener("keydown", async (e) => {
         if (e.shiftKey && e.key == 'Enter') {
-            console.log("Shift + Enter");
             messageInput.focus;
         }
         else if (e.key == "Enter") {
@@ -1849,7 +1904,7 @@
                 "message-menu-wrapper"
             )[0].classList.remove('show');
 
-            document.getElementsByClassName("chat-container")[0].style.overflow =
+            document.getElementsByClassName(`chat-container-wrapper`)[0].style.overflow =
                 "auto";
             selectedMessageIndex = null;
         }
@@ -1861,6 +1916,19 @@
         }
 
     });
+
+    document.getElementsByClassName('chat-container-wrapper')[0].addEventListener('scroll', e => {
+        const element = document.getElementsByClassName('chat-container-wrapper')[0]
+        const isScrolledToBottom = element.scrollTop + element.clientHeight >= element.scrollHeight;
+        if (!isScrolledToBottom) {
+            document.getElementsByClassName('chat-end')[0].style.display = 'flex'
+        }
+        else {
+
+            document.getElementsByClassName('chat-end')[0].style.display = 'none'
+        }
+
+    })
 
     async function sendPostRequest(url, data) {
         try {
@@ -1884,7 +1952,7 @@
     }
 
     async function sendFile(sender, receiver, fileDetails, message, formData, date, replyIndex) {
-        document.getElementsByClassName('file-send-container')[0].style.display = 'none'
+        document.getElementsByClassName('file-send-wrapper')[0].style.display = 'none'
 
         let time = {
             year: date.getFullYear(),
@@ -1893,7 +1961,8 @@
             hours: date.getHours(),
             mins: date.getMinutes(),
         };
-        let index = writeFileMessage(fileDetails, message, time, true, false, false, false, replyIndex)
+        const parentContainer = document.getElementsByClassName(`chat-container-${receiver}`)[0];
+        let index = writeFileMessage(parentContainer, fileDetails, message, time, true, false, false, false, replyIndex)
         const details = { name: fileDetails.name, size: fileDetails.size, type: fileDetails.type }
         let data = { type: 'file', sender, receiver, time, message, file_details: details, index }
         formData.append('data', JSON.stringify(data));
@@ -1937,13 +2006,14 @@
 
     async function sendMessage(sender, receiver, message, date, replyIndex) {
         let time = {
-            year: date.getFullYear(),
-            month: date.getMonth() + 1,
-            day: date.getDate(),
-            hours: date.getHours(),
-            mins: date.getMinutes(),
+            year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate(), hours: date.getHours(), mins: date.getMinutes(),
         };
-        let index = writeTextMessage(message, time, true, false, false, false, selectedMessageIndex);
+
+        const parentContainer = document.getElementsByClassName(`chat-container-${receiver}`)[0];
+
+        console.log("Receiver", receiver);
+
+        let index = writeTextMessage(parentContainer, message, time, true, false, false, false, selectedMessageIndex);
         const messageData = {
             type: "send", sender: myid, receiver: currentFriendId, message, time, index, status: 0, replyIndex
         }
@@ -2000,7 +2070,7 @@
                         if (currentFriendId == -1) {
                             if (streamingIndex == -1) {
                                 let date = new Date();
-                                writeTextMessage(totalMessageResult, { hours: date.getHours(), mins: date.getMinutes() }, false);
+                                writeTextMessage(parentContainer, totalMessageResult, { hours: date.getHours(), mins: date.getMinutes() }, false);
                                 let friendMessages = document.getElementsByClassName('friend-message');
                                 streamingIndex = friendMessages.length - 1;
                                 if (autoScroll) {
@@ -2074,11 +2144,12 @@
                 }
             })
             .catch(err => {
+                console.error(err)
                 createChatErrorMessage(err);
             })
     }
 
-    function writeFileMessage(fileDetails, message, date, myMessage, sent, delivered, seen, replyIndex, triggerDownload) {
+    function writeFileMessage(parentContainer, fileDetails, message, date, myMessage, sent, delivered, seen, replyIndex, triggerDownload) {
 
         let targetMessage;
         if (replyIndex) {
@@ -2164,7 +2235,7 @@
             }</div>
                     </div>
                     <div class="message-status">
-                        <i class="fas fa-circle-notch fa-spin not-sent" style= display:${sent == true ? "none" : "flex"}></i>
+                        <img src="../assets/images/icons8-clock.gif" class="not-sent" style= display:${sent == true ? "none" : "flex"}>
                         <i class="fa-solid fa-circle-xmark circle-icon failed" style="display:none"></i>
 
                         <i class="fas fa-check-circle message-tick ${seen == true ? "blue-tick" : ""
@@ -2205,9 +2276,9 @@
         replyingTo.addEventListener('click', e => {
             pointToMessage(replyIndex);
         })
-        let chatContainer = document.getElementsByClassName("chat-container")[0];
+
         messageOuterContainer.appendChild(messageContainer)
-        chatContainer.appendChild(messageOuterContainer);
+        parentContainer.appendChild(messageOuterContainer);
 
 
         let index = Array.from(
@@ -2215,7 +2286,7 @@
         ).indexOf(messageContainer);
 
 
-        chatContainer.scrollTop = chatContainer.scrollHeight;
+        document.getElementsByClassName('chat-container-wrapper')[0].scrollTop = document.getElementsByClassName('chat-container-wrapper')[0].scrollHeight;
 
         messageOuterContainer.addEventListener('mouseover', e => {
             if (messageSelection == true) {
@@ -2266,11 +2337,10 @@
             )[0];
             messageMenu.classList.add('show');
             // messageMenu.style.display = "flex";
-            const container = document.getElementsByClassName("chat-container")[0];
             const wrapper = document.getElementsByClassName('chat-wrapper')[0];
             const wrapperRect = wrapper.getBoundingClientRect();
             const messageMenuRect = messageMenu.getBoundingClientRect();
-            const containerRect = container.getBoundingClientRect();
+            const containerRect = document.getElementsByClassName("chat-container-wrapper")[0].getBoundingClientRect();
             const refrenceRect = document
                 .getElementsByClassName("main")[0]
                 .getBoundingClientRect();
@@ -2289,7 +2359,7 @@
                     e.clientX - refrenceRect.left - messageMenuRect.width - wrapperRect.left + "px";
             }
 
-            container.style.overflow = "hidden";
+            document.getElementsByClassName("chat-container-wrapper")[0].style.overflow = "hidden";
 
 
         });
@@ -2349,14 +2419,7 @@
         }
     }
 
-    function writeTextMessage(
-        message,
-        date,
-        myMessage,
-        sent,
-        delivered,
-        seen,
-        replyIndex
+    function writeTextMessage(parentContainer, message, date, myMessage, sent, delivered, seen, replyIndex
     ) {
 
         let targetMessage;
@@ -2394,7 +2457,7 @@
             }</div>
                     </div>
                     <div class="message-status">
-                        <i class="fas fa-circle-notch fa-spin not-sent" style= display:${sent == true ? "none" : "flex"}></i>
+                        <img src="../assets/images/icons8-clock.gif" class="not-sent" style= display:${sent == true ? "none" : "flex"}>
                         <i class="fa-solid fa-circle-xmark circle-icon failed" style="display:none"></i>
                         <i class="fas fa-check-circle message-tick ${seen == true ? "blue-tick" : ""
             }" style=display:${sent == false ? "none" : "flex"}></i>
@@ -2412,38 +2475,18 @@
 
         messageContainer.innerHTML = htm;
 
-
-
-
         let replyingTo = messageContainer.getElementsByClassName('replying-to')[0];
         replyingTo.addEventListener('click', e => {
             pointToMessage(replyIndex);
         })
-        let chatContainer = document.getElementsByClassName("chat-container")[0];
 
-        let messageQuickOptionsContiner = document.createElement('div');
-        messageQuickOptionsContiner.classList.add('message-quick-options');
-        if (myMessage) {
-            messageQuickOptionsContiner.classList.add('my-message-quick-options')
-        }
-        else {
-
-            messageQuickOptionsContiner.classList.add('friend-message-quick-options')
-        }
-        messageQuickOptionsContiner.innerHTML = "<div class='fas fa-copy'></div><div class='fas fa-volume-up'></div>"
-
-        messageContainer.appendChild(messageQuickOptionsContiner)
         messageOuterContainer.appendChild(messageContainer)
-        chatContainer.appendChild(messageOuterContainer);
+        parentContainer.appendChild(messageOuterContainer);
 
         let index = Array.from(
             document.getElementsByClassName("my-message")
         ).indexOf(messageContainer);
-
-
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-
-
+        document.getElementsByClassName('chat-container-wrapper')[0].scrollTop = document.getElementsByClassName('chat-container-wrapper')[0].scrollHeight;
 
         messageOuterContainer.addEventListener('mouseover', e => {
             if (messageSelection == true) {
@@ -2495,11 +2538,10 @@
             )[0];
             messageMenu.classList.add('show');
             // messageMenu.style.display = "flex";
-            const container = document.getElementsByClassName("chat-container")[0];
             const wrapper = document.getElementsByClassName('chat-wrapper')[0];
             const wrapperRect = wrapper.getBoundingClientRect();
             const messageMenuRect = messageMenu.getBoundingClientRect();
-            const containerRect = container.getBoundingClientRect();
+            const containerRect = document.getElementsByClassName("chat-container-wrapper")[0].getBoundingClientRect();
             const refrenceRect = document
                 .getElementsByClassName("main")[0]
                 .getBoundingClientRect();
@@ -2518,7 +2560,7 @@
                     e.clientX - refrenceRect.left - messageMenuRect.width - wrapperRect.left + "px";
             }
 
-            container.style.overflow = "hidden";
+            document.getElementsByClassName("chat-container-wrapper")[0].style.overflow = "hidden";
 
 
         });
@@ -2626,20 +2668,49 @@
         container
             .getElementsByClassName("recent-message-chat")
         [index].classList.add("recent-active-message");
+
+        const currentContainer = document.getElementsByClassName(`chat-container-${friendId}`);
+        if (currentContainer.length) {
+
+            document.getElementsByClassName('active-chat-container')[0].classList.remove("active-chat-container");
+            currentContainer[0].classList.add("active-chat-container")
+            document.getElementsByClassName('recent-messages-wrapper')[0].classList.add('hide')
+            document.getElementsByClassName(
+                "nav-options-mobile"
+            )[0].style.display = "none";
+            document.getElementsByClassName("welcome-page")[0].classList.add('hide')
+            document.getElementsByClassName("navbar")[0].classList.add('hide')
+            document.getElementsByClassName("chat-wrapper")[0].classList.remove('hide')
+            document.getElementsByClassName('chat-end')[0].style.display = 'none'
+            const friendUsername = userInfo.friendUsernames[userInfo.friends.indexOf(friendId)];
+            document.getElementsByClassName("friend-username")[0].innerHTML = friendUsername;
+            document.getElementsByClassName(
+                "friend-connection-status"
+            )[0].innerHTML = "last seen recently";
+
+            let messageInput = document.getElementsByClassName(
+                "message-input-element"
+            )[0];
+
+
+            messageInput.placeholder = "Message " + friendUsername;
+            messageInput.focus();
+            document.getElementsByClassName('chat-container-wrapper')[0].scrollTop = document.getElementsByClassName('chat-container-wrapper')[0].scrollHeight;
+            currentFriendId = friendId;
+            return;
+
+
+        }
+
         let data = await fetchChats(friendId);
         if (data.ok) {
-            document.getElementsByClassName("chat-container")[0].innerHTML = '<div class="chat-background"></div>';
-            document.getElementsByClassName(
-                "chat-container"
-            )[0].style.scrollBehavior = "auto";
             let myUserid = data.data.myUserid;
             let friendUserid = data.data.friendUserid;
             let myUsername = data.data.myUsername;
             let friendUsername = data.data.friendUsername;
             let messages = data.data.messages;
             currentFriendId = friendUserid;
-            myid = myUserid;
-            if (messages.length) {
+            if (messages.length || true) {
                 document.getElementsByClassName('recent-messages-wrapper')[0].classList.add('hide')
                 document.getElementsByClassName(
                     "nav-options-mobile"
@@ -2648,93 +2719,23 @@
                 document.getElementsByClassName("navbar")[0].classList.add('hide')
                 document.getElementsByClassName("chat-wrapper")[0].classList.remove('hide')
                 document.getElementsByClassName('chat-end')[0].style.display = 'none'
-                document.getElementsByClassName("chat-container")[0].classList.remove("hide")
+                if (document.getElementsByClassName("active-chat-container").length) {
+
+                    document.getElementsByClassName("active-chat-container")[0].classList.remove("active-chat-container")
+                }
                 document.getElementsByClassName("friend-username")[0].innerHTML =
                     friendUsername;
                 document.getElementsByClassName(
                     "friend-connection-status"
                 )[0].innerHTML = "last seen recently";
 
-                let chatInfo = document.createElement("div");
-                chatInfo.classList.add("chat-info");
-                chatInfo.innerHTML =
-                    "<i class='fas fa-lock'></i> Messages to this chat are end to end encrypted. Stop worrying about the security!";
-                document
-                    .getElementsByClassName("chat-container")[0]
-                    .appendChild(chatInfo);
-                const unreadElement = document.createElement("div");
-                unreadElement.classList.add("unread");
-                let currentDate;
-                let dateNow = new Date();
-                let unreadCount = 0;
-                let unread = false;
-                let fileMessageIndex = 0;
-                for (let i = 0; i < messages.length; i++) {
-                    let message = messages[i];
+                const newContainer = createChatContainer(messages, friendId);
+                newContainer.classList.add('active-chat-container');
+                // document.getElementsByClassName('chat-container-wrapper')[0].appendChild(newContainer);
+                document.getElementsByClassName('chat-container-wrapper')[0].scrollTop = document.getElementsByClassName('chat-container-wrapper')[0].scrollHeight;
 
 
-                    let date = formatDate(message.time);
-                    if (currentDate == undefined || currentDate != date) {
-                        let dateContainer = chatInfo.cloneNode(true);
-                        dateContainer.classList.add('date-info');
-
-                        let messageDate = getRelativeDate(message.time);
-
-                        dateContainer.innerHTML = messageDate;
-
-                        document
-                            .getElementsByClassName("chat-container")[0]
-                            .appendChild(dateContainer);
-                    }
-                    if (
-                        !unread &&
-
-                        message.status == 0 &&
-                        message.sender == currentFriendId
-                    ) {
-                        unread = true;
-                        unreadElement.innerHTML = `${unreadCount} unread messages`;
-                        document
-                            .getElementsByClassName("chat-container")[0]
-                            .appendChild(unreadElement);
-                        unreadCount++;
-
-                    }
-
-
-                    if (message.type == 'send') {
-
-                        writeTextMessage(message.message, message.time, message.sender == myUserid, true, message.state == 0, message.status == 1, message.replyIndex, true);
-                    }
-                    else if (message.type == 'file') {
-                        writeFileMessage(message.file_details, message.message, message.time, message.sender == myUserid, true, message.state == 0, message.status == 1, message.replyIndex, true);
-                        downloadFileFromServer(message.fileId, message.file_details.name, message.file_details.type)
-                        fileMessageIndex++;
-
-                    }
-
-
-                    currentDate = date;
-                }
-                if (unreadCount) {
-                    unreadElement.innerHTML = `${unreadCount} unread messages`;
-
-                }
-
-            } else {
-                document.getElementsByClassName("welcome-page")[0].style.display =
-                    "none";
-                document.getElementsByClassName("chat-wrapper")[0].style.display =
-                    "flex";
-                document.getElementsByClassName("empty-chat")[0].style.display =
-                    "flex";
-                document.getElementsByClassName("chat-container")[0].style.display =
-                    "none";
             }
-
-            document.getElementsByClassName(
-                "chat-container"
-            )[0].style.scrollBehavior = "smooth";
             scrollToBottom()
 
             let messageInput = document.getElementsByClassName(
@@ -2774,6 +2775,8 @@
         })
             .catch(err => {
 
+                console.error("Error loading chats", err);
+
 
             });
     }
@@ -2784,29 +2787,7 @@
     }
 
     function formatDate(date) {
-        const months = [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December",
-        ];
-        let str = "";
-        date.day >= 10 ? (str += date.day) : (str += "0" + date.day);
-        str += " ";
-        // date.month >= 10 ? (str += date.month) : (str += "0" + date.month);
-        str += months[date.month];
-        str += " ";
-        date.year >= 10 ? (str += date.year) : (str += "0" + date.year);
-
-        return str;
+        return `${date.day}-${date.month}-${date.year}`;
     }
 
     function trimToMaxLength(str, maxLength) {
@@ -2853,10 +2834,10 @@
 
     function removeUnreadMessagesTag() {
         let unreadMessagesTag = document
-            .getElementsByClassName("chat-container")[0]
+            .getElementsByClassName(`chat-container-${currentFriendId}`)[0]
             .getElementsByClassName("unread");
         if (unreadMessagesTag.length) {
-            unreadMessagesTag[0].style.display = "none";
+            unreadMessagesTag[0].remove();
         }
     }
 
@@ -2867,7 +2848,7 @@
         chatContainer.appendChild(typingElement);
 
         typingElement.style.display = "flex";
-        chatContainer.scrollTop = chatContainer.scrollHeight;
+        document.getElementsByClassName('chat-container-wrapper')[0].scrollTop = document.getElementsByClassName('chat-container-wrapper')[0].scrollHeight;
     }
 
     function removeTypingSymbol() {
@@ -2986,7 +2967,6 @@
             const messageInput = document.getElementsByClassName(
                 "message-input-element"
             )[0];
-            console.log("Erasing")
 
             // Optionally, you can use a slight delay
             setTimeout(() => {
@@ -3028,6 +3008,7 @@
             ).indexOf(activeElement);
             container.insertBefore(activeElement, container.firstChild);
             moveToFront(userInfo.friends, index);
+            moveToFront(userInfo.friendUsernames, index);
             scrollToChild(container, activeElement);
             messageInput.value = "";
             removeUnreadMessagesTag();
@@ -3269,7 +3250,7 @@
             .then(() => {
                 // document.getElementsByClassName('message-menu-wrapper')[0].style.display = 'none'
                 document.getElementsByClassName('message-menu-wrapper')[0].classList.remove('show');
-                chatContainer.style.overflow = 'auto'
+                document.getElementsByClassName("chat-container-wrapper")[0].style.overflow = 'auto'
                 selectedMessageIndex = null;
             })
     }
@@ -3293,7 +3274,7 @@
         replyMessageWrapper.style.display = 'flex'
         document.getElementsByClassName('message-menu-wrapper')[0].classList.remove('show')
         // document.getElementsByClassName('message-menu-wrapper')[0].style.display = 'none'
-        chatContainer.style.overflow = 'auto'
+        document.getElementsByClassName("chat-container-wrapper")[0].style.overflow = 'auto'
 
     }
 
@@ -3308,7 +3289,7 @@
         // ws.send(JSON.stringify(obj))
         let chatContainer = document.getElementsByClassName('chat-container')[0];
         let messageIndex = selectedMessageIndex;
-        chatContainer.style.overflow = 'auto'
+        document.getElementsByClassName("chat-container-wrapper")[0].style.overflow = 'auto'
         selectedMessageIndex = null;
         document.getElementsByClassName('delete-message-wrapper')[0].style.display = 'none'
         setTimeout(() => {
@@ -3329,7 +3310,7 @@
 
 
     function scrollChatContainer() {
-        const chatContainer = document.getElementsByClassName('chat-container')[0];
+        const chatContainer = document.getElementsByClassName('chat-container-wrapper')[0];
         if (isScrolledToMax(chatContainer)) {
             document.getElementsByClassName('chat-end')[0].style.display = 'none'
         }
@@ -3340,17 +3321,17 @@
     }
 
     function scrollToBottom() {
-        let chatContainer = document.getElementsByClassName("chat-container")[0]
-        chatContainer.scrollTop = chatContainer.scrollHeight
+        let chatContainer = document.getElementsByClassName("chat-container-wrapper")[0]
+        chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
 
     function pointToMessage(messageIndex) {
-        let parent = document.getElementsByClassName('chat-container')[0]
-
+        let parent = document.getElementsByClassName(`chat-container-${currentFriendId}`)[0]
         let child = parent.getElementsByClassName('message-outer-container')[messageIndex]
+
         if (child) {
-            scrollToCenter(parent, child);
+            scrollToCenter(document.getElementsByClassName('chat-container-wrapper')[0], child);
             child.classList.add('blinky-message')
             setTimeout(() => {
                 child.classList.remove('blinky-message')
@@ -3366,7 +3347,7 @@
         document.getElementsByClassName('message-outer-container')[selectedMessageIndex].classList.add('selected-message');
         document.getElementsByClassName('message-menu-wrapper')[0].classList.remove('show')
         // document.getElementsByClassName('message-menu-wrapper')[0].style.display = 'none';
-        chatContainer.style.overflow = 'auto'
+        document.getElementsByClassName("chat-container-wrapper")[0].style.overflow = 'auto'
         selectedMessageIndex = null;
         document.getElementsByClassName('friend-profile-info')[0].style.display = 'none';
         document.getElementsByClassName('selected-messages-wrapper')[0].style.display = 'flex';
@@ -3405,7 +3386,8 @@
 
     async function downloadFileFromServer(fileId, fileName, fileType) {
         try {
-            const index = document.getElementsByClassName('file-message').length - 1;
+            const container = document.getElementsByClassName('active-chat-container')[0];
+            const index = container.getElementsByClassName('file-message').length - 1;
             let chunks = [];
             let cachedChunks = await getFileChunksFromCache(db, fileId);
             if (cachedChunks && cachedChunks.length) {
@@ -3828,17 +3810,17 @@
     }
 
 
-    let container = document.getElementsByClassName('chat-container')[0];
+    // let container = document.getElementsByClassName('chat-container')[0];
 
-    let lastScrollTop = container.scrollTop;
+    // let lastScrollTop = container.scrollTop;
 
-    container.addEventListener('scroll', e => {
-        let currentScrollTop = container.scrollTop;
-        if (currentScrollTop < lastScrollTop) {
-            autoScroll = false;
-        }
+    // container.addEventListener('scroll', e => {
+    //     let currentScrollTop = container.scrollTop;
+    //     if (currentScrollTop < lastScrollTop) {
+    //         autoScroll = false;
+    //     }
 
-    })
+    // })
 
 
     function isScrolledToMax(element) {
@@ -3846,15 +3828,6 @@
     }
 
 
-    // function processMessageContent(message) {
-
-
-    //     message = (escapeHtml(message));
-    //     message = message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    //     message = message.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-    //     return getGoodHTML(message);
-
-    // }
 
     function processMessageContent(message) {
 
@@ -3871,7 +3844,8 @@
 
             }
             else {
-                html += getGoodHTML(escapeHtml(fragments[i]));
+                let text = getGoodHTML(escapeHtml(fragments[i]));
+                html += markdownToHtml(text);
             }
         }
 
@@ -3885,6 +3859,25 @@
         return hljs.highlightAuto(code)
     }
 
+    function markdownToHtml(text) {
+        // Convert bold: **text** or __text__
+        text = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+        text = text.replace(/__(.*?)__/g, '<b>$1</b>');
+
+        // Convert italic: *text* or _text_
+        text = text.replace(/\*(.*?)\*/g, '<i>$1</i>');
+        text = text.replace(/_(.*?)_/g, '<i>$1</i>');
+
+        // Convert strikethrough: ~~text~~
+        text = text.replace(/~~(.*?)~~/g, '<del>$1</del>');
+        text = text.replace(/`(.*?)`/g, '<code>$1</code >');
+
+        // Convert links: [text](url)
+        text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
+
+
+        return text;
+    }
 
     function copyHTML(html, element) {
         navigator.clipboard.write(getGoodHTML(escapeHtml(html)))
@@ -3895,6 +3888,76 @@
                     element.innerHTML = '<i class="fas fa-copy"></i> Copy code';
                 }, 1000);
             })
+    }
+
+
+    function createChatInfo(info) {
+        const chatInfoContainer = document.createElement('div');
+        chatInfoContainer.className = 'chat-info';
+        chatInfoContainer.innerHTML = info;
+
+        return chatInfoContainer;
+
+    }
+    function createDateInfo(info) {
+        const dateInfoContainer = document.createElement('div');
+        dateInfoContainer.className = 'chat-info date-info';
+        dateInfoContainer.innerHTML = info;
+
+        return dateInfoContainer;
+
+    }
+    function createChatContainer(messages, containerId) {
+        const container = document.createElement('div');
+        container.className = `chat-container active-chat-container  chat-container-${containerId}`;
+        const chatBackground = document.createElement('div');
+        chatBackground.className = 'chat-background';
+        container.appendChild(chatBackground)
+        container.appendChild(createChatInfo("<i class='fas fa-lock'></i> Messages to this chat are end to end encrypted. Stop worrying about the security."));
+
+        document.getElementsByClassName('chat-container-wrapper')[0].appendChild(container);
+
+        let unreadCount = 0;
+        let visitedUnreadMessage = false;
+        const unreadContainer = document.createElement('div');
+        unreadContainer.className = 'unread';
+
+        for (let i = 0; i < messages.length; i++) {
+            const message = messages[i];
+            if (message.status == 0 && message.sender == currentFriendId) {
+                //unread message from friend
+                unreadCount++;
+                if (!visitedUnreadMessage) {
+                    container.appendChild(unreadContainer);
+                    unreadContainer.textContent = unreadCount + " unread messages";
+                }
+                else {
+
+                    unreadContainer.textContent = unreadCount + ' unread messages';
+                }
+
+                visitedUnreadMessage = true;
+            }
+
+            if (i == 0 || message.time.day != messages[i - 1].time.day) {
+                const dateContainer = createDateInfo(getRelativeDate(message.time));
+                container.appendChild(dateContainer);
+            }
+
+            if (message.type == 'send') {
+                writeTextMessage(container, message.message, message.time, message.sender == myid, true, message.state == 0, message.status == 1, message.replyIndex, true);
+            }
+            else if (message.type == 'file') {
+
+                writeFileMessage(container, message.file_details, message.message, message.time, message.sender == myid, true, message.state == 0, message.status == 1, message.replyIndex, true);
+                downloadFileFromServer(message.fileId, message.file_details.name, message.file_details.type)
+
+            }
+
+
+        }
+        return container;
+
     }
 
 

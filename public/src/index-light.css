@@ -508,7 +508,6 @@ body.light-mode .searched-chat-profile-gender {
     min-height: 8vh;
     cursor: pointer;
     padding: 2vh;
-    margin-bottom: 1vh;
     position: relative;
     border-radius: 1vh;
 
@@ -794,6 +793,7 @@ body.light-mode .last-message-time {
 .not-sent {
     margin: 0 0.2vw;
     font-size: small;
+    width: 15px;
     display: none;
 }
 
@@ -896,7 +896,7 @@ body.light-mode .loading-profile-image-element {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 1%;
+    padding: 1% 0;
     min-width: 30vw;
     border-right: 1px solid var(--container-color);
 }
@@ -1060,11 +1060,21 @@ body.light-mode .empty-chat {
     overflow: auto;
     scroll-behavior: auto;
     scrollbar-width: none;
-}
-
-.chat-container.hide {
     display: none;
 }
+
+.chat-container-wrapper {
+    height: 100%;
+    overflow: auto;
+    scroll-behavior: auto;
+    scrollbar-width: none;
+}
+
+.active-chat-container {
+    display: flex;
+}
+
+
 
 .chat-background {
     position: fixed;
@@ -1653,10 +1663,9 @@ body.light-mode .welcome-page {
 
 .chat-info {
     align-self: center;
-    background-color: var(--body-color);
+    background-color: white;
     color: var(--sharp-color);
-    padding: 1% 0%;
-    width: 95%;
+    padding: 5px 10px;
     margin: 2% 0;
     border-radius: 8px;
     position: sticky;
@@ -1671,10 +1680,8 @@ body.light-mode .chat-info {
 
 
 .date-info {
-    background-color: rgba(0, 0, 0, 0);
+    background-color: var(--body-color);
     color: var(--sharp-color);
-    padding: 5px 0%;
-    width: 100%;
 }
 
 body.light-mode .date-info {
@@ -1900,7 +1907,7 @@ body.light-mode .profile-option {
     color: var(--sharp-color);
     padding: 0.5%;
     margin: 2% 0;
-    border-radius: 5px;
+    border-bottom: 1px solid var(--sharp-color);
     text-align: center;
 }
 
@@ -2969,6 +2976,10 @@ pre {
     color: orangered;
     margin-left: 5px;
     font-size: small;
+}
+
+a {
+    color: var(--accent-bright);
 }
 
 @media screen and (max-width:900px) {
