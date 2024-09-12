@@ -10,36 +10,18 @@
     <link rel="icon" type="image/png" href="../assets/images/good-logo.png">
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <link rel="stylesheet" id="css-file" href="../src/index-light.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <script src="https://unpkg.com/prettier@2.8.8/standalone.js"></script>
     <script src="https://unpkg.com/prettier@2.8.8/parser-babel.js"></script> <!-- Parser for JavaScript -->
 
 
 </head>
 
-
 <body>
-    <!-- <svg width="20" height="20" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="100" cy="100" r="95" stroke="white" stroke-width="5" fill="#333" />
-
-        <line id="hour-hand" x1="100" y1="100" x2="100" y2="60" stroke="white" stroke-width="6">
-            <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="10s"
-                repeatCount="indefinite" transform-origin="100 100" />
-        </line>
-
-        <line id="minute-hand" x1="100" y1="100" x2="100" y2="40" stroke="white" stroke-width="4">
-            <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="1s"
-                repeatCount="indefinite" transform-origin="100 100" />
-        </line>
-
-        <circle cx="100" cy="100" r="10" fill="white" />
-    </svg> -->
-
-
 
 
     <div class="code-wrapper hide">
@@ -1215,6 +1197,7 @@
 
     var selectedFile;
     var selectedFormData;
+    var fileType
     var db;
 
     const fileForm = document.getElementById('uploadFile');
@@ -1227,6 +1210,7 @@
         formData.append('file', fileDetails)
         selectedFile = fileDetails
         selectedFormData = formData
+        fileType = 'file';
         let extensions = fileDetails.name.split('.');
         const extension = extensions[extensions.length - 1]
         const fileSendContainer = document.getElementsByClassName('file-send-wrapper')[0];
@@ -1234,6 +1218,30 @@
         fileSendContainer.getElementsByClassName('file-size')[0].textContent = getStandardSize(fileDetails.size) + ', ' + map2[extension];
         fileSendContainer.getElementsByClassName('file-icon')[0].src = `../assets/images/${map[extension] || 'unknown'}-icon.png`
         fileSendContainer.style.display = 'flex'
+        document.getElementById('preview').innerHTML = '';
+        previewFile(document.getElementById('preview'), fileDetails)
+        document.getElementsByClassName('caption-input-element')[0].focus()
+    })
+
+    const photoForm = document.getElementById('uploadPhoto');
+    photoForm.addEventListener('change', e => {
+        const map = { 'pdf': 'pdf', 'png': 'image', 'jpeg': 'image', 'jpg': 'image', 'doc': 'word', 'docx': 'word', wav: 'sound', mp3: 'sound', aac: 'sound', flac: 'sound', ogg: 'sound', wma: 'sound', m4a: 'sound', aiff: 'sound', aif: 'sound', aifc: 'sound', amr: 'sound', pcm: 'sound', dts: 'sound', ac3: 'sound', mid: 'sound', midi: 'sound', 'txt': 'text', 'pgn': 'text' }
+        const map2 = { 'pdf': 'PDF Document', 'png': 'PNG Image', 'jpeg': 'JPEG Image', 'jpg': 'JPG Image', 'doc': 'Word Document', 'docx': 'Word Document', 'txt': 'Text File', 'pgn': 'Text File' }
+        let fileInput = document.getElementById('photoInput');
+        const formData = new FormData();
+        const fileDetails = fileInput.files[0];
+        formData.append('file', fileDetails)
+        selectedFile = fileDetails
+        selectedFormData = formData
+        fileType = 'photo'
+        let extensions = fileDetails.name.split('.');
+        const extension = extensions[extensions.length - 1]
+        const fileSendContainer = document.getElementsByClassName('file-send-wrapper')[0];
+        fileSendContainer.getElementsByClassName('file-name')[0].textContent = fileDetails.name;
+        fileSendContainer.getElementsByClassName('file-size')[0].textContent = getStandardSize(fileDetails.size) + ', ' + map2[extension];
+        fileSendContainer.getElementsByClassName('file-icon')[0].src = `../assets/images/${map[extension] || 'unknown'}-icon.png`
+        fileSendContainer.style.display = 'flex'
+        document.getElementById('preview').innerHTML = '';
         previewFile(document.getElementById('preview'), fileDetails)
         document.getElementsByClassName('caption-input-element')[0].focus()
     })
@@ -1243,7 +1251,13 @@
 
             const caption = document.getElementsByClassName('caption-input-element')[0].value
             let date = new Date();
-            await sendFile(myid, currentFriendId, selectedFile, caption, selectedFormData, date, selectedMessageIndex);
+            if (fileType == 'file') {
+                await sendFile(myid, currentFriendId, selectedFile, caption, selectedFormData, date, selectedMessageIndex);
+
+            }
+            else if (fileType == 'photo') {
+                await sendPhoto(myid, currentFriendId, selectedFile, caption, selectedFormData, date, selectedMessageIndex);
+            }
             let container = document.getElementsByClassName(
                 "recent-messages-container"
             )[0];
@@ -1257,9 +1271,8 @@
             activeElement.getElementsByClassName(
                 "last-message-status"
             )[0].classList.remove('blue-tick');
-            activeElement.getElementsByClassName(
-                "last-message-content"
-            )[0].innerHTML = '<i class="fas fa-file-alt"></i> ' + `${caption.length ? caption : selectedFile.name}`;
+            activeElement.getElementsByClassName("last-message-content")[0].innerHTML = `<i class="fas ${fileType == 'file' ? 'fa-file-alt' : 'fa-image'}"></i>` + `${caption.length ? caption : selectedFile.name}`;
+
             activeElement.getElementsByClassName("last-message-time")[0].innerHTML =
                 formatTime(date.getHours(), date.getMinutes());
             const index = Array.from(
@@ -1344,7 +1357,7 @@
 
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        if (data && data.type == 'file') {
+        if (data && (data.type == 'file' || data.type == 'photo')) {
             let index = userInfo.friends.indexOf(data.sender);
             let index1 = userInfo.friends.indexOf(data.receiver);
             let activeElement;
@@ -1359,9 +1372,14 @@
             } else {
                 throw new Error("Something is wrong");
             }
-            activeElement.getElementsByClassName(
-                "last-message-content"
-            )[0].innerHTML = '<i class="fas fa-file-alt"></i> ' + `${data.message.length ? data.message : data.file_details.name} `;
+            if (data.type == 'file') {
+
+                activeElement.getElementsByClassName("last-message-content")[0].innerHTML = '<i class="fas fa-file-alt"></i> ' + `${data.message.length ? data.message : data.file_details.name} `;
+            }
+            else {
+                activeElement.getElementsByClassName("last-message-content")[0].innerHTML = '<i class="fas fa-image"></i> ' + `${data.message.length ? data.message : data.file_details.name} `;
+            }
+
             activeElement.getElementsByClassName("last-message-time")[0].innerHTML =
                 formatTime(data.time.hours, data.time.mins);
 
@@ -1385,8 +1403,15 @@
             }
             else if (data.sender == currentFriendId) {
                 const parentContainer = document.getElementsByClassName(`chat-container-${data.sender}`)[0];
-                writeFileMessage(parentContainer, data.file_details, data.message, data.time, false, false, false, false, data.replyIndex, true)
-                downloadFileFromServer(data.fileId, data.file_details.name, data.file_details.type)
+                if (data.type == 'file') {
+                    writeFileMessage(parentContainer, data.file_details, data.message, data.time, false, false, false, false, data.replyIndex, true)
+
+                }
+                else {
+                    writePhotoMessage(parentContainer, data.file_details, data.message, data.time, false, false, false, false, data.replyIndex, true)
+
+                }
+                downloadFileFromServer(parentContainer, data.fileId, data.file_details.name, data.file_details.type, data.type == 'photo')
                 receivedMessageNotify.play();
                 ws.send(
                     JSON.stringify({ type: "chat-opened", recepient: data.sender })
@@ -1417,8 +1442,16 @@
                         parentContainer.appendChild(unreadContainer);
                     }
 
-                    writeFileMessage(parentContainer, data.file_details, data.message, data.time, false, false, false, false, data.replyIndex, triggerDownload = false)
-                    downloadFileFromServer(data.fileId, data.file_details.name, data.file_details.type)
+                    if (data.type == 'file') {
+
+                        writeFileMessage(parentContainer, data.file_details, data.message, data.time, false, false, false, false, data.replyIndex, triggerDownload = false)
+                    }
+                    else {
+
+                        writePhotoMessage(parentContainer, data.file_details, data.message, data.time, false, false, false, false, data.replyIndex, triggerDownload = false)
+                    }
+
+                    downloadFileFromServer(parentContainer, data.fileId, data.file_details.name, data.file_details.type, data.type == 'photo')
                 }
                 let element = document.getElementsByClassName("new-messages")[index];
                 let currentUnreadMessages =
@@ -1966,6 +1999,7 @@
         const details = { name: fileDetails.name, size: fileDetails.size, type: fileDetails.type }
         let data = { type: 'file', sender, receiver, time, message, file_details: details, index }
         formData.append('data', JSON.stringify(data));
+
         fetch('/upload', {
             method: 'POST',
             body: formData
@@ -2003,6 +2037,59 @@
             })
 
     }
+
+    async function sendPhoto(sender, receiver, fileDetails, message, formData, date, replyIndex) {
+        document.getElementsByClassName('file-send-wrapper')[0].style.display = 'none'
+
+        let time = {
+            year: date.getFullYear(),
+            month: date.getMonth() + 1,
+            day: date.getDate(),
+            hours: date.getHours(),
+            mins: date.getMinutes(),
+        };
+        const parentContainer = document.getElementsByClassName(`chat-container-${receiver}`)[0];
+        let index = writePhotoMessage(parentContainer, fileDetails, message, time, true, false, false, false, replyIndex)
+        const details = { name: fileDetails.name, size: fileDetails.size, type: fileDetails.type }
+        let data = { type: 'photo', sender, receiver, time, message, file_details: details, index }
+        formData.append('data', JSON.stringify(data));
+
+        fetch('/upload', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+
+                    const thisMessage = document.getElementsByClassName('my-message')[index];
+                    thisMessage.getElementsByClassName('not-sent')[0].style.display = 'none'
+                    thisMessage.getElementsByClassName('message-tick')[0].style.display = 'flex'
+
+                    const activeElement = document.getElementsByClassName(
+                        "recent-active-message"
+                    )[0];
+
+                    activeElement.getElementsByClassName(
+                        "last-message-status"
+                    )[0].style.display = "flex";
+                    activeElement
+                        .getElementsByClassName("message-tick")[0]
+                        .classList.remove("blue-tick");
+
+
+                }
+                else {
+                    alert('Error uploading the file')
+                }
+            })
+            .catch(err => {
+                // alert('Error sending the post Request:', err)
+                throw new Error(err)
+            })
+
+    }
+
 
     async function sendMessage(sender, receiver, message, date, replyIndex) {
         let time = {
@@ -2161,8 +2248,16 @@
         messageContainer.classList.add("message");
         messageContainer.classList.add("file-message");
         if (myMessage) {
+            const messages = document.getElementsByClassName('message');
+            if (messages.length == 0 || messages[messages.length - 1].classList.contains('friend-message')) {
+                messageOuterContainer.classList.add('first-message');
+            }
             messageContainer.classList.add("my-message");
         } else {
+            const messages = document.getElementsByClassName('message');
+            if (messages.length == 0 || messages[messages.length - 1].classList.contains('my-message')) {
+                messageOuterContainer.classList.add('first-message');
+            }
             messageContainer.classList.add("friend-message");
         }
 
@@ -2181,10 +2276,7 @@
             </div>
             <div class="file-container">
                  <div class="file-content">
-                    <div class='file-preview'>
-                      
-                       
-                        </div>
+                    <div class='file-preview'></div>
                     <div class="file-content-inner">
                         <div class="file-icon">
                         <img src="../assets/images/${map[extension] || 'unknown'}-icon.png" class='file-icon-image'>
@@ -2209,7 +2301,7 @@
                         </div>
                         <div class="progress-details">
                             <div class="size-downloaded">0 B</div>
-                            <div class="total-size">/12 MB</div>
+                            <div class="total-size">/calculating...</div>
                         </div>
                     </div>
 
@@ -2286,7 +2378,126 @@
         ).indexOf(messageContainer);
 
 
-        document.getElementsByClassName('chat-container-wrapper')[0].scrollTop = document.getElementsByClassName('chat-container-wrapper')[0].scrollHeight;
+        scrollToBottom();
+        addListenersToMessage(messageOuterContainer, messageContainer);
+
+        if (triggerDownload) {
+            messageContainer.getElementsByClassName('file-downloader')[0].classList.add('show')
+            messageContainer.getElementsByClassName('file-downloader')[0].classList.remove('hide')
+            messageContainer.getElementsByClassName('file-loader')[0].classList.add('hide')
+            messageContainer.getElementsByClassName('file-loader')[0].classList.remove('show')
+
+        }
+
+        return index;
+
+    }
+
+
+    function writePhotoMessage(parentContainer, fileDetails, message, date, myMessage, sent, delivered, seen, replyIndex, triggerDownload) {
+
+        let targetMessage;
+        if (replyIndex) {
+            targetMessage = document.getElementsByClassName('message')[replyIndex]
+        }
+        let messageOuterContainer = document.createElement('div');
+        messageOuterContainer.classList.add('message-outer-container')
+        let messageContainer = document.createElement("div");
+        messageContainer.classList.add("message");
+        messageContainer.classList.add("photo-message");
+        if (myMessage) {
+            const messages = document.getElementsByClassName('message');
+            if (messages.length == 0 || messages[messages.length - 1].classList.contains('friend-message')) {
+                messageOuterContainer.classList.add('first-message');
+            }
+            messageContainer.classList.add("my-message");
+        } else {
+            const messages = document.getElementsByClassName('message');
+            if (messages.length == 0 || messages[messages.length - 1].classList.contains('my-message')) {
+                messageOuterContainer.classList.add('first-message');
+            }
+            messageContainer.classList.add("friend-message");
+        }
+
+        let fileSize = fileDetails.size
+        let fileName = fileDetails.name;
+        let extensions = fileName.split('.')
+        let extension = extensions[extensions.length - 1]
+        let type = { 'png': 'PNG File', 'jpeg': 'JPEG File', 'jpg': 'JPG File' }
+        let map = { 'png': 'image', 'jpg': 'image', 'jpeg': 'image' }
+        let htm = ` 
+        <div  class="message-wrapper">
+            <div class="replying-to" style="display: ${targetMessage ? 'flex' : 'none'}; border-left: ${targetMessage && targetMessage.classList.contains('my-message') ? "5px solid var(--accent-bright)" : "5px solid #e707a0"}"><div class="replying-to-username" style="color:${targetMessage && targetMessage.classList.contains('my-message') ? "var(--accent-color)" : "#e707a0"}">${targetMessage && targetMessage.classList.contains('my-message') ? userInfo.username : document.getElementsByClassName('friend-username')[0].textContent}</div>
+                <div class="replying-to-content">${targetMessage ? targetMessage.getElementsByClassName('message-content')[0].textContent : ""}</div>
+            </div>
+            <div class="file-container">
+                 <div class="file-content">
+                    <div class='photo-container'></div>
+                </div>
+            </div>
+            <div class="message-container">
+                <div class="message-content">
+                    ${(message)}
+               </div>
+                   <div class="message-info">
+
+                        <div class="message-time">
+
+                        <div class="hrs">${date.hours >= 10 ? date.hours : "0" + date.hours
+            }</div>:
+                        <div class="mins">${date.mins >= 10 ? date.mins : "0" + date.mins
+            }</div>
+                    </div>
+                    <div class="message-status">
+                        <img src="../assets/images/icons8-clock.gif" class="not-sent" style= display:${sent == true ? "none" : "flex"}>
+                        <i class="fa-solid fa-circle-xmark circle-icon failed" style="display:none"></i>
+
+                        <i class="fas fa-check-circle message-tick ${seen == true ? "blue-tick" : ""
+            }" style=display:${sent == false ? "none" : "flex"}></i>
+                    </div>
+
+                    </div>
+                
+            </div>
+
+                
+            </div>
+        
+      
+                    `;
+
+        messageContainer.innerHTML = htm;
+        if (!triggerDownload) {
+
+            let photoContainer = messageContainer.getElementsByClassName('photo-container')[0];
+            previewFile(photoContainer, fileDetails, false, true)
+            photoContainer.style.display = 'flex'
+        }
+
+        let replyingTo = messageContainer.getElementsByClassName('replying-to')[0];
+        replyingTo.addEventListener('click', e => {
+            pointToMessage(replyIndex);
+        })
+
+        messageOuterContainer.appendChild(messageContainer)
+        parentContainer.appendChild(messageOuterContainer);
+
+
+        let index = Array.from(
+            document.getElementsByClassName("my-message")
+        ).indexOf(messageContainer);
+
+
+        scrollToBottom();
+        addListenersToMessage(messageOuterContainer, messageContainer);
+
+        return index;
+
+
+    }
+
+    function addListenersToMessage(messageOuterContainer, messageContainer) {
+
 
         messageOuterContainer.addEventListener('mouseover', e => {
             if (messageSelection == true) {
@@ -2363,17 +2574,6 @@
 
 
         });
-
-        if (triggerDownload) {
-            messageContainer.getElementsByClassName('file-downloader')[0].classList.add('show')
-            messageContainer.getElementsByClassName('file-downloader')[0].classList.remove('hide')
-            messageContainer.getElementsByClassName('file-loader')[0].classList.add('hide')
-            messageContainer.getElementsByClassName('file-loader')[0].classList.remove('show')
-
-        }
-
-        return index;
-
     }
 
     function openFile(file) {
@@ -2432,8 +2632,16 @@
         let messageContainer = document.createElement("div");
         messageContainer.classList.add("message");
         if (myMessage) {
+            const messages = document.getElementsByClassName('message');
+            if (messages.length == 0 || messages[messages.length - 1].classList.contains('friend-message')) {
+                messageOuterContainer.classList.add('first-message');
+            }
             messageContainer.classList.add("my-message");
         } else {
+            const messages = document.getElementsByClassName('message');
+            if (messages.length == 0 || messages[messages.length - 1].classList.contains('my-message')) {
+                messageOuterContainer.classList.add('first-message');
+            }
             messageContainer.classList.add("friend-message");
         }
 
@@ -2486,84 +2694,8 @@
         let index = Array.from(
             document.getElementsByClassName("my-message")
         ).indexOf(messageContainer);
-        document.getElementsByClassName('chat-container-wrapper')[0].scrollTop = document.getElementsByClassName('chat-container-wrapper')[0].scrollHeight;
-
-        messageOuterContainer.addEventListener('mouseover', e => {
-            if (messageSelection == true) {
-                messageOuterContainer.classList.add('message-outer-container-hover')
-            }
-
-        })
-        messageOuterContainer.addEventListener('mouseout', e => {
-            messageOuterContainer.classList.remove('message-outer-container-hover')
-
-        })
-
-        messageOuterContainer.addEventListener('click', e => {
-            if (messageSelection == true) {
-                let overallIndex = Array.from(document.getElementsByClassName('message')).indexOf(messageContainer);
-                let outerContainer = document.getElementsByClassName('message-outer-container')[overallIndex];
-
-                if (outerContainer.classList.contains("selected-message")) {
-                    selectedMessages = selectedMessages.filter(element => element != overallIndex);
-                    outerContainer.classList.remove("selected-message")
-                    let len = selectedMessages.length;
-                    document.getElementsByClassName('delete-count')[0].textContent = `(${len})`
-                    document.getElementsByClassName('forward-count')[0].textContent = `(${len})`
-                    document.getElementsByClassName('copy-count')[0].textContent = `(${len})`
-                    if (len == 0) {
-                        cancelSelection()
-                    }
-
-                }
-                else {
-                    selectedMessages.push(overallIndex)
-                    outerContainer.classList.add("selected-message")
-                    let len = selectedMessages.length;
-                    document.getElementsByClassName('delete-count')[0].textContent = `(${len})`
-                    document.getElementsByClassName('forward-count')[0].textContent = `(${len})`
-                    document.getElementsByClassName('copy-count')[0].textContent = `(${len})`
-                }
-            }
-
-        })
-
-        messageContainer.addEventListener("contextmenu", (e) => {
-            let overallIndex = Array.from(document.getElementsByClassName('message')).indexOf(messageContainer)
-            e.preventDefault();
-            selectedMessageIndex = overallIndex
-
-            const messageMenu = document.getElementsByClassName(
-                "message-menu-wrapper"
-            )[0];
-            messageMenu.classList.add('show');
-            // messageMenu.style.display = "flex";
-            const wrapper = document.getElementsByClassName('chat-wrapper')[0];
-            const wrapperRect = wrapper.getBoundingClientRect();
-            const messageMenuRect = messageMenu.getBoundingClientRect();
-            const containerRect = document.getElementsByClassName("chat-container-wrapper")[0].getBoundingClientRect();
-            const refrenceRect = document
-                .getElementsByClassName("main")[0]
-                .getBoundingClientRect();
-
-            if (containerRect.bottom - e.clientY >= messageMenuRect.height) {
-                messageMenu.style.top = e.clientY - refrenceRect.top + "px";
-            } else {
-                messageMenu.style.top =
-                    e.clientY - refrenceRect.top - messageMenuRect.height + "px";
-            }
-
-            if (containerRect.right - e.clientX >= messageMenuRect.width) {
-                messageMenu.style.left = e.clientX - refrenceRect.left - wrapperRect.left + "px";
-            } else {
-                messageMenu.style.left =
-                    e.clientX - refrenceRect.left - messageMenuRect.width - wrapperRect.left + "px";
-            }
-
-            document.getElementsByClassName("chat-container-wrapper")[0].style.overflow = "hidden";
-
-
-        });
+        scrollToBottom();
+        addListenersToMessage(messageOuterContainer, messageContainer);
         enableCodeCopy(messageContainer);
         return index;
     }
@@ -2600,6 +2732,10 @@
             }
             else if (lastMessage.type == 'file') {
                 lastMessageContent = '<i class="fas fa-file-alt"></i> ' + `${lastMessage.message.length ? lastMessage.message : lastMessage.file_details.name}`
+            }
+            else if (lastMessage.type == 'photo') {
+
+                lastMessageContent = '<i class="fas fa-image"></i> ' + `${lastMessage.message.length ? lastMessage.message : lastMessage.file_details.name}`
             }
         }
 
@@ -2695,7 +2831,7 @@
 
             messageInput.placeholder = "Message " + friendUsername;
             messageInput.focus();
-            document.getElementsByClassName('chat-container-wrapper')[0].scrollTop = document.getElementsByClassName('chat-container-wrapper')[0].scrollHeight;
+            scrollToBottom();
             currentFriendId = friendId;
             return;
 
@@ -2731,8 +2867,6 @@
 
                 const newContainer = createChatContainer(messages, friendId);
                 newContainer.classList.add('active-chat-container');
-                // document.getElementsByClassName('chat-container-wrapper')[0].appendChild(newContainer);
-                document.getElementsByClassName('chat-container-wrapper')[0].scrollTop = document.getElementsByClassName('chat-container-wrapper')[0].scrollHeight;
 
 
             }
@@ -2787,7 +2921,9 @@
     }
 
     function formatDate(date) {
-        return `${date.day}-${date.month}-${date.year}`;
+        const day = date.day < 10 ? "0" + date.day : date.day;
+        const month = date.month < 10 ? "0" + date.month : date.month;
+        return `${day}-${month}-${date.year}`;
     }
 
     function trimToMaxLength(str, maxLength) {
@@ -2848,7 +2984,7 @@
         chatContainer.appendChild(typingElement);
 
         typingElement.style.display = "flex";
-        document.getElementsByClassName('chat-container-wrapper')[0].scrollTop = document.getElementsByClassName('chat-container-wrapper')[0].scrollHeight;
+        scrollToBottom();
     }
 
     function removeTypingSymbol() {
@@ -3384,10 +3520,10 @@
         parent.scrollTop = centerOffset;
     }
 
-    async function downloadFileFromServer(fileId, fileName, fileType) {
+    async function downloadFileFromServer(container, fileId, fileName, fileType, isPhoto) {
         try {
-            const container = document.getElementsByClassName('active-chat-container')[0];
-            const index = container.getElementsByClassName('file-message').length - 1;
+            const fileIndex = container.getElementsByClassName('file-message').length - 1;
+            const photoIndex = container.getElementsByClassName('photo-message').length - 1;
             let chunks = [];
             let cachedChunks = await getFileChunksFromCache(db, fileId);
             if (cachedChunks && cachedChunks.length) {
@@ -3420,10 +3556,13 @@
                         await storeFileChunk(db, fileId, value)
                         chunks.push(value);
                         receivedSize += value.length;
-                        document.getElementsByClassName('size-downloaded')[index].textContent = getStandardSize(receivedSize)
-                        document.getElementsByClassName('total-size')[index].textContent = "/" + getStandardSize(totalSize)
                         const progress = Math.floor((100 * receivedSize) / (totalSize))
-                        document.getElementsByClassName('bar')[index].style.width = progress + "%";
+                        if (!isPhoto) {
+                            container.getElementsByClassName('size-downloaded')[fileIndex].textContent = getStandardSize(receivedSize)
+                            container.getElementsByClassName('total-size')[fileIndex].textContent = "/" + getStandardSize(totalSize)
+                            container.getElementsByClassName('bar')[fileIndex].style.width = progress + "%";
+                        }
+
                     } else {
                         console.warn('Received empty chunk');
                     }
@@ -3432,26 +3571,27 @@
 
             }
 
-            let previewContainer = document.getElementsByClassName('file-preview')[index]
-            filePreviewFromChunks(previewContainer, chunks, fileType)
+            if (isPhoto) {
+                const photoContainer = container.getElementsByClassName("photo-container")[photoIndex];
+                filePreviewFromChunks(photoContainer, chunks, fileType, true)
+            }
+            else {
+                const previewContainer = container.getElementsByClassName('file-preview')[fileIndex]
+                filePreviewFromChunks(previewContainer, chunks, fileType, false)
+            }
+
             const blob = new Blob(chunks, { type: fileType });
             const link = URL.createObjectURL(blob)
             const data = JSON.stringify({ fileName, link })
-            document.getElementsByClassName('file-downloader')[index].classList.add("hide")
-            document.getElementsByClassName('file-downloader')[index].classList.remove("show")
-
-            document.getElementsByClassName('file-actions')[index].classList.remove("hide")
-            document.getElementsByClassName('file-actions')[index].classList.add("show")
-
             localStorage.setItem(fileId, data)
-
-            document.getElementsByClassName('save-as')[index].addEventListener('click', e => {
-                downloadCachedFile(link, fileName)
-            })
-            document.getElementsByClassName('open')[index].addEventListener('click', e => {
-                openCachedFile(link)
-            })
-
+            if (!isPhoto) {
+                container.getElementsByClassName('file-downloader')[fileIndex].classList.add("hide")
+                container.getElementsByClassName('file-downloader')[fileIndex].classList.remove("show")
+                container.getElementsByClassName('file-actions')[fileIndex].classList.remove("hide")
+                container.getElementsByClassName('file-actions')[fileIndex].classList.add("show")
+                container.getElementsByClassName('save-as')[fileIndex].addEventListener('click', e => { downloadCachedFile(link, fileName) })
+                container.getElementsByClassName('open')[fileIndex].addEventListener('click', e => { openCachedFile(link) })
+            }
 
         } catch (error) {
             console.error('Error downloading file:', error);
@@ -3521,14 +3661,17 @@
     }
 
 
-    function previewFile(container, file, receivePreview) {
+    function previewFile(container, file, receivePreview, isPhoto) {
         container.innerHTML = ""
         if (file) {
             const reader = new FileReader();
             if (file.type.startsWith('image/')) {
                 reader.onload = function (e) {
                     const img = document.createElement('img');
-                    if (receivePreview) {
+                    if (isPhoto) {
+                        img.classList.add('photo-image-element');
+                    }
+                    else if (receivePreview) {
 
                         img.classList.add('preview-element-alt')
                     }
@@ -3609,12 +3752,13 @@
                 container.style.display = 'none'
             }
         }
+
     }
 
-    function filePreviewFromChunks(container, chunks, fileType) {
+    function filePreviewFromChunks(container, chunks, fileType, isPhoto) {
         const blob = new Blob(chunks, { type: fileType });
         const file = new File([blob], "tempFile", { type: fileType });
-        previewFile(container, file, true);
+        previewFile(container, file, true, isPhoto);
     }
 
 
@@ -3810,19 +3954,6 @@
     }
 
 
-    // let container = document.getElementsByClassName('chat-container')[0];
-
-    // let lastScrollTop = container.scrollTop;
-
-    // container.addEventListener('scroll', e => {
-    //     let currentScrollTop = container.scrollTop;
-    //     if (currentScrollTop < lastScrollTop) {
-    //         autoScroll = false;
-    //     }
-
-    // })
-
-
     function isScrolledToMax(element) {
         return element.scrollTop + element.clientHeight >= element.scrollHeight;
     }
@@ -3916,6 +4047,7 @@
         container.appendChild(createChatInfo("<i class='fas fa-lock'></i> Messages to this chat are end to end encrypted. Stop worrying about the security."));
 
         document.getElementsByClassName('chat-container-wrapper')[0].appendChild(container);
+        scrollToBottom();
 
         let unreadCount = 0;
         let visitedUnreadMessage = false;
@@ -3950,8 +4082,12 @@
             else if (message.type == 'file') {
 
                 writeFileMessage(container, message.file_details, message.message, message.time, message.sender == myid, true, message.state == 0, message.status == 1, message.replyIndex, true);
-                downloadFileFromServer(message.fileId, message.file_details.name, message.file_details.type)
+                downloadFileFromServer(container, message.fileId, message.file_details.name, message.file_details.type)
 
+            }
+            else if (message.type == 'photo') {
+                writePhotoMessage(container, message.file_details, message.message, message.time, message.sender == myid, true, message.state == 0, message.status == 1, message.replyIndex, true);
+                downloadFileFromServer(container, message.fileId, message.file_details.name, message.file_details.type, true)
             }
 
 
