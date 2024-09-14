@@ -69,7 +69,7 @@ initializeDatabase().then(() => {
         const user = await db.collection('session_tokens').findOne({ session_id: sessionId });
         if (user) {
             try {
-                await db.collection('devices').updateOne({ userid: user.userid }, { $set: { 'device': req.body } });
+                await db.collection('devices').updateOne({ userid: user.userid }, { $set: { 'device': req.body } }, { upsert: true });
                 res.send({ ok: true })
 
             } catch (error) {
@@ -474,7 +474,6 @@ initializeDatabase().then(() => {
                 await db.collection('users').insertOne({ userid, username, password })
 
                 await db.collection('user_data').insertOne({ userid, gender, friends: [], username, color })
-                await db.collection('devices').insertOne({ userid })
 
                 res.send({ ok: true })
             }

@@ -1122,6 +1122,7 @@ body.light-mode .chat-background {
 
     background-color: var(--my-file-container);
     background-color: #adb96fad;
+    background-color: #8da745;
 }
 
 body.light-mode .my-message .file-container {
@@ -1364,7 +1365,8 @@ body.light-mode .message {
     background-color: var(--my-message-color);
     background-color: #adac8d;
     background-color: #aacf4491;
-    color: var(--sharp-color);
+    background-color: #789134;
+    color: white;
     justify-self: flex-end;
     border-top-right-radius: 0;
     justify-self: flex-end;

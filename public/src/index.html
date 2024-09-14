@@ -21,8 +21,77 @@
 
 </head>
 
+
+<style>
+    .photo-viewer-wrapper {
+        position: absolute;
+        width: 100vw;
+        height: 100vh;
+        background-color: #333;
+        z-index: 10001;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .photo-viewer-wrapper.hide {
+        display: none;
+    }
+
+    .photo-viewer-content {
+
+        display: flex;
+        height: 0%;
+        flex-grow: 1;
+        align-self: center;
+    }
+
+    .photo-viewer-image-element {
+        max-height: 100%;
+        max-width: 100%;
+    }
+
+    .photo-viewer-options {
+        padding: 5px;
+        display: flex;
+        position: relative;
+    }
+
+    .photo-viewer-options-right {
+        position: absolute;
+        right: 10px;
+    }
+
+    .photo-viewer-option {
+        background-color: rgb(61, 60, 60);
+        border: none;
+        padding: 10px 20px;
+        color: white;
+    }
+</style>
+
 <body>
 
+    <div class="photo-viewer-wrapper hide">
+        <div class="photo-viewer-options">
+            <div class="photo-viewer-options-left">
+                <div class="sender">User</div>
+                <div class="time">
+                    26 Aug 15:34
+                </div>
+            </div>
+            <div class="photo-viewer-options-right">
+                <button class="photo-viewer-option fas fa-trash"></button>
+                <button class="photo-viewer-option fas fa-download"></button>
+                <button class="photo-viewer-option fas fa-star"></button>
+            </div>
+        </div>
+
+        <div class="photo-viewer-content">
+            <img class="photo-viewer-image-element" src="../assets/images/chat-background.png" alt="">
+        </div>
+
+
+    </div>
 
     <div class="code-wrapper hide">
         <div class="code-inner-wrapper">
@@ -1858,7 +1927,13 @@
     }
 
     window.addEventListener("popstate", function (event) {
-        if (event.state && event.state.contentId) {
+        const viewer = document.getElementsByClassName('photo-viewer-wrapper')[0]
+        if (!viewer.classList.contains('hide')) {
+            viewer.classList.add('hide')
+            return;
+
+        }
+        else if (event.state && event.state.contentId) {
             if (event.state.contentId == -1) {
                 //notificatons
                 document
@@ -2005,8 +2080,13 @@
             body: formData
         })
             .then(response => response.json())
-            .then(data => {
+            .then(async (data) => {
                 if (data.ok) {
+                    const chunks = await chunkFile(fileDetails, 255 * 1024);
+                    for (const chunk of chunks) {
+                        storeFileChunk(db, data.fileId, chunk)
+                    }
+
                     document.getElementsByClassName('my-message')[data.index].getElementsByClassName('file-actions')[0].classList.add('show')
                     document.getElementsByClassName('my-message')[data.index].getElementsByClassName('file-loader')[0].classList.add('hide')
 
@@ -2491,6 +2571,13 @@
         scrollToBottom();
         addListenersToMessage(messageOuterContainer, messageContainer);
 
+        const photoContainer = messageContainer.getElementsByClassName('photo-container')[0];
+        photoContainer.addEventListener('click', e => {
+            const imageSrc = photoContainer.getElementsByClassName('photo-image-element')[0].src;
+            document.getElementsByClassName("photo-viewer-image-element")[0].src = imageSrc;
+            document.getElementsByClassName('photo-viewer-wrapper')[0].classList.remove('hide')
+        })
+
         return index;
 
 
@@ -2830,7 +2917,7 @@
 
 
             messageInput.placeholder = "Message " + friendUsername;
-            messageInput.focus();
+            // messageInput.focus();
             scrollToBottom();
             currentFriendId = friendId;
             return;
@@ -2878,7 +2965,7 @@
 
 
             messageInput.placeholder = "Message " + friendUsername;
-            messageInput.focus();
+            // messageInput.focus();
         }
     }
 
@@ -3527,9 +3614,11 @@
             let chunks = [];
             let cachedChunks = await getFileChunksFromCache(db, fileId);
             if (cachedChunks && cachedChunks.length) {
+                console.log("Downloading From Local")
                 chunks = cachedChunks
             }
             else {
+                console.log("Downloading From Server")
                 const response = await fetch('/files/id', {
                     method: 'POST',
                     headers: {
@@ -3762,6 +3851,52 @@
     }
 
 
+    function chunkFile(file, chunkSize) {
+        const totalChunks = Math.ceil(file.size / chunkSize);
+        const chunks = [];
+        let currentChunk = 0;
+
+        function readNextChunk() {
+            if (currentChunk >= totalChunks) {
+                return Promise.resolve(); // All chunks processed
+            }
+
+            const start = currentChunk * chunkSize;
+            const end = Math.min(start + chunkSize, file.size);
+            const blob = file.slice(start, end);
+
+            return new Promise((resolve, reject) => {
+                processChunk(blob)
+                    .then(chunkData => {
+                        chunks.push(chunkData);
+                        currentChunk++;
+                        resolve(readNextChunk()); // Process the next chunk
+                    })
+                    .catch(reject);
+            });
+        }
+
+        function processChunk(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+
+                reader.onload = function (event) {
+                    const arrayBuffer = event.target.result;
+                    const uint8Array = new Uint8Array(arrayBuffer);
+                    resolve(uint8Array); // Resolve with the chunk data
+                };
+
+                reader.onerror = function (error) {
+                    reject(error); // Reject on error
+                };
+
+                reader.readAsArrayBuffer(blob);
+            });
+        }
+
+        return readNextChunk().then(() => chunks); // Return the array of chunks
+    }
+
 
     const dbPromise = indexedDB.open('database', 1);
 
@@ -3818,18 +3953,6 @@
                 console.error("Error fetching file chunks: ", request.error);
                 reject(request.error);
             };
-        });
-    }
-
-    function convertLinksToAnchors(text) {
-        const urlPattern = /(\b(?:https?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-zA-Z]{2,6}\b(?:[-a-zA-Z0-9@:%_\+.~#?&//=]*))/gi;
-        return text.replace(urlPattern, function (url) {
-            let href = url;
-            // Add default protocol if missing
-            if (!/^https?:\/\//i.test(url)) {
-                href = 'http://' + url;
-            }
-            return `<a href="${href}" class="message-link" target="_blank">${url}</a>`;
         });
     }
 
