@@ -22,72 +22,28 @@
 </head>
 
 
-<style>
-    .photo-viewer-wrapper {
-        position: absolute;
-        width: 100vw;
-        height: 100vh;
-        background-color: #333;
-        z-index: 10001;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .photo-viewer-wrapper.hide {
-        display: none;
-    }
-
-    .photo-viewer-content {
-
-        display: flex;
-        height: 0%;
-        flex-grow: 1;
-        align-self: center;
-    }
-
-    .photo-viewer-image-element {
-        max-height: 100%;
-        max-width: 100%;
-    }
-
-    .photo-viewer-options {
-        padding: 5px;
-        display: flex;
-        position: relative;
-    }
-
-    .photo-viewer-options-right {
-        position: absolute;
-        right: 10px;
-    }
-
-    .photo-viewer-option {
-        background-color: rgb(61, 60, 60);
-        border: none;
-        padding: 10px 20px;
-        color: white;
-    }
-</style>
 
 <body>
 
     <div class="photo-viewer-wrapper hide">
         <div class="photo-viewer-options">
             <div class="photo-viewer-options-left">
-                <div class="sender">User</div>
-                <div class="time">
-                    26 Aug 15:34
+                <div class="photo-viewer-sender"></div>
+                <div class="photo-viewer-time">
+
                 </div>
             </div>
             <div class="photo-viewer-options-right">
-                <button class="photo-viewer-option fas fa-trash"></button>
-                <button class="photo-viewer-option fas fa-download"></button>
-                <button class="photo-viewer-option fas fa-star"></button>
+                <button class="photo-viewer-option ">Save</button>
             </div>
         </div>
 
         <div class="photo-viewer-content">
             <img class="photo-viewer-image-element" src="../assets/images/chat-background.png" alt="">
+        </div>
+
+        <div class="photo-viewer-footer">
+            Viewer By Interact &copy;2024
         </div>
 
 
@@ -500,9 +456,10 @@
                     <div class="file-caption">
                         <div class="caption-input">
 
-                            <input type="text" class="input caption-input-element" placeholder="Caption(optional)">
+                            <textarea type="text" class="input caption-input-element" placeholder="Caption(optional)"
+                                rows="1"></textarea>
                         </div>
-                        <div class="file-send-button fas fa-paper-plane" onclick="preSendFile()">
+                        <div class="file-send-button" onclick="preSendFile()"> Send
                         </div>
                     </div>
                 </div>
@@ -600,7 +557,12 @@
             <div class="chat-end fas fa-arrow-down"
                 onclick="scrollToBottom();document.getElementsByClassName('message-input-element')[0].focus()"></div>
 
+            <div class="top-message-time hide">
+                Today
+
+            </div>
             <div class="chat-container-wrapper">
+
 
             </div>
 
@@ -1689,11 +1651,9 @@
             const recepient = data.recepient;
             if (recepient == currentFriendId) {
                 if (data.typeStatus == true) {
-                    // createTypingSymbol();
                     document.getElementsByClassName('friend-connection-status')[0].style.display = 'none'
                     document.getElementsByClassName('typing-indicator')[0].style.display = 'flex'
                 } else {
-                    // removeTypingSymbol();
                     document.getElementsByClassName('friend-connection-status')[0].style.display = 'flex'
                     document.getElementsByClassName('typing-indicator')[0].style.display = 'none'
                 }
@@ -1934,7 +1894,7 @@
 
         }
         else if (event.state && event.state.contentId) {
-            if (event.state.contentId == -1) {
+            if (event.state.contentId == "notifications") {
                 //notificatons
                 document
                     .getElementsByClassName("nav-active-option")[0]
@@ -2035,6 +1995,23 @@
 
             document.getElementsByClassName('chat-end')[0].style.display = 'none'
         }
+
+        // const topChild = getTopVisibleChild();
+
+        // if (topChild) {
+        //     const messageTimeElement = topChild.getElementsByClassName("message-time")[0];
+        //     const year = messageTimeElement.getElementsByClassName("year")[0].textContent;
+        //     const month = messageTimeElement.getElementsByClassName("month")[0].textContent;
+        //     const day = messageTimeElement.getElementsByClassName("day")[0].textContent;
+
+        //     const relativeDate = getRelativeDate({ year, month, day });
+        //     document.getElementsByClassName("top-message-time")[0].textContent = relativeDate;
+        //     document.getElementsByClassName("top-message-time")[0].classList.remove("hide");
+        //     setTimeout(() => {
+        //         document.getElementsByClassName("top-message-time")[0].classList.add("hide");
+        //     }, 1000);
+
+        // }
 
     })
 
@@ -2395,17 +2372,16 @@
             </div>
             <div class="message-container">
                 <div class="message-content">
-                    ${(message)}
+                    ${(processMessageContent(message))}
                </div>
                    <div class="message-info">
-
                         <div class="message-time">
-
-                        <div class="hrs">${date.hours >= 10 ? date.hours : "0" + date.hours
-            }</div>:
-                        <div class="mins">${date.mins >= 10 ? date.mins : "0" + date.mins
-            }</div>
-                    </div>
+                            <div class="year">${date.year >= 10 ? date.year : "0" + date.year}</div>
+                            <div class="month">${date.month >= 10 ? date.month : "0" + date.month}</div>
+                            <div class="day">${date.day >= 10 ? date.day : "0" + date.day}</div>
+                            <div class="hrs">${date.hours >= 10 ? date.hours : "0" + date.hours}</div>:
+                            <div class="mins">${date.mins >= 10 ? date.mins : "0" + date.mins}</div>
+                        </div>
                     <div class="message-status">
                         <img src="../assets/images/icons8-clock.gif" class="not-sent" style= display:${sent == true ? "none" : "flex"}>
                         <i class="fa-solid fa-circle-xmark circle-icon failed" style="display:none"></i>
@@ -2458,7 +2434,6 @@
         ).indexOf(messageContainer);
 
 
-        scrollToBottom();
         addListenersToMessage(messageOuterContainer, messageContainer);
 
         if (triggerDownload) {
@@ -2469,6 +2444,7 @@
 
         }
 
+        scrollToBottom();
         return index;
 
     }
@@ -2517,23 +2493,21 @@
             </div>
             <div class="message-container">
                 <div class="message-content">
-                    ${(message)}
+                    ${(processMessageContent(message))}
                </div>
                    <div class="message-info">
-
                         <div class="message-time">
-
-                        <div class="hrs">${date.hours >= 10 ? date.hours : "0" + date.hours
-            }</div>:
-                        <div class="mins">${date.mins >= 10 ? date.mins : "0" + date.mins
-            }</div>
-                    </div>
+                            <div class="year">${date.year >= 10 ? date.year : "0" + date.year}</div>
+                            <div class="month">${date.month >= 10 ? date.month : "0" + date.month}</div>
+                            <div class="day">${date.day >= 10 ? date.day : "0" + date.day}</div>
+                            <div class="hrs">${date.hours >= 10 ? date.hours : "0" + date.hours}</div>:
+                            <div class="mins">${date.mins >= 10 ? date.mins : "0" + date.mins}</div>
+                        </div>
                     <div class="message-status">
                         <img src="../assets/images/icons8-clock.gif" class="not-sent" style= display:${sent == true ? "none" : "flex"}>
                         <i class="fa-solid fa-circle-xmark circle-icon failed" style="display:none"></i>
 
-                        <i class="fas fa-check-circle message-tick ${seen == true ? "blue-tick" : ""
-            }" style=display:${sent == false ? "none" : "flex"}></i>
+                        <i class="fas fa-check-circle message-tick ${seen == true ? "blue-tick" : ""}" style=display:${sent == false ? "none" : "flex"}></i>
                     </div>
 
                     </div>
@@ -2568,16 +2542,18 @@
         ).indexOf(messageContainer);
 
 
-        scrollToBottom();
         addListenersToMessage(messageOuterContainer, messageContainer);
 
         const photoContainer = messageContainer.getElementsByClassName('photo-container')[0];
         photoContainer.addEventListener('click', e => {
             const imageSrc = photoContainer.getElementsByClassName('photo-image-element')[0].src;
             document.getElementsByClassName("photo-viewer-image-element")[0].src = imageSrc;
+            document.getElementsByClassName("photo-viewer-sender")[0].textContent = myMessage ? userInfo.username + "   (You)" : userInfo.friendUsernames[userInfo.friends.indexOf(currentFriendId)];
+            document.getElementsByClassName("photo-viewer-time")[0].textContent = getSmartDate(date);
             document.getElementsByClassName('photo-viewer-wrapper')[0].classList.remove('hide')
         })
 
+        scrollToBottom();
         return index;
 
 
@@ -2741,22 +2717,22 @@
             <div class="message-container">
                 <div class="message-content">
                            ${processMessageContent(message)}
+                           
                </div>
                    <div class="message-info">
 
                         <div class="message-time">
-
-                        <div class="hrs">${date.hours >= 10 ? date.hours : "0" + date.hours
-            }</div>:
-                        <div class="mins">${date.mins >= 10 ? date.mins : "0" + date.mins
-            }</div>
-                    </div>
-                    <div class="message-status">
-                        <img src="../assets/images/icons8-clock.gif" class="not-sent" style= display:${sent == true ? "none" : "flex"}>
-                        <i class="fa-solid fa-circle-xmark circle-icon failed" style="display:none"></i>
-                        <i class="fas fa-check-circle message-tick ${seen == true ? "blue-tick" : ""
-            }" style=display:${sent == false ? "none" : "flex"}></i>
-                    </div>
+                            <div class="year">${date.year >= 10 ? date.year : "0" + date.year}</div>
+                            <div class="month">${date.month >= 10 ? date.month : "0" + date.month}</div>
+                            <div class="day">${date.day >= 10 ? date.day : "0" + date.day}</div>
+                            <div class="hrs">${date.hours >= 10 ? date.hours : "0" + date.hours}</div>:
+                            <div class="mins">${date.mins >= 10 ? date.mins : "0" + date.mins}</div>
+                        </div>
+                        <div class="message-status">
+                            <img src="../assets/images/icons8-clock.gif" class="not-sent" style= display:${sent == true ? "none" : "flex"}>
+                            <i class="fa-solid fa-circle-xmark circle-icon failed" style="display:none"></i>
+                            <i class="fas fa-check-circle message-tick ${seen == true ? "blue-tick" : ""}" style=display:${sent == false ? "none" : "flex"}></i>
+                        </div>
 
                     </div>
                 
@@ -2781,9 +2757,9 @@
         let index = Array.from(
             document.getElementsByClassName("my-message")
         ).indexOf(messageContainer);
-        scrollToBottom();
         addListenersToMessage(messageOuterContainer, messageContainer);
         enableCodeCopy(messageContainer);
+        scrollToBottom();
         return index;
     }
 
@@ -2957,7 +2933,6 @@
 
 
             }
-            scrollToBottom()
 
             let messageInput = document.getElementsByClassName(
                 "message-input-element"
@@ -3062,16 +3037,6 @@
         if (unreadMessagesTag.length) {
             unreadMessagesTag[0].remove();
         }
-    }
-
-    function createTypingSymbol() {
-        const typingElement = document.getElementsByClassName("typing")[0];
-        const chatContainer =
-            document.getElementsByClassName("chat-container")[0];
-        chatContainer.appendChild(typingElement);
-
-        typingElement.style.display = "flex";
-        scrollToBottom();
     }
 
     function removeTypingSymbol() {
@@ -3357,9 +3322,6 @@
         document.getElementsByClassName("welcome-page")[0].classList.add('show');
         document.getElementsByClassName("chat-wrapper")[0].classList.add('hide');
         history.pushState({ contentId: "notifications" }, "", "/notifications");
-
-        // document.getElementsByClassName("notifications-container")[0].innerHTML =
-        //     '<div class="center" style="height:100%">Loading <i class="fas fa-spinner fa-spin loader-element"></i></div>';
 
         sendPostRequest('/notifications-seen', {})
         return;
@@ -3960,46 +3922,41 @@
     //testing for push notifications
 
     const publicVapidKey = 'BE-Y9hALujcoIQGb6U3cxsUlszhT8KhYoLSy7T6wA6U8rNJP-f5dACdsNK6ZSJXeX0jr0hcJCkixV3j6hwh3KK8'; // Replace with your public VAPID key
-    navigator.serviceWorker.ready.then(function (registration) {
-        return registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: publicVapidKey
-        });
-    }).then(function (subscription) {
-        // Send the subscription to the server to save it
-        fetch('/subscribe', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(subscription)
-        })
-            .then(response => response.json())
-            .then(data => console.log('Subscription saved:', data))
-            .catch(error => console.error('Error saving subscription:', error));
-    }).catch(function (error) {
-        console.error('Failed to subscribe:', error);
-    });
-
-
-
     async function subscribeUser() {
-        const registration = await navigator.serviceWorker.register('/src/sw.js');
-        const subscription = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
-        });
+        try {
+            // Register the service worker
+            const registration = await navigator.serviceWorker.register('/src/sw.js');
 
-        await fetch('/subscribe', {
-            method: 'POST',
-            body: JSON.stringify(subscription),
-            headers: {
-                'Content-Type': 'application/json'
+            // Check if the user is already subscribed
+            let subscription = await registration.pushManager.getSubscription();
+
+            if (!subscription) {
+                // If not subscribed, subscribe the user
+                subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
+                });
+
+                // Send the subscription to the server to save it
+                await fetch('/subscribe', {
+                    method: 'POST',
+                    body: JSON.stringify(subscription),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                console.log('Subscription saved:', subscription);
+            } else {
+                console.log('User is already subscribed:', subscription);
             }
-        });
+        } catch (error) {
+            console.error('Failed to subscribe:', error);
+        }
     }
 
     subscribeUser()
+
     function urlBase64ToUint8Array(base64String) {
         const padding = '='.repeat((4 - base64String.length % 4) % 4);
         const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
@@ -4011,17 +3968,6 @@
         }
 
         return outputArray;
-    }
-
-
-    async function sendMeNotification() {
-
-        let response = await sendPostRequest("/test-notification", {});
-        if (response.ok == false) {
-            subscribeUser();
-        }
-
-
     }
 
 
@@ -4099,6 +4045,7 @@
             }
             else {
                 let text = getGoodHTML(escapeHtml(fragments[i]));
+                // text = convertToMarkdownLinks(text);
                 html += markdownToHtml(text);
             }
         }
@@ -4132,6 +4079,36 @@
 
         return text;
     }
+
+    function convertToMarkdownLinks(text) {
+        // Regex pattern to match URLs that start with http, https, www, or a domain and may include paths
+        const urlPattern = /(?<!\]\()((https?:\/\/[^\s\[\]()]+|www\.[^\s\[\]()]+|[^\s\[\]()]+(?:\.[a-z]{2,})(?:\/[^\s]*)?))(?!\()/gi;
+        const markdownPattern = /\[([^\]]+)\]\((https?:\/\/[^\s]+)\)/gi;
+
+        // Function to check if a URL is valid
+        function isValidLink(link) {
+            const validEndings = [".com", ".org", ".net", ".edu", ".gov", ".io", ".co", ".us", ".uk"];
+            if (link.startsWith("https://www.")) {
+                return true;
+            }
+            return validEndings.some(ending => link.endsWith(ending));
+        }
+
+        // Replace raw URLs with Markdown links
+        return text.replace(urlPattern, (match) => {
+            // Ensure the match is not part of an existing Markdown link
+            const surroundingText = text.slice(Math.max(text.indexOf(match) - 20, 0), text.indexOf(match) + match.length + 20);
+            if (markdownPattern.test(surroundingText)) {
+                return match;
+            }
+
+            // Convert raw URL to Markdown link
+            return isValidLink(match) ? `[${match}](${match})` : match;
+        });
+    }
+
+
+
 
     function copyHTML(html, element) {
         navigator.clipboard.write(getGoodHTML(escapeHtml(html)))
@@ -4167,10 +4144,14 @@
         const chatBackground = document.createElement('div');
         chatBackground.className = 'chat-background';
         container.appendChild(chatBackground)
+
+        const topMessageTime = document.createElement('div')
+        topMessageTime.className = 'top-message-time';
+        topMessageTime.textContent = 'Yesterday'
+        // container.appendChild(topMessageTime)
         container.appendChild(createChatInfo("<i class='fas fa-lock'></i> Messages to this chat are end to end encrypted. Stop worrying about the security."));
 
         document.getElementsByClassName('chat-container-wrapper')[0].appendChild(container);
-        scrollToBottom();
 
         let unreadCount = 0;
         let visitedUnreadMessage = false;
@@ -4219,6 +4200,38 @@
 
     }
 
+
+    function getSmartDate(date) {
+        // Array of month abbreviations
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        // Get the date components from the date object
+        const day = String(date.day).padStart(2, '0'); // Pad single digits to two digits
+        const month = months[date.month - 1]; // Get the month abbreviation
+        const year = date.year;
+        const hours = String(date.hours).padStart(2, '0'); // Pad hours to two digits
+        const mins = String(date.mins).padStart(2, '0'); // Pad minutes to two digits
+
+        // Format the date string
+        return `${day} ${month} ${year} ${hours}:${mins}`;
+    }
+
+
+    function getTopVisibleChild() {
+        const parent = document.getElementsByClassName("chat-container-wrapper")[0];
+        const children = parent.getElementsByClassName("message-outer-container");
+        const parentRect = parent.getBoundingClientRect();
+
+        for (let child of children) {
+            const childRect = child.getBoundingClientRect();
+
+            // Check if the top of the child is at or above the top of the parent
+            if (childRect.top >= parentRect.top && childRect.top <= parentRect.bottom) {
+                return child;  // Return the first visible child at the top
+            }
+        }
+        return null;  // In case no child is in the viewport
+    }
 
 </script>
 

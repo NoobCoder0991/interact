@@ -44,23 +44,11 @@ initializeDatabase().then(() => {
     });
     app.use(sessionMiddleware);
     app.use(cookieParser());
-
     //request a test notification
 
-    app.post('/test-notification', async (req, res) => {
-        const { db, gfs } = getDatabase();
-        const sessionId = req.session.sessionId;
-        const user = await db.collection('session_tokens').findOne({ session_id: sessionId });
-        if (user) {
-            const device = await db.collection('devices').findOne({ userid: user.userid }, { projection: { _id: 0, device: 1 } })
-            let response = await notifcations.sendNotification(device.device, { sender: "Shafaat", content: "Hello bro, how are you" })
-            res.send(response)
-        }
-        else {
-            res.send({ ok: false, errMessage: "user not registered" })
-        }
+    const { db, gfs } = getDatabase();
 
-    })
+
 
     //subscribing the push notifcations user
     app.post('/subscribe', async (req, res) => {
