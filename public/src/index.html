@@ -17,13 +17,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
     <script src="https://unpkg.com/prettier@2.8.8/standalone.js"></script>
     <script src="https://unpkg.com/prettier@2.8.8/parser-babel.js"></script> <!-- Parser for JavaScript -->
-
-
 </head>
 
 
 
 <body>
+
 
     <div class="photo-viewer-wrapper hide">
         <div class="photo-viewer-options">
@@ -2516,8 +2515,6 @@
 
                 
             </div>
-        
-      
                     `;
 
         messageContainer.innerHTML = htm;
@@ -3321,6 +3318,7 @@
         )[0].classList.remove('hide')
         document.getElementsByClassName("welcome-page")[0].classList.add('show');
         document.getElementsByClassName("chat-wrapper")[0].classList.add('hide');
+        document.getElementsByClassName('welcome-page')[0].classList.remove("hide")
         history.pushState({ contentId: "notifications" }, "", "/notifications");
 
         sendPostRequest('/notifications-seen', {})

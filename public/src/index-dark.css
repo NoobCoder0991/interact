@@ -1279,7 +1279,6 @@ body.light-mode .replying-to-username {
     transition: transform 0.4s ease, opacity 0.4s ease;
     cursor: default;
     color: var(--sharp-color);
-    user-select: none;
 }
 
 

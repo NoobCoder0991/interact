@@ -228,14 +228,14 @@ initializeDatabase().then(() => {
                     }
 
                 }
-                if (recepients && recepients.length == 0) {
+                if (!recepients || (recepients && recepients.length == 0)) {
                     //offline recepients
+                    console.log("here")
                     const device = await db.collection('devices').findOne({ userid: data.receiver }, { projection: { _id: 0, device: 1 } })
                     if (device) {
                         const sender_data = await db.collection('user_data').findOne({ userid: data.sender }, { projection: { _id: 0, username: 1 } });
                         const devices = device.device
                         for (const device of devices) {
-
                             await notifcations.sendNotification(device, { sender: sender_data.username, content: data.message })
                         }
                     }
