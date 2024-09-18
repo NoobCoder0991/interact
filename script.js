@@ -230,7 +230,6 @@ initializeDatabase().then(() => {
                 }
                 if (!recepients || (recepients && recepients.length == 0)) {
                     //offline recepients
-                    console.log("here")
                     const device = await db.collection('devices').findOne({ userid: data.receiver }, { projection: { _id: 0, device: 1 } })
                     if (device) {
                         const sender_data = await db.collection('user_data').findOne({ userid: data.sender }, { projection: { _id: 0, username: 1 } });
