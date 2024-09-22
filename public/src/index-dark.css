@@ -63,6 +63,8 @@
     background-color: var(--accent-color);
 }
 
+
+
 body {
     /* font-family: "Roboto", sans-serif; */
     font-weight: 400;
@@ -988,9 +990,9 @@ body.light-mode .empty-chat {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    overflow: auto;
-    scroll-behavior: auto;
-    scrollbar-width: none;
+    /* overflow: auto; */
+    /* scroll-behavior: auto; */
+    /* scrollbar-width: none; */
     display: none;
 }
 
@@ -1053,8 +1055,19 @@ body.light-mode .chat-background {
     background-color: #8da745;
 }
 
-.my-message a {
+.my-message a,
+.friend-message a {
     color: var(--accent-bright);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.my-message a:hover {
+    text-decoration: underline;
+}
+
+.friend-message a:hover {
+    text-decoration: underline;
 }
 
 body.light-mode .my-message .file-container {
@@ -1169,6 +1182,7 @@ body.light-mode .chat-end {
     position: relative;
     padding: 1px 10px;
     margin: 0;
+    box-sizing: border-box;
 }
 
 .first-message {
@@ -1368,10 +1382,7 @@ body.light-mode .selected-message {
 }
 
 .chat-input-wrapper {
-    position: sticky;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -1380,8 +1391,6 @@ body.light-mode .selected-message {
     border-top: 1px solid var(--container-color);
 
 }
-
-
 
 .chat-input-wrapper>div {
     height: 100%;
@@ -1438,7 +1447,6 @@ body.light-mode .message-input-element {
 
 .message-time {
     display: flex;
-    font-size: small;
     justify-content: flex-end;
     margin-right: 1%;
 }
@@ -1564,10 +1572,13 @@ body.light-mode .friend-connection-status {
 
 .message-info {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     align-items: center;
-    margin-left: 30px;
-    align-self: flex-end;
+    margin-left: 20px;
+    float: right;
+    display: inline-flex;
+    margin-top: 10px;
+    font-size: x-small;
 
 }
 
@@ -2253,7 +2264,8 @@ body.light-mode .typing-indicator-2 {
 .message-menu-wrapper {
     position: absolute;
     z-index: 10;
-    background-color: var(--dark-sharp-color);
+    /* background-color: var(--dark-sharp-color); */
+    background-color: var(--body-color);
     box-shadow: 0px 0px 1px #666;
     border-radius: 8px;
     display: flex;
@@ -3036,6 +3048,27 @@ a {
 .photo-viewer-sender {
     font-weight: bold;
     margin-right: 10px;
+}
+
+.generating-cursor {
+    display: inline-flex;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: white;
+    margin-left: 5px;
+    animation: 0.8s generate linear infinite;
+}
+
+@keyframes generate {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+
 }
 
 

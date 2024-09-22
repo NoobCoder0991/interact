@@ -563,6 +563,7 @@
 
             </div>
             <div class="chat-container-wrapper">
+                <div class="chat-background"></div>
 
 
             </div>
@@ -572,7 +573,6 @@
                     <div class="reply-message-info">
                         <div class="friend-name"></div>
                         <div class="reply-message-content">
-
                         </div>
                     </div>
 
@@ -1988,7 +1988,7 @@
 
     document.getElementsByClassName('chat-container-wrapper')[0].addEventListener('scroll', e => {
         const element = document.getElementsByClassName('chat-container-wrapper')[0]
-        const isScrolledToBottom = element.scrollTop + element.clientHeight >= element.scrollHeight;
+        const isScrolledToBottom = element.scrollTop + element.clientHeight >= element.scrollHeight - 1;
         if (!isScrolledToBottom) {
             document.getElementsByClassName('chat-end')[0].style.display = 'flex'
         }
@@ -1997,23 +1997,21 @@
             document.getElementsByClassName('chat-end')[0].style.display = 'none'
         }
 
-        // const topChild = getTopVisibleChild();
+        const topChild = getTopVisibleChild();
 
-        // if (topChild) {
-        //     const messageTimeElement = topChild.getElementsByClassName("message-time")[0];
-        //     const year = messageTimeElement.getElementsByClassName("year")[0].textContent;
-        //     const month = messageTimeElement.getElementsByClassName("month")[0].textContent;
-        //     const day = messageTimeElement.getElementsByClassName("day")[0].textContent;
+        if (topChild) {
+            const messageTimeElement = topChild.getElementsByClassName("message-time")[0];
+            const year = messageTimeElement.getElementsByClassName("year")[0].textContent;
+            const month = messageTimeElement.getElementsByClassName("month")[0].textContent;
+            const day = messageTimeElement.getElementsByClassName("day")[0].textContent;
 
-        //     const relativeDate = getRelativeDate({ year, month, day });
-        //     document.getElementsByClassName("top-message-time")[0].textContent = relativeDate;
-        //     document.getElementsByClassName("top-message-time")[0].classList.remove("hide");
-        //     setTimeout(() => {
-        //         document.getElementsByClassName("top-message-time")[0].classList.add("hide");
-        //     }, 1000);
-
-        // }
-
+            const relativeDate = getRelativeDate({ year, month, day });
+            document.getElementsByClassName("top-message-time")[0].textContent = relativeDate;
+            document.getElementsByClassName("top-message-time")[0].classList.remove("hide");
+            setTimeout(() => {
+                document.getElementsByClassName("top-message-time")[0].classList.add("hide");
+            }, 1000);
+        }
     })
 
     async function sendPostRequest(url, data) {
@@ -2207,7 +2205,13 @@
                 try {
                     while (true) {
                         const { done, value } = await reader.read();
-                        if (done) break;
+                        if (done) {
+                            const messageContainer = document.getElementsByClassName('friend-message')[streamingIndex];
+                            messageContainer.getElementsByClassName("generating-cursor")[0].style.display = 'none'
+
+                            break;
+
+                        }
                         result = decoder.decode(value, { stream: true });
 
                         totalMessageResult += result;
@@ -2225,7 +2229,7 @@
                             }
                             else {
                                 const messageContainer = document.getElementsByClassName('friend-message')[streamingIndex];
-                                messageContainer.getElementsByClassName('message-content')[0].innerHTML = (processMessageContent(totalMessageResult));
+                                messageContainer.getElementsByClassName('message-content')[0].innerHTML = (processMessageContent(totalMessageResult) + "<span class='generating-cursor'></span>");
                                 enableCodeCopy(messageContainer)
                                 if (autoScroll) {
 
@@ -2373,9 +2377,11 @@
             </div>
             <div class="message-container">
                 <div class="message-content">
-                    ${(processMessageContent(message))}
-               </div>
-                   <div class="message-info">
+                    <span class="message-content-inner">
+                        ${(processMessageContent(message))}
+
+                    </span>
+                    <div class="message-info">
                         <div class="message-time">
                             <div class="year">${date.year >= 10 ? date.year : "0" + date.year}</div>
                             <div class="month">${date.month >= 10 ? date.month : "0" + date.month}</div>
@@ -2383,15 +2389,16 @@
                             <div class="hrs">${date.hours >= 10 ? date.hours : "0" + date.hours}</div>:
                             <div class="mins">${date.mins >= 10 ? date.mins : "0" + date.mins}</div>
                         </div>
-                    <div class="message-status">
-                        <img src="../assets/images/icons8-clock.gif" class="not-sent" style= display:${sent == true ? "none" : "flex"}>
-                        <i class="fa-solid fa-circle-xmark circle-icon failed" style="display:none"></i>
+                        <div class="message-status">
+                            <img src="../assets/images/icons8-clock.gif" class="not-sent" style= display:${sent == true ? "none" : "flex"}>
+                            <i class="fa-solid fa-circle-xmark circle-icon failed" style="display:none"></i>
 
-                        <i class="fas fa-check-circle message-tick ${seen == true ? "blue-tick" : ""
-            }" style=display:${sent == false ? "none" : "flex"}></i>
-                    </div>
+                            <i class="fas fa-check-circle message-tick ${seen == true ? "blue-tick" : ""}" style=display:${sent == false ? "none" : "flex"}></i>
+                        </div>
 
                     </div>
+               </div>
+          
                 
             </div>
 
@@ -2494,9 +2501,11 @@
             </div>
             <div class="message-container">
                 <div class="message-content">
-                    ${(processMessageContent(message))}
-               </div>
-                   <div class="message-info">
+                    <span class="message-content-inner">
+                        ${(processMessageContent(message))}
+
+                    </span>
+                          <div class="message-info">
                         <div class="message-time">
                             <div class="year">${date.year >= 10 ? date.year : "0" + date.year}</div>
                             <div class="month">${date.month >= 10 ? date.month : "0" + date.month}</div>
@@ -2504,14 +2513,16 @@
                             <div class="hrs">${date.hours >= 10 ? date.hours : "0" + date.hours}</div>:
                             <div class="mins">${date.mins >= 10 ? date.mins : "0" + date.mins}</div>
                         </div>
-                    <div class="message-status">
-                        <img src="../assets/images/icons8-clock.gif" class="not-sent" style= display:${sent == true ? "none" : "flex"}>
-                        <i class="fa-solid fa-circle-xmark circle-icon failed" style="display:none"></i>
+                        <div class="message-status">
+                            <img src="../assets/images/icons8-clock.gif" class="not-sent" style= display:${sent == true ? "none" : "flex"}>
+                            <i class="fa-solid fa-circle-xmark circle-icon failed" style="display:none"></i>
 
-                        <i class="fas fa-check-circle message-tick ${seen == true ? "blue-tick" : ""}" style=display:${sent == false ? "none" : "flex"}></i>
-                    </div>
+                            <i class="fas fa-check-circle message-tick ${seen == true ? "blue-tick" : ""}" style=display:${sent == false ? "none" : "flex"}></i>
+                        </div>
 
                     </div>
+               </div>
+             
                 
             </div>
 
@@ -2715,10 +2726,11 @@
             </div>
             <div class="message-container">
                 <div class="message-content">
-                           ${processMessageContent(message)}
-                           
-               </div>
-                   <div class="message-info">
+                    <span class="message-content-inner">
+                        ${(processMessageContent(message))}
+
+                    </span>
+                    <div class="message-info">
 
                         <div class="message-time">
                             <div class="year">${date.year >= 10 ? date.year : "0" + date.year}</div>
@@ -2734,6 +2746,9 @@
                         </div>
 
                     </div>
+                           
+               </div>
+    
                 
             </div>
 
@@ -3208,7 +3223,6 @@
                 "recent-messages-container"
             )[0].style.display = "flex";
             document.getElementsByClassName("chat-search-input")[0].value = "";
-
             selectedMessageIndex = null;
             document.getElementsByClassName('reply-message-wrapper')[0].style.display = 'none'
             messageInput.focus();
@@ -4150,7 +4164,7 @@
         container.className = `chat-container active-chat-container  chat-container-${containerId}`;
         const chatBackground = document.createElement('div');
         chatBackground.className = 'chat-background';
-        container.appendChild(chatBackground)
+        // container.appendChild(chatBackground)
 
         const topMessageTime = document.createElement('div')
         topMessageTime.className = 'top-message-time';

@@ -18,7 +18,7 @@ async function* getAIResponse(db, userid, query) {
             // model: "meta-llama/Meta-Llama-3-8B-Instruct",
             model: 'mistralai/Mistral-Nemo-Instruct-2407',
             messages: messages,
-            max_tokens: 500,
+            max_tokens: 800,
         })) {
             // Extract and yield content from each chunk
             const content = chunk.choices[0]?.delta?.content || "";

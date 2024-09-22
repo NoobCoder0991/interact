@@ -1057,9 +1057,9 @@ body.light-mode .empty-chat {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    overflow: auto;
-    scroll-behavior: auto;
-    scrollbar-width: none;
+    /* overflow: auto; */
+    /* scroll-behavior: auto;
+    scrollbar-width: none; */
     display: none;
 }
 
@@ -1436,10 +1436,7 @@ body.light-mode .selected-message {
 }
 
 .chat-input-wrapper {
-    position: sticky;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -1630,13 +1627,19 @@ body.light-mode .friend-connection-status {
     margin: 0 0.8vw;
 }
 
+
 .message-info {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     align-items: center;
-    margin-left: 30px;
-    align-self: flex-end;
+    margin-left: 20px;
+    float: right;
+    display: inline-flex;
+    margin-top: 10px;
+    font-size: x-small;
+
 }
+
 
 .message-content {
     flex-grow: 1;
@@ -3007,6 +3010,15 @@ pre {
     font-size: small;
 }
 
+.my-message a {
+    color: var(--accent-bright);
+    text-decoration: none;
+}
+
+.my-message a:hover {
+    text-decoration: underline;
+}
+
 a {
     color: var(--accent-bright);
 }
@@ -3015,7 +3027,8 @@ a {
 
     background-color: var(--active-color);
     padding: 5px 10px;
-    background-color: #161515;
+    background-color: var(--body-color);
+    color: var(--sharp-color);
     position: absolute;
     left: 50%;
     transform: translate(-50%, 15vh);

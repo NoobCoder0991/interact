@@ -231,9 +231,10 @@ initializeDatabase().then(() => {
                 if (!recepients || (recepients && recepients.length == 0)) {
                     //offline recepients
                     const device = await db.collection('devices').findOne({ userid: data.receiver }, { projection: { _id: 0, device: 1 } })
-                    if (device) {
+                    if (device && device.device) {
                         const sender_data = await db.collection('user_data').findOne({ userid: data.sender }, { projection: { _id: 0, username: 1 } });
                         const devices = device.device
+
                         for (const device of devices) {
                             await notifcations.sendNotification(device, { sender: sender_data.username, content: data.message })
                         }
@@ -882,7 +883,6 @@ initializeDatabase().then(() => {
             }
 
 
-
         } catch (error) {
 
             res.send({ ok: false, errMessage: error })
@@ -891,8 +891,12 @@ initializeDatabase().then(() => {
     })
 
 }).catch(err => {
+
     console.error("Failed to initialize database", err);
-    process.exit(1);
+    // process.exit(1);
+    app.use((req, res, next) => {
+        res.status(500).send("<h2>Internal Server Error</h2>");
+    });
 })
 
 
