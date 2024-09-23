@@ -14,7 +14,6 @@ webPush.setVapidDetails('mailto:shafaath508@gmail.com', publicVapidKey, privateV
 
 async function sendNotification(device, message) {
 
-
     if (device) {
         const payload = JSON.stringify({
             title: `New Message from ${message.sender}`,

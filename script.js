@@ -465,7 +465,7 @@ initializeDatabase().then(() => {
                 const userid = await db.collection('users').countDocuments() + 1;
                 await db.collection('users').insertOne({ userid, username, password })
 
-                await db.collection('user_data').insertOne({ userid, gender, friends: [], username, color })
+                await db.collection('user_data').insertOne({ userid, gender, friends: [-1], username, color })
 
                 res.send({ ok: true })
             }

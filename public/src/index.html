@@ -1333,6 +1333,7 @@
 
     document.getElementById('open-picker').addEventListener('click', function () {
         const picker = document.getElementById('emoji-picker');
+        console.log("Hello world this is picker")
         if (picker.style.display === 'none') {
             picker.style.display = 'flex';
             document.getElementById('file-picker').style.display = 'none'
@@ -2105,8 +2106,12 @@
             mins: date.getMinutes(),
         };
         const parentContainer = document.getElementsByClassName(`chat-container-${receiver}`)[0];
+        const photoDimensions = await getPhotoDimensions(fileDetails);
+
+        fileDetails.photoDimensions = photoDimensions;
         let index = writePhotoMessage(parentContainer, fileDetails, message, time, true, false, false, false, replyIndex)
-        const details = { name: fileDetails.name, size: fileDetails.size, type: fileDetails.type }
+
+        const details = { name: fileDetails.name, size: fileDetails.size, type: fileDetails.type, photoDimensions }
         let data = { type: 'photo', sender, receiver, time, message, file_details: details, index }
         formData.append('data', JSON.stringify(data));
 
@@ -2301,8 +2306,28 @@
     function writeFileMessage(parentContainer, fileDetails, message, date, myMessage, sent, delivered, seen, replyIndex, triggerDownload) {
 
         let targetMessage;
-        if (replyIndex) {
-            targetMessage = document.getElementsByClassName('message')[replyIndex]
+        let targetMessageContent;
+        if (replyIndex != undefined) {
+            targetMessage = parentContainer.getElementsByClassName('message')[replyIndex];
+            targetMessageContent = targetMessage.getElementsByClassName("message-content-inner")[0].innerText;
+            if (targetMessage.classList.contains("file-message")) {
+                if (targetMessageContent.length == 0) {
+                    targetMessageContent = "<i class='fas fa-file-alt'></i> " + targetMessage.getElementsByClassName("file-name")[0].textContent;
+                }
+                else {
+                    targetMessageContent = "<i class='fas fa-file-alt'></i> " + targetMessageContent;
+
+                }
+            }
+            else if (targetMessage.classList.contains("photo-message")) {
+                if (targetMessageContent.length == 0) {
+                    targetMessageContent = "<i class='fas fa-image'></i> " + "Image";
+                }
+                else {
+                    targetMessageContent = "<i class='fas fa-image'></i> " + targetMessageContent;
+
+                }
+            }
         }
         let messageOuterContainer = document.createElement('div');
         messageOuterContainer.classList.add('message-outer-container')
@@ -2310,13 +2335,13 @@
         messageContainer.classList.add("message");
         messageContainer.classList.add("file-message");
         if (myMessage) {
-            const messages = document.getElementsByClassName('message');
+            const messages = parentContainer.getElementsByClassName('message');
             if (messages.length == 0 || messages[messages.length - 1].classList.contains('friend-message')) {
                 messageOuterContainer.classList.add('first-message');
             }
             messageContainer.classList.add("my-message");
         } else {
-            const messages = document.getElementsByClassName('message');
+            const messages = parentContainer.getElementsByClassName('message');
             if (messages.length == 0 || messages[messages.length - 1].classList.contains('my-message')) {
                 messageOuterContainer.classList.add('first-message');
             }
@@ -2334,7 +2359,7 @@
         let htm = ` 
         <div  class="message-wrapper">
             <div class="replying-to" style="display: ${targetMessage ? 'flex' : 'none'}; border-left: ${targetMessage && targetMessage.classList.contains('my-message') ? "5px solid var(--accent-bright)" : "5px solid #e707a0"}"><div class="replying-to-username" style="color:${targetMessage && targetMessage.classList.contains('my-message') ? "var(--accent-color)" : "#e707a0"}">${targetMessage && targetMessage.classList.contains('my-message') ? userInfo.username : document.getElementsByClassName('friend-username')[0].textContent}</div>
-                <div class="replying-to-content">${targetMessage ? targetMessage.getElementsByClassName('message-content')[0].textContent : ""}</div>
+                <div class="replying-to-content">${targetMessage ? targetMessageContent : ""}</div>
             </div>
             <div class="file-container">
                  <div class="file-content">
@@ -2461,8 +2486,28 @@
     function writePhotoMessage(parentContainer, fileDetails, message, date, myMessage, sent, delivered, seen, replyIndex, triggerDownload) {
 
         let targetMessage;
-        if (replyIndex) {
-            targetMessage = document.getElementsByClassName('message')[replyIndex]
+        let targetMessageContent;
+        if (replyIndex != undefined) {
+            targetMessage = parentContainer.getElementsByClassName('message')[replyIndex];
+            targetMessageContent = targetMessage.getElementsByClassName("message-content-inner")[0].innerText;
+            if (targetMessage.classList.contains("file-message")) {
+                if (targetMessageContent.length == 0) {
+                    targetMessageContent = "<i class='fas fa-file-alt'></i> " + targetMessage.getElementsByClassName("file-name")[0].textContent;
+                }
+                else {
+                    targetMessageContent = "<i class='fas fa-file-alt'></i> " + targetMessageContent;
+
+                }
+            }
+            else if (targetMessage.classList.contains("photo-message")) {
+                if (targetMessageContent.length == 0) {
+                    targetMessageContent = "<i class='fas fa-image'></i> " + "Image";
+                }
+                else {
+                    targetMessageContent = "<i class='fas fa-image'></i> " + targetMessageContent;
+
+                }
+            }
         }
         let messageOuterContainer = document.createElement('div');
         messageOuterContainer.classList.add('message-outer-container')
@@ -2470,13 +2515,13 @@
         messageContainer.classList.add("message");
         messageContainer.classList.add("photo-message");
         if (myMessage) {
-            const messages = document.getElementsByClassName('message');
+            const messages = parentContainer.getElementsByClassName('message');
             if (messages.length == 0 || messages[messages.length - 1].classList.contains('friend-message')) {
                 messageOuterContainer.classList.add('first-message');
             }
             messageContainer.classList.add("my-message");
         } else {
-            const messages = document.getElementsByClassName('message');
+            const messages = parentContainer.getElementsByClassName('message');
             if (messages.length == 0 || messages[messages.length - 1].classList.contains('my-message')) {
                 messageOuterContainer.classList.add('first-message');
             }
@@ -2492,11 +2537,11 @@
         let htm = ` 
         <div  class="message-wrapper">
             <div class="replying-to" style="display: ${targetMessage ? 'flex' : 'none'}; border-left: ${targetMessage && targetMessage.classList.contains('my-message') ? "5px solid var(--accent-bright)" : "5px solid #e707a0"}"><div class="replying-to-username" style="color:${targetMessage && targetMessage.classList.contains('my-message') ? "var(--accent-color)" : "#e707a0"}">${targetMessage && targetMessage.classList.contains('my-message') ? userInfo.username : document.getElementsByClassName('friend-username')[0].textContent}</div>
-                <div class="replying-to-content">${targetMessage ? targetMessage.getElementsByClassName('message-content')[0].textContent : ""}</div>
+                <div class="replying-to-content">${targetMessage ? targetMessageContent : ""}</div>
             </div>
             <div class="file-container">
                  <div class="file-content">
-                    <div class='photo-container'></div>
+                    <div class='photo-container' style="height:${Math.min((36 / 100) * window.innerHeight, fileDetails.photoDimensions.height)}px"></div>
                 </div>
             </div>
             <div class="message-container">
@@ -2505,7 +2550,7 @@
                         ${(processMessageContent(message))}
 
                     </span>
-                          <div class="message-info">
+                    <div class="message-info">
                         <div class="message-time">
                             <div class="year">${date.year >= 10 ? date.year : "0" + date.year}</div>
                             <div class="month">${date.month >= 10 ? date.month : "0" + date.month}</div>
@@ -2569,6 +2614,27 @@
 
     }
 
+    function getPhotoDimensions(file) {
+        return new Promise((resolve, reject) => {
+            if (!file || !file.type.startsWith('image/')) {
+                reject(new Error('Invalid image file'));
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    resolve({ width: img.width, height: img.height });
+                };
+                img.src = e.target.result;
+            };
+            reader.onerror = (e) => {
+                reject(new Error('Error reading file'));
+            };
+            reader.readAsDataURL(file);
+        });
+    }
     function addListenersToMessage(messageOuterContainer, messageContainer) {
 
 
@@ -2584,12 +2650,12 @@
 
         messageOuterContainer.addEventListener('click', e => {
             if (messageSelection == true) {
-                let overallIndex = Array.from(document.getElementsByClassName('message')).indexOf(messageContainer);
-                let outerContainer = document.getElementsByClassName('message-outer-container')[overallIndex];
+                const parentContainer = document.getElementsByClassName("active-chat-container")[0];
+                let overallIndex = Array.from(parentContainer.getElementsByClassName("message")).indexOf(messageContainer);
 
-                if (outerContainer.classList.contains("selected-message")) {
+                if (messageOuterContainer.classList.contains("selected-message")) {
                     selectedMessages = selectedMessages.filter(element => element != overallIndex);
-                    outerContainer.classList.remove("selected-message")
+                    messageOuterContainer.classList.remove("selected-message")
                     let len = selectedMessages.length;
                     document.getElementsByClassName('delete-count')[0].textContent = `(${len})`
                     document.getElementsByClassName('forward-count')[0].textContent = `(${len})`
@@ -2601,7 +2667,7 @@
                 }
                 else {
                     selectedMessages.push(overallIndex)
-                    outerContainer.classList.add("selected-message")
+                    messageOuterContainer.classList.add("selected-message")
                     let len = selectedMessages.length;
                     document.getElementsByClassName('delete-count')[0].textContent = `(${len})`
                     document.getElementsByClassName('forward-count')[0].textContent = `(${len})`
@@ -2612,10 +2678,9 @@
         })
 
         messageContainer.addEventListener("contextmenu", (e) => {
-            let overallIndex = Array.from(document.getElementsByClassName('message')).indexOf(messageContainer)
-            e.preventDefault();
+            const parentContainer = document.getElementsByClassName("active-chat-container")[0];
+            let overallIndex = Array.from(parentContainer.getElementsByClassName("message")).indexOf(messageContainer); e.preventDefault();
             selectedMessageIndex = overallIndex
-
             const messageMenu = document.getElementsByClassName(
                 "message-menu-wrapper"
             )[0];
@@ -2692,12 +2757,31 @@
         }
     }
 
-    function writeTextMessage(parentContainer, message, date, myMessage, sent, delivered, seen, replyIndex
-    ) {
+    function writeTextMessage(parentContainer, message, date, myMessage, sent, delivered, seen, replyIndex) {
 
         let targetMessage;
+        let targetMessageContent;
         if (replyIndex != undefined) {
-            targetMessage = document.getElementsByClassName('message')[replyIndex]
+            targetMessage = parentContainer.getElementsByClassName('message')[replyIndex];
+            targetMessageContent = targetMessage.getElementsByClassName("message-content-inner")[0].innerText;
+            if (targetMessage.classList.contains("file-message")) {
+                if (targetMessageContent.length == 0) {
+                    targetMessageContent = "<i class='fas fa-file-alt'></i> " + targetMessage.getElementsByClassName("file-name")[0].textContent;
+                }
+                else {
+                    targetMessageContent = "<i class='fas fa-file-alt'></i> " + targetMessageContent;
+
+                }
+            }
+            else if (targetMessage.classList.contains("photo-message")) {
+                if (targetMessageContent.length == 0) {
+                    targetMessageContent = "<i class='fas fa-image'></i> " + "Image";
+                }
+                else {
+                    targetMessageContent = "<i class='fas fa-image'></i> " + targetMessageContent;
+
+                }
+            }
         }
 
         let messageOuterContainer = document.createElement('div');
@@ -2705,13 +2789,13 @@
         let messageContainer = document.createElement("div");
         messageContainer.classList.add("message");
         if (myMessage) {
-            const messages = document.getElementsByClassName('message');
+            const messages = parentContainer.getElementsByClassName('message');
             if (messages.length == 0 || messages[messages.length - 1].classList.contains('friend-message')) {
                 messageOuterContainer.classList.add('first-message');
             }
             messageContainer.classList.add("my-message");
         } else {
-            const messages = document.getElementsByClassName('message');
+            const messages = parentContainer.getElementsByClassName('message');
             if (messages.length == 0 || messages[messages.length - 1].classList.contains('my-message')) {
                 messageOuterContainer.classList.add('first-message');
             }
@@ -2722,7 +2806,7 @@
         let htm = ` 
         <div  class="message-wrapper">
             <div class="replying-to" style="display: ${targetMessage ? 'flex' : 'none'}; border-left: ${targetMessage && targetMessage.classList.contains('my-message') ? "5px solid var(--accent-bright)" : "5px solid #e707a0"}"><div class="replying-to-username" style="color:${targetMessage && targetMessage.classList.contains('my-message') ? "var(--accent-color)" : "#e707a0"}">${targetMessage && targetMessage.classList.contains('my-message') ? userInfo.username : document.getElementsByClassName('friend-username')[0].textContent}</div>
-                <div class="replying-to-content">${targetMessage ? targetMessage.getElementsByClassName('message-content')[0].textContent : ""}</div>
+                <div class="replying-to-content">${targetMessage ? targetMessageContent : ""}</div>
             </div>
             <div class="message-container">
                 <div class="message-content">
@@ -3443,9 +3527,9 @@
     }
 
     function copyMessageText() {
-        let chatContainer = document.getElementsByClassName('chat-container')[0];
-        let selectedMessage = chatContainer.getElementsByClassName('message-content')[selectedMessageIndex];
-        navigator.clipboard.writeText(selectedMessage.textContent)
+        let chatContainer = document.getElementsByClassName('active-chat-container')[0];
+        let selectedMessage = chatContainer.getElementsByClassName('message-content-inner')[selectedMessageIndex];
+        navigator.clipboard.writeText(selectedMessage.innerText)
             .then(() => {
                 // document.getElementsByClassName('message-menu-wrapper')[0].style.display = 'none'
                 document.getElementsByClassName('message-menu-wrapper')[0].classList.remove('show');
@@ -3455,9 +3539,10 @@
     }
 
     function replyMessage() {
-        let chatContainer = document.getElementsByClassName('chat-container')[0];
+        let chatContainer = document.getElementsByClassName('active-chat-container')[0];
         const selectedMessageContainer = chatContainer.getElementsByClassName('message')[selectedMessageIndex]
-        let selectedMessage = chatContainer.getElementsByClassName('message-content')[selectedMessageIndex];
+        let selectedMessage = chatContainer.getElementsByClassName('message-content-inner')[selectedMessageIndex];
+        let messageText = selectedMessage.innerText;
         let replyMessageWrapper = document.getElementsByClassName('reply-message-wrapper')[0];
         if (selectedMessageContainer.classList.contains('my-message')) {
 
@@ -3469,7 +3554,29 @@
             replyMessageWrapper.getElementsByClassName('friend-name')[0].textContent = document.getElementsByClassName('friend-username')[0].textContent;
             replyMessageWrapper.getElementsByClassName('friend-name')[0].style.color = '#e707a0'
         }
-        replyMessageWrapper.getElementsByClassName('reply-message-content')[0].textContent = trimToMaxLength(selectedMessage.textContent, 200)
+        if (selectedMessageContainer.classList.contains("file-message")) {
+
+            if (messageText.length == 0) {
+                messageText = "<i class='fas fa-file-alt'></i> " + selectedMessageContainer.getElementsByClassName("file-name")[0].textContent;
+            }
+            else {
+
+                messageText = "<i class='fas fa-file-alt'></i> " + messageText;
+            }
+
+        }
+        else if (selectedMessageContainer.classList.contains("photo-message")) {
+
+            if (messageText.length == 0) {
+                messageText = "<i class='fas fa-image'></i> " + "Image";
+            }
+            else {
+
+                messageText = "<i class='fas fa-image'></i> " + messageText;
+            }
+
+        }
+        replyMessageWrapper.getElementsByClassName('reply-message-content')[0].innerHTML = trimToMaxLength(messageText, 200)
         replyMessageWrapper.style.display = 'flex'
         document.getElementsByClassName('message-menu-wrapper')[0].classList.remove('show')
         // document.getElementsByClassName('message-menu-wrapper')[0].style.display = 'none'
@@ -3752,35 +3859,43 @@
             }
             else if (file.type == 'application/pdf') {
                 reader.onload = function (e) {
-                    const loadingTask = pdfjsLib.getDocument({ data: e.target.result });
-                    loadingTask.promise.then(function (pdf) {
-                        pdf.getPage(1).then(function (page) {
-                            const scale = 1;
-                            const viewport = page.getViewport({ scale: scale })
-                            const canvas = document.createElement('canvas');
-                            if (receivePreview) {
+                    try {
+                        const loadingTask = pdfjsLib.getDocument({ data: e.target.result });
+                        loadingTask.promise.then(function (pdf) {
+                            pdf.getPage(1).then(function (page) {
+                                const scale = 1;
+                                const viewport = page.getViewport({ scale: scale })
+                                const canvas = document.createElement('canvas');
+                                if (receivePreview) {
 
-                                canvas.classList.add('preview-element-alt')
+                                    canvas.classList.add('preview-element-alt')
+                                }
+                                else {
+
+                                    canvas.classList.add('preview-element')
+                                }
+                                const context = canvas.getContext('2d');
+                                canvas.height = viewport.height
+                                canvas.width = viewport.width
+
+                                const renderContext = {
+                                    canvasContext: context,
+                                    viewport: viewport
+                                }
+
+                                page.render(renderContext)
+                                container.appendChild(canvas)
+
                             }
-                            else {
+                            )
+                        })
 
-                                canvas.classList.add('preview-element')
-                            }
-                            const context = canvas.getContext('2d');
-                            canvas.height = viewport.height
-                            canvas.width = viewport.width
+                    } catch (error) {
 
-                            const renderContext = {
-                                canvasContext: context,
-                                viewport: viewport
-                            }
+                        console.log("Error: could not load pdf.js")
 
-                            page.render(renderContext)
-                            container.appendChild(canvas)
+                    }
 
-                        }
-                        )
-                    })
 
                 }
 
@@ -4061,13 +4176,20 @@
                 let text = getGoodHTML(escapeHtml(fragments[i]));
                 // text = convertToMarkdownLinks(text)
                 text = markdownToHtml(text);
-                text = Autolinker.link(text, {
-                    newWindow: true,  // Opens links in a new tab
-                    stripPrefix: false, // Keep 'www.' prefix
-                    urls: { schemeMatches: true, wwwMatches: true, tldMatches: true },
-                    email: false,
-                    phone: false
-                });
+                try {
+                    text = Autolinker.link(text, {
+                        newWindow: true,  // Opens links in a new tab
+                        stripPrefix: false, // Keep 'www.' prefix
+                        urls: { schemeMatches: true, wwwMatches: true, tldMatches: true },
+                        email: false,
+                        phone: false
+                    });
+
+                } catch (error) {
+
+                    console.log("Could not load autolinker")
+
+                }
                 html += text;
             }
         }
