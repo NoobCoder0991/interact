@@ -16,9 +16,19 @@ async function sendNotification(device, message) {
 
     if (device) {
         const payload = JSON.stringify({
-            title: `New Message from ${message.sender}`,
-            body: message.content,
-            icon: path.join(__dirname, "/public/assets/images/good-logo.png")
+            "title": `${message.sender}`,
+            "body": message.content,
+            "icon": path.join(__dirname, "/public/assets/images/good-logo.png"),
+            "actions": [
+                {
+                    "action": "view",
+                    "title": "View Message"
+                },
+                {
+                    "action": "ignore",
+                    "title": "Ignore"
+                }
+            ]
         });
         return new Promise((resolve, reject) => {
 

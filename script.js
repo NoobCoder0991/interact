@@ -345,6 +345,25 @@ initializeDatabase().then(() => {
                             recepient.send(JSON.stringify(data))
                         }
                     }
+                    if (!recepients || (recepients && recepients.length == 0)) {
+                        //offline recepients
+                        const device = await db.collection('devices').findOne({ userid: data.receiver }, { projection: { _id: 0, device: 1 } })
+                        if (device && device.device) {
+                            const sender_data = await db.collection('user_data').findOne({ userid: data.sender }, { projection: { _id: 0, username: 1 } });
+                            const devices = device.device
+
+                            for (const device of devices) {
+                                let content;
+                                if (data.type == 'file') {
+                                    content = data.message.length ? `File : ${data.message}` : `File : ${data.file_details.name}`;
+                                }
+                                else if (data.type == 'photo') {
+                                    content = data.message.length ? `Image : ${data.message}` : `Image : ${data.file_details.name}`;
+                                }
+                                await notifcations.sendNotification(device, { sender: sender_data.username, content })
+                            }
+                        }
+                    }
                     // onlineUsers[data.receiver].send(JSON.stringify(data))
 
                     res.status(200).json({

@@ -1003,7 +1003,7 @@ body.light-mode .empty-chat {
 .chat-container-wrapper {
     height: 100%;
     overflow: auto;
-    /* scroll-behavior: smooth; */
+    scroll-behavior: smooth;
     scrollbar-width: none;
 }
 
@@ -1654,6 +1654,10 @@ body.light-mode .chat-info {
     background-color: rgba(0, 0, 0, 0);
     background-color: #161515;
     color: var(--sharp-color);
+}
+
+.actual-date-info {
+    display: none;
 }
 
 body.light-mode .date-info {

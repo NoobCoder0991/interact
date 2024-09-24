@@ -39,4 +39,8 @@ async function* getAIResponse(db, userid, query) {
     }
 
 }
+
+
+
+
 module.exports = { getAIResponse };

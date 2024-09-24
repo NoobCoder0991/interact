@@ -1700,6 +1700,10 @@ body.light-mode .chat-info {
     color: var(--sharp-color);
 }
 
+.actual-date-info {
+    display: none;
+}
+
 body.light-mode .date-info {
     color: var(--sharp-color-light-mode);
 }

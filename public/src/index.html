@@ -1436,6 +1436,7 @@
             }
             else if (data.sender == currentFriendId) {
                 const parentContainer = document.getElementsByClassName(`chat-container-${data.sender}`)[0];
+                updateDateInfoContainers(parentContainer, data.time);
                 if (data.type == 'file') {
                     writeFileMessage(parentContainer, data.file_details, data.message, data.time, false, false, false, false, data.replyIndex, true)
 
@@ -1462,6 +1463,8 @@
             } else {
                 const parentContainer = document.getElementsByClassName(`chat-container-${data.sender}`)[0];
                 if (parentContainer) {
+                    updateDateInfoContainers(parentContainer, data.time);
+
                     const unreadContainer = parentContainer.getElementsByClassName('unread');
                     if (unreadContainer.length) {
                         console.log("here")
@@ -1547,6 +1550,7 @@
                 container.insertBefore(activeElement, container.firstChild);
             } else if (message.sender == currentFriendId) {
                 const parentContainer = document.getElementsByClassName(`chat-container-${message.sender}`)[0];
+                updateDateInfoContainers(parentContainer, message.time);
                 writeTextMessage(parentContainer, message.message, message.time, message.sender == myid, false, false, false, message.replyIndex);
                 receivedMessageNotify.play();
                 ws.send(
@@ -1564,6 +1568,8 @@
                 )[0].style.display = "none";
             } else {
                 const parentContainer = document.getElementsByClassName(`chat-container-${message.sender}`)[0];
+                updateDateInfoContainers(parentContainer, message.time);
+
                 if (parentContainer) {
                     const unreadContainer = parentContainer.getElementsByClassName('unread');
                     if (unreadContainer.length) {
@@ -1890,12 +1896,13 @@
 
     window.addEventListener("popstate", function (event) {
         const viewer = document.getElementsByClassName('photo-viewer-wrapper')[0]
-        if (!viewer.classList.contains('hide')) {
-            viewer.classList.add('hide')
-            return;
+        // if (!viewer.classList.contains('hide')) {
+        //     viewer.classList.add('hide')
+        //     return;
 
-        }
-        else if (event.state && event.state.contentId) {
+        // }
+        viewer.classList.add('hide')
+        if (event.state && event.state.contentId) {
             if (event.state.contentId == "notifications") {
                 //notificatons
                 document
@@ -1942,7 +1949,7 @@
                 "notifications-wrapper"
             )[0].classList.add('hide');
             document.getElementsByClassName("chat-wrapper")[0].classList.add('hide')
-            document.getElementsByClassName("welcome-page")[0].classList.add('show')
+            document.getElementsByClassName("welcome-page")[0].classList.remove('hide')
             document.getElementsByClassName(
                 "navbar"
             )[0].classList.remove('hide')
@@ -2047,6 +2054,7 @@
             mins: date.getMinutes(),
         };
         const parentContainer = document.getElementsByClassName(`chat-container-${receiver}`)[0];
+        updateDateInfoContainers(parentContainer, time);
         let index = writeFileMessage(parentContainer, fileDetails, message, time, true, false, false, false, replyIndex)
         const details = { name: fileDetails.name, size: fileDetails.size, type: fileDetails.type }
         let data = { type: 'file', sender, receiver, time, message, file_details: details, index }
@@ -2109,6 +2117,7 @@
         const photoDimensions = await getPhotoDimensions(fileDetails);
 
         fileDetails.photoDimensions = photoDimensions;
+        updateDateInfoContainers(parentContainer, time);
         let index = writePhotoMessage(parentContainer, fileDetails, message, time, true, false, false, false, replyIndex)
 
         const details = { name: fileDetails.name, size: fileDetails.size, type: fileDetails.type, photoDimensions }
@@ -2158,9 +2167,7 @@
         };
 
         const parentContainer = document.getElementsByClassName(`chat-container-${receiver}`)[0];
-
-        console.log("Receiver", receiver);
-
+        updateDateInfoContainers(parentContainer, time);
         let index = writeTextMessage(parentContainer, message, time, true, false, false, false, selectedMessageIndex);
         const messageData = {
             type: "send", sender: myid, receiver: currentFriendId, message, time, index, status: 0, replyIndex
@@ -2224,7 +2231,10 @@
                         if (currentFriendId == -1) {
                             if (streamingIndex == -1) {
                                 let date = new Date();
-                                writeTextMessage(parentContainer, totalMessageResult, { hours: date.getHours(), mins: date.getMinutes() }, false);
+                                let time = { year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate(), hours: date.getHours(), mins: date.getMinutes() };
+                                updateDateInfoContainers(parentContainer, time);
+
+                                writeTextMessage(parentContainer, totalMessageResult, time, false);
                                 let friendMessages = document.getElementsByClassName('friend-message');
                                 streamingIndex = friendMessages.length - 1;
                                 if (autoScroll) {
@@ -2234,7 +2244,7 @@
                             }
                             else {
                                 const messageContainer = document.getElementsByClassName('friend-message')[streamingIndex];
-                                messageContainer.getElementsByClassName('message-content')[0].innerHTML = (processMessageContent(totalMessageResult) + "<span class='generating-cursor'></span>");
+                                messageContainer.getElementsByClassName('message-content-inner')[0].innerHTML = (processMessageContent(totalMessageResult) + "<span class='generating-cursor'></span>");
                                 enableCodeCopy(messageContainer)
                                 if (autoScroll) {
 
@@ -2260,12 +2270,7 @@
                 createChatErrorMessage('Failed to fetch.')
 
             }
-
-
-
             return;
-
-
         }
         sendPostRequest("/message", messageData)
             .then(data => {
@@ -2601,6 +2606,11 @@
 
         const photoContainer = messageContainer.getElementsByClassName('photo-container')[0];
         photoContainer.addEventListener('click', e => {
+            history.pushState(
+                { contentId: currentFriendId, index: index },
+                "",
+                `/view-image`
+            );
             const imageSrc = photoContainer.getElementsByClassName('photo-image-element')[0].src;
             document.getElementsByClassName("photo-viewer-image-element")[0].src = imageSrc;
             document.getElementsByClassName("photo-viewer-sender")[0].textContent = myMessage ? userInfo.username + "   (You)" : userInfo.friendUsernames[userInfo.friends.indexOf(currentFriendId)];
@@ -2952,6 +2962,7 @@
     }
 
     async function loadChats(friendId, index) {
+        document.getElementsByClassName("chat-container-wrapper")[0].style.scrollBehavior = 'auto'
         const container = document.getElementsByClassName(
             "recent-messages-container"
         )[0];
@@ -2994,6 +3005,8 @@
             // messageInput.focus();
             scrollToBottom();
             currentFriendId = friendId;
+            document.getElementsByClassName("chat-container-wrapper")[0].style.scrollBehavior = 'smooth'
+
             return;
 
 
@@ -3038,6 +3051,9 @@
 
 
             messageInput.placeholder = "Message " + friendUsername;
+            scrollToBottom();
+            document.getElementsByClassName("chat-container-wrapper")[0].style.scrollBehavior = 'smooth'
+
             // messageInput.focus();
         }
     }
@@ -3261,6 +3277,9 @@
             }, 0);
 
             const date = new Date();
+            let time = { year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate(), hours: date.getHours(), mins: date.getMinutes() };
+
+            //Need to insert date info and update others if the previous message was not send today
             await sendMessage(myid, currentFriendId, message, date, selectedMessageIndex);
             let container = document.getElementsByClassName(
                 "recent-messages-container"
@@ -3313,6 +3332,31 @@
         }
     }
 
+
+    function updateDateInfoContainers(container, time) {
+
+        if (container.getElementsByClassName("message").length == 0) {
+            container.appendChild(createDateInfo(time));
+        }
+        else {
+            const messages = container.getElementsByClassName('message')
+            const lastMessage = messages[messages.length - 1];
+            const messageTimeElement = lastMessage.getElementsByClassName("message-time")[0];
+            const year = parseInt(messageTimeElement.getElementsByClassName("year")[0].textContent);
+            const month = parseInt(messageTimeElement.getElementsByClassName("month")[0].textContent);
+            const day = parseInt(messageTimeElement.getElementsByClassName("day")[0].textContent);
+            if (time.year != year || time.month != month || time.day != day) {
+
+                const dateInfoContainers = container.getElementsByClassName('date-info');
+                for (let i = 0; i < dateInfoContainers.length; i++) {
+                    const time = JSON.parse(dateInfoContainers[i].getElementsByClassName("actual-date-info")[0].textContent);
+                    dateInfoContainers[i].getElementsByClassName('relative-date-info')[0].textContent = getRelativeDate(time);
+                }
+                container.appendChild(createDateInfo(time));
+            }
+
+        }
+    }
 
 
 
@@ -3416,7 +3460,7 @@
         document.getElementsByClassName(
             "notifications-wrapper"
         )[0].classList.remove('hide')
-        document.getElementsByClassName("welcome-page")[0].classList.add('show');
+        // document.getElementsByClassName("welcome-page")[0].classList.remove('hide');
         document.getElementsByClassName("chat-wrapper")[0].classList.add('hide');
         document.getElementsByClassName('welcome-page')[0].classList.remove("hide")
         history.pushState({ contentId: "notifications" }, "", "/notifications");
@@ -4273,10 +4317,20 @@
         return chatInfoContainer;
 
     }
-    function createDateInfo(info) {
+    function createDateInfo(time) {
+        const relativeTime = getRelativeDate(time);
         const dateInfoContainer = document.createElement('div');
         dateInfoContainer.className = 'chat-info date-info';
-        dateInfoContainer.innerHTML = info;
+
+        const relativeDateContainer = document.createElement('span');
+        relativeDateContainer.className = "relative-date-info"
+        const actualDateContainer = document.createElement('span');
+        actualDateContainer.className = "actual-date-info"
+
+        relativeDateContainer.textContent = getRelativeDate(time);
+        actualDateContainer.textContent = JSON.stringify(time);
+        dateInfoContainer.appendChild(relativeDateContainer)
+        dateInfoContainer.appendChild(actualDateContainer)
 
         return dateInfoContainer;
 
@@ -4319,7 +4373,7 @@
             }
 
             if (i == 0 || message.time.day != messages[i - 1].time.day) {
-                const dateContainer = createDateInfo(getRelativeDate(message.time));
+                const dateContainer = createDateInfo(message.time);
                 container.appendChild(dateContainer);
             }
 
