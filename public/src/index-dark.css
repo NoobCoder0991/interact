@@ -1207,15 +1207,15 @@ body.light-mode .chat-end {
 
 }
 
-body.light-mode .message-outer-container-hover {
-    background-color: var(--hover-color-light-light-mode);
-
-}
-
 .message-wrapper {
     display: flex;
     flex-direction: column;
     width: 100%;
+}
+
+.replying-to-wrapper {
+    padding: 5px;
+    padding-bottom: 0;
 }
 
 .replying-to {
@@ -1225,7 +1225,9 @@ body.light-mode .message-outer-container-hover {
     padding: 5px;
     border-radius: 4px;
     font-size: small;
+    width: 100%;
     cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 body.light-mode .replying-to {
@@ -1234,8 +1236,8 @@ body.light-mode .replying-to {
 }
 
 .my-message .replying-to {
-    background-color: var(--my-file-container);
-    background-color: #4f5f38;
+    /* background-color: var(--my-file-container); */
+    /* background-color: #4f5f38; */
 }
 
 body.light-mode .my-message .replying-to {
@@ -1243,7 +1245,7 @@ body.light-mode .my-message .replying-to {
 }
 
 .friend-message .replying-to {
-    background-color: var(--friend-file-container);
+    /* background-color: var(--friend-file-container); */
 }
 
 body.light-mode .friend-message .replying-to {
@@ -2476,17 +2478,40 @@ body.light-mode #emoji-picker {
     position: absolute;
     display: flex;
     flex-direction: column;
-    bottom: 100%;
-    left: 1px;
+    bottom: 110%;
+    left: 5px;
     background-color: var(--body-color);
     z-index: 1000;
     font-size: large;
-    padding: 5px 0;
-    border: 1px solid var(--border-color-light);
+    padding: 8px 10px;
+    border-radius: 5px;
+    /* border: 1px solid var(--border-color-light); */
+    box-sizing: 0px 2px 5px rgba(0, 0, 0, 0.2);
     font-size: 1rem;
     overflow: hidden;
     cursor: auto;
 }
+
+.photo-input-icon {
+    color: rebeccapurple;
+}
+
+.document-input-icon {
+    color: rgb(50, 50, 168);
+}
+
+.camera-input-icon {
+    color: rgb(197, 26, 54);
+}
+
+.contact-input-icon {
+    color: dodgerblue;
+}
+
+.poll-input-icon {
+    color: purple;
+}
+
 
 body.light-mode #file-picker {
 
@@ -2501,12 +2526,14 @@ body.light-mode #file-picker {
 
 .input-icon {
     margin-right: 10px;
+    font-size: large;
 }
 
 #file-picker label {
     display: flex;
     align-items: center;
-    padding: 5px 10px;
+    padding: 10px;
+    border-radius: 5px;
     cursor: pointer;
 }
 
@@ -3255,7 +3282,7 @@ a {
 
 @media screen and (max-width:450px) {
     .message {
-        max-width: 100%;
+        max-width: 95%;
     }
 
     .photo-message {

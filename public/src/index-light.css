@@ -1266,11 +1266,17 @@ body.light-mode .message-outer-container-hover {
     width: 100%;
 }
 
+.replying-to-wrapper {
+    padding: 5px;
+    padding-bottom: 0;
+}
+
 .replying-to {
     display: flex;
     flex-direction: column;
     border-left: 4px solid var(--accent-bright);
     padding: 5px;
+    width: 100%;
     border-radius: 4px;
     font-size: small;
     cursor: pointer;
@@ -2513,13 +2519,15 @@ body.light-mode .delete-message-option {
     position: absolute;
     display: flex;
     flex-direction: column;
-    bottom: 100%;
-    left: 1px;
+    bottom: 110%;
+    left: 5px;
     background-color: var(--body-color);
     z-index: 1000;
     font-size: large;
-    padding: 5px 0;
-    border: 1px solid var(--border-color-light);
+    padding: 8px 10px;
+    border-radius: 5px;
+    /* border: 1px solid var(--border-color-light); */
+    box-sizing: 0px 2px 5px rgba(0, 0, 0, 0.2);
     font-size: 1rem;
     overflow: hidden;
     cursor: auto;
@@ -2533,6 +2541,7 @@ body.light-mode #file-picker {
 
 #file-picker>form {
     cursor: pointer;
+    font-size: large;
 }
 
 
@@ -2540,10 +2549,31 @@ body.light-mode #file-picker {
     margin-right: 10px;
 }
 
+.photo-input-icon {
+    color: rebeccapurple;
+}
+
+.document-input-icon {
+    color: rgb(50, 50, 168);
+}
+
+.camera-input-icon {
+    color: rgb(197, 26, 54);
+}
+
+.contact-input-icon {
+    color: dodgerblue;
+}
+
+.poll-input-icon {
+    color: purple;
+}
+
 #file-picker label {
     display: flex;
     align-items: center;
-    padding: 5px 10px;
+    padding: 10px;
+    border-radius: 5px;
     cursor: pointer;
 }
 
@@ -3302,7 +3332,7 @@ a {
 
 @media screen and (max-width:450px) {
     .message {
-        max-width: 100%;
+        max-width: 95%;
     }
 
     .photo-message {

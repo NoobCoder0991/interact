@@ -1145,7 +1145,7 @@
                             <input type="file" accept="image/*, video/*" name="file" id="photoInput" />
                             <label for="photoInput"
                                 onclick="selectedInput='photoInput';document.getElementById('file-picker').style.display='none'">
-                                <div class="input-icon"><i class="fas fa-image"></i></div>
+                                <div class="input-icon photo-input-icon"><i class="fas fa-image"></i></div>
                                 <div>Photos & videos</div>
                             </label>
                             <button class="upload-button" type="submit">Upload File</button>
@@ -1154,7 +1154,7 @@
                             <input type="file" name="file" id="fileInput" />
                             <label for="fileInput"
                                 onclick="selectedInput='fileInput';document.getElementById('file-picker').style.display='none'">
-                                <div class="input-icon"><i class="fas fa-file-alt"></i></div>
+                                <div class="input-icon document-input-icon"><i class="fas fa-file-alt"></i></div>
                                 <div>Document</div>
                             </label>
                             <button class="upload-button" type="submit">Upload File</button>
@@ -1162,19 +1162,19 @@
                         <form id="camera">
                             <label for=""
                                 onclick="document.getElementById('file-picker').style.display='none';document.getElementsByClassName('code-wrapper')[0].classList.toggle('hide')">
-                                <div class="input-icon"><i class="fas fa-code"></i></div>
+                                <div class="input-icon camera-input-icon"><i class="fas fa-code"></i></div>
                                 <div>Code</div>
                             </label>
                         </form>
                         <form id="poll">
                             <label for="" onclick="document.getElementById('file-picker').style.display='none'">
-                                <div class="input-icon"><i class="fas fa-poll"></i></div>
+                                <div class="input-icon poll-input-icon"><i class="fas fa-poll"></i></div>
                                 <div>Poll</div>
                             </label>
                         </form>
-                        <form id="poll">
+                        <form id="contact">
                             <label for="" onclick="document.getElementById('file-picker').style.display='none'">
-                                <div class="input-icon"><i class="fas fa-contact-book"></i></div>
+                                <div class="input-icon contact-input-icon"><i class="fas fa-contact-book"></i></div>
                                 <div>Contact</div>
                             </label>
                         </form>
@@ -1996,7 +1996,8 @@
 
     document.getElementsByClassName('chat-container-wrapper')[0].addEventListener('scroll', e => {
         const element = document.getElementsByClassName('chat-container-wrapper')[0]
-        const isScrolledToBottom = element.scrollTop + element.clientHeight >= element.scrollHeight - 1;
+        // const isScrolledToBottom = element.scrollTop + element.clientHeight >= element.scrollHeight - 1;
+        const isScrolledToBottom = isScrolledToMax(element)
         if (!isScrolledToBottom) {
             document.getElementsByClassName('chat-end')[0].style.display = 'flex'
         }
@@ -2363,8 +2364,11 @@
         }
         let htm = ` 
         <div  class="message-wrapper">
-            <div class="replying-to" style="display: ${targetMessage ? 'flex' : 'none'}; border-left: ${targetMessage && targetMessage.classList.contains('my-message') ? "5px solid var(--accent-bright)" : "5px solid #e707a0"}"><div class="replying-to-username" style="color:${targetMessage && targetMessage.classList.contains('my-message') ? "var(--accent-color)" : "#e707a0"}">${targetMessage && targetMessage.classList.contains('my-message') ? userInfo.username : document.getElementsByClassName('friend-username')[0].textContent}</div>
-                <div class="replying-to-content">${targetMessage ? targetMessageContent : ""}</div>
+            <div class="replying-to-wrapper"  style="display: ${targetMessage ? 'flex' : 'none'};">
+                <div class="replying-to" border-left: ${targetMessage && targetMessage.classList.contains('my-message') ? "5px solid var(--accent-bright)" : "5px solid #e707a0"}">
+                    <div class="replying-to-username" style="color:${targetMessage && targetMessage.classList.contains('my-message') ? "var(--accent-color)" : "#e707a0"}">${targetMessage && targetMessage.classList.contains('my-message') ? userInfo.username : document.getElementsByClassName('friend-username')[0].textContent}</div>
+                    <div class="replying-to-content">${targetMessage ? targetMessageContent : ""}</div>
+                </div>
             </div>
             <div class="file-container">
                  <div class="file-content">
@@ -2541,8 +2545,11 @@
         let map = { 'png': 'image', 'jpg': 'image', 'jpeg': 'image' }
         let htm = ` 
         <div  class="message-wrapper">
-            <div class="replying-to" style="display: ${targetMessage ? 'flex' : 'none'}; border-left: ${targetMessage && targetMessage.classList.contains('my-message') ? "5px solid var(--accent-bright)" : "5px solid #e707a0"}"><div class="replying-to-username" style="color:${targetMessage && targetMessage.classList.contains('my-message') ? "var(--accent-color)" : "#e707a0"}">${targetMessage && targetMessage.classList.contains('my-message') ? userInfo.username : document.getElementsByClassName('friend-username')[0].textContent}</div>
-                <div class="replying-to-content">${targetMessage ? targetMessageContent : ""}</div>
+            <div class="replying-to-wrapper"  style="display: ${targetMessage ? 'flex' : 'none'};">
+                <div class="replying-to" border-left: ${targetMessage && targetMessage.classList.contains('my-message') ? "5px solid var(--accent-bright)" : "5px solid #e707a0"}">
+                    <div class="replying-to-username" style="color:${targetMessage && targetMessage.classList.contains('my-message') ? "var(--accent-color)" : "#e707a0"}">${targetMessage && targetMessage.classList.contains('my-message') ? userInfo.username : document.getElementsByClassName('friend-username')[0].textContent}</div>
+                    <div class="replying-to-content">${targetMessage ? targetMessageContent : ""}</div>
+                </div>
             </div>
             <div class="file-container">
                  <div class="file-content">
@@ -2815,9 +2822,13 @@
 
         let htm = ` 
         <div  class="message-wrapper">
-            <div class="replying-to" style="display: ${targetMessage ? 'flex' : 'none'}; border-left: ${targetMessage && targetMessage.classList.contains('my-message') ? "5px solid var(--accent-bright)" : "5px solid #e707a0"}"><div class="replying-to-username" style="color:${targetMessage && targetMessage.classList.contains('my-message') ? "var(--accent-color)" : "#e707a0"}">${targetMessage && targetMessage.classList.contains('my-message') ? userInfo.username : document.getElementsByClassName('friend-username')[0].textContent}</div>
-                <div class="replying-to-content">${targetMessage ? targetMessageContent : ""}</div>
+            <div class="replying-to-wrapper"  style="display: ${targetMessage ? 'flex' : 'none'};">
+                <div class="replying-to" border-left: ${targetMessage && targetMessage.classList.contains('my-message') ? "5px solid var(--accent-bright)" : "5px solid #e707a0"}">
+                    <div class="replying-to-username" style="color:${targetMessage && targetMessage.classList.contains('my-message') ? "var(--accent-color)" : "#e707a0"}">${targetMessage && targetMessage.classList.contains('my-message') ? userInfo.username : document.getElementsByClassName('friend-username')[0].textContent}</div>
+                    <div class="replying-to-content">${targetMessage ? targetMessageContent : ""}</div>
+                </div>
             </div>
+
             <div class="message-container">
                 <div class="message-content">
                     <span class="message-content-inner">
@@ -4197,7 +4208,9 @@
 
 
     function isScrolledToMax(element) {
-        return element.scrollTop + element.clientHeight >= element.scrollHeight;
+        const offSet = Math.abs(element.scrollTop + element.clientHeight - element.scrollHeight)
+
+        return offSet <= 50;
     }
 
 
