@@ -1854,6 +1854,13 @@ body.light-mode .profile-info-wrapper {
     font-size: x-large;
 }
 
+.username-greeting {
+    align-self: center;
+    font-weight: bold;
+    font-size: x-large;
+
+}
+
 .profile-options {
     display: flex;
     flex-wrap: wrap;
