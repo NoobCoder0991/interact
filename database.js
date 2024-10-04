@@ -40,7 +40,6 @@ function getDatabase() {
     if (!db) {
         throw new Error("Database not initialized. Try running initializeDatabase().")
     }
-
     return { db, gfs };
 }
 

@@ -62,12 +62,12 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+        align-items: center;
         background-color: var(--container-color-dark);
-        /* border: 1px solid #444040; */
-        box-shadow: 0px 0px 2px #bbb;
-        padding: 3%;
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+        padding: 10px;
         border-radius: 5px;
-        min-width: 35vw;
+        padding: 40px 20px;
     }
 
     body.light-mode .login-wrapper {
@@ -86,23 +86,25 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        padding: 10px;
         width: 100%;
     }
 
     .username-input,
     .password-input {
+        display: flex;
         width: 100%;
         position: relative;
     }
 
     .input {
         width: 100%;
-        padding: 2% 1%;
-        margin: 1% 0;
+        padding: 8px 10px;
+        margin: 10px 0;
         background-color: var(--body-color-dark);
         border: none;
         outline: none;
-        border-bottom: 2px solid grey;
+        border-bottom: 2px solid #eee;
         color: white;
     }
 
@@ -122,8 +124,8 @@
     .login-button {
         background-color: var(--accent-color-dark);
         color: white;
-        padding: 2.5% 15%;
-        margin: 2% 0;
+        padding: 8px 50px;
+        margin: 10px;
         border-radius: 2px;
         cursor: pointer;
         user-select: none;
@@ -160,8 +162,9 @@
     .username-input-icon,
     .password-input-icon {
         position: absolute;
-        right: 0;
-        top: 35%;
+        right: 10px;
+        top: 50%;
+        transform: translate(0, -50%);
         color: #bababa;
     }
 
@@ -174,7 +177,7 @@
         position: absolute;
         top: 0;
         left: 0;
-        padding: 1% 0;
+        padding: 10px 0;
         width: 100%;
         display: flex;
         justify-content: center;
@@ -187,8 +190,22 @@
     .error-message {
         background-image: linear-gradient(to bottom, rgba(255, 0, 0, 0.5), rgba(255, 0, 0, 0.4), rgba(255, 0, 0, 0.3), rgba(255, 0, 0, 0.1));
     }
-</style>
 
+    /* Prevent background and color changes for autofilled input fields */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    textarea:-webkit-autofill,
+    textarea:-webkit-autofill:hover,
+    textarea:-webkit-autofill:focus,
+    select:-webkit-autofill,
+    select:-webkit-autofill:hover,
+    select:-webkit-autofill:focus {
+        -webkit-text-fill-color: white;
+        -webkit-box-shadow: 0 0 0px 1000px rgba(0, 0, 0, 0.2) inset;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+</style>
 
 <body>
     <div class="main">
@@ -196,7 +213,7 @@
             <!-- <div class="message-container"></div> -->
             <h2 class="title"><i class="fas fa-lock"></i> Login</h2>
 
-            <h3 class="subtitle">Login with your Interact account details!</h3>
+            <p class="subtitle">Login with your Interact account details!</p>
             <div class="login-container">
                 <div class="user-input">
                     <div class="username-input">

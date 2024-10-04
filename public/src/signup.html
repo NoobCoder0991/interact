@@ -70,22 +70,18 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        /* align-items: center; */
-        /* background-color: #1c2835; */
-        border: 1px solid #444040;
-        box-shadow: 0px 0px 2px #bbb;
+        align-items: center;
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
         border-radius: 5px;
-        padding: 3%;
-        min-width: 35vw;
+        padding: 20px;
     }
 
     .register-container {
         display: flex;
         flex-direction: column;
-        /* justify-content: center; */
         align-items: center;
+        justify-content: center;
         width: 100%;
-        /* background-color: red; */
     }
 
     .user-input {
@@ -104,12 +100,12 @@
 
     .input {
         width: 100%;
-        padding: 2% 1%;
-        margin: 1% 0;
+        margin: 10px 0;
         background-color: var(--body-color);
         border: none;
         outline: none;
         border-bottom: 2px solid grey;
+        padding: 10px 0;
         color: white;
     }
 
@@ -117,11 +113,15 @@
         border-bottom: 2px solid var(--accent-color);
     }
 
+    input:-internal-autofill-selected {
+        background-color: red;
+    }
+
     .register-button {
         background-color: var(--accent-color);
         color: white;
-        padding: 2.5% 15%;
-        margin: 2% 0;
+        padding: 8px 40px;
+        margin: 10px 0;
         border-radius: 2px;
         cursor: pointer;
         user-select: none;
@@ -148,31 +148,31 @@
     }
 
     .message-container {
-        position: absolute;
         top: 0;
         left: 0;
-        /* background-color: red; */
-        padding: 1% 0;
+        padding: 10px;
         width: 100%;
         display: flex;
         justify-content: center;
     }
 
     .success-message {
-        background-image: linear-gradient(to bottom, rgba(0, 200, 200, 0.5), rgba(0, 200, 200, 0.4), rgba(0, 200, 200, 0.3), rgba(0, 200, 200, 0.1));
+        color: #76e211;
+        font-weight: bold;
 
     }
 
     .error-message {
-        background-image: linear-gradient(to bottom, rgba(255, 0, 0, 0.5), rgba(255, 0, 0, 0.4), rgba(255, 0, 0, 0.3), rgba(255, 0, 0, 0.1));
+        color: rgb(161, 48, 48);
+        font-weight: bold;
 
     }
 
     .gender-input {
         display: flex;
-        justify-content: center;
+        justify-content: space-around;
         align-items: center;
-        margin: 2%;
+        margin-top: 10px;
         width: 100%;
     }
 
@@ -180,16 +180,16 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: var(--body-color);
-        padding: 1%;
-        width: 20%;
-        /* margin: 0 1%; */
+        background-color: var(--container-color);
+        padding: 5px;
         cursor: pointer;
+        flex: 1;
         user-select: none;
     }
 
     .selected-gender-option {
-        background-color: var(--accent-bright);
+        background-color: var(--accent-dim);
+        font-weight: bold;
     }
 
     .loader {
@@ -228,21 +228,22 @@
         <div class="register-wrapper">
 
             <div class="loader"></div>
-            <div class="message-container"></div>
             <h2 class="title">
                 Register</h2>
 
-            <h3 class="subtitle">Register on Interact and enjoy secure messaging!</h3>
+            <p class="subtitle">Register on Interact and enjoy secure messaging!</p>
             <div class="register-container">
                 <div class="user-input">
                     <div class="username-input">
                         <div class="username-input-icon fas fa-user"></div>
-                        <input type="text" class="input username-input-element" placeholder="Username" />
+                        <input type="text" name="username" class="input username-input-element"
+                            placeholder="Username" />
                     </div>
 
                     <div class="password-input">
                         <div class="password-input-icon fas fa-lock"></div>
-                        <input type="password" class="input password-input-element" placeholder="Password" />
+                        <input type="password" name="password" autocomplete="new-password"
+                            class="input password-input-element" placeholder="Password" />
                     </div>
 
 
@@ -258,6 +259,7 @@
                     </div>
 
                 </div>
+                <div class="message-container"></div>
 
                 <div class="register-button">Register</div>
             </div>

@@ -44,23 +44,11 @@ initializeDatabase().then(() => {
     });
     app.use(sessionMiddleware);
     app.use(cookieParser());
-
     //request a test notification
 
-    app.post('/test-notification', async (req, res) => {
-        const { db, gfs } = getDatabase();
-        const sessionId = req.session.sessionId;
-        const user = await db.collection('session_tokens').findOne({ session_id: sessionId });
-        if (user) {
-            const device = await db.collection('devices').findOne({ userid: user.userid }, { projection: { _id: 0, device: 1 } })
-            let response = await notifcations.sendNotification(device.device, { sender: "Shafaat", content: "Hello bro, how are you" })
-            res.send(response)
-        }
-        else {
-            res.send({ ok: false, errMessage: "user not registered" })
-        }
+    const { db, gfs } = getDatabase();
 
-    })
+
 
     //subscribing the push notifcations user
     app.post('/subscribe', async (req, res) => {
@@ -69,7 +57,7 @@ initializeDatabase().then(() => {
         const user = await db.collection('session_tokens').findOne({ session_id: sessionId });
         if (user) {
             try {
-                await db.collection('devices').updateOne({ userid: user.userid }, { $set: { 'device': req.body } });
+                await db.collection('devices').updateOne({ userid: user.userid }, { $push: { device: req.body } }, { upsert: true });
                 res.send({ ok: true })
 
             } catch (error) {
@@ -240,12 +228,16 @@ initializeDatabase().then(() => {
                     }
 
                 }
-                if (recepients && recepients.length == 0) {
+                if (!recepients || (recepients && recepients.length == 0)) {
                     //offline recepients
                     const device = await db.collection('devices').findOne({ userid: data.receiver }, { projection: { _id: 0, device: 1 } })
-                    if (device) {
-                        const sender_data = await db.collection('user_data').findOne({ userid: data.sender }, { projection: { _id: 0, username: 1 } })
-                        await notifcations.sendNotification(device.device, { sender: sender_data.username, content: data.message })
+                    if (device && device.device) {
+                        const sender_data = await db.collection('user_data').findOne({ userid: data.sender }, { projection: { _id: 0, username: 1 } });
+                        const devices = device.device
+
+                        for (const device of devices) {
+                            await notifcations.sendNotification(device, { sender: sender_data.username, content: data.message })
+                        }
                     }
                 }
 
@@ -280,11 +272,18 @@ initializeDatabase().then(() => {
 
                     try {
                         // Stream the response from the AI function
-                        for await (const chunk of ai.getAIResponse(data.sender, query)) {
-                            if (chunk.length) {
+                        for await (const chunk of ai.getAIResponse(db, data.sender, query)) {
+                            if (chunk) {
+                                if (chunk.ok) {
+                                    responseMessage += chunk.content;
+                                    res.write(chunk.content);
 
-                                responseMessage += chunk;
-                                res.write(chunk); // Add a newline for better separation of chunks
+                                }
+                                else {
+                                    res.send({ ok: false, errMessage: chunk.errMessage });
+                                    res.end();
+                                }
+
                             }
                         }
 
@@ -344,6 +343,25 @@ initializeDatabase().then(() => {
 
                         for (let recepient of recepients) {
                             recepient.send(JSON.stringify(data))
+                        }
+                    }
+                    if (!recepients || (recepients && recepients.length == 0)) {
+                        //offline recepients
+                        const device = await db.collection('devices').findOne({ userid: data.receiver }, { projection: { _id: 0, device: 1 } })
+                        if (device && device.device) {
+                            const sender_data = await db.collection('user_data').findOne({ userid: data.sender }, { projection: { _id: 0, username: 1 } });
+                            const devices = device.device
+
+                            for (const device of devices) {
+                                let content;
+                                if (data.type == 'file') {
+                                    content = data.message.length ? `File : ${data.message}` : `File : ${data.file_details.name}`;
+                                }
+                                else if (data.type == 'photo') {
+                                    content = data.message.length ? `Image : ${data.message}` : `Image : ${data.file_details.name}`;
+                                }
+                                await notifcations.sendNotification(device, { sender: sender_data.username, content })
+                            }
                         }
                     }
                     // onlineUsers[data.receiver].send(JSON.stringify(data))
@@ -466,8 +484,7 @@ initializeDatabase().then(() => {
                 const userid = await db.collection('users').countDocuments() + 1;
                 await db.collection('users').insertOne({ userid, username, password })
 
-                await db.collection('user_data').insertOne({ userid, gender, friends: [], username, color })
-                await db.collection('devices').insertOne({ userid })
+                await db.collection('user_data').insertOne({ userid, gender, friends: [-1], username, color })
 
                 res.send({ ok: true })
             }
@@ -509,6 +526,7 @@ initializeDatabase().then(() => {
 
             if (user) {
                 const userInfo = await db.collection('user_data').findOne({ userid: user.userid }, { projection: { _id: 0, userid: 1, gender: 1, friends: 1, username: 1, color: 1, notifications: 1 } })
+
                 res.send({ ok: true, data: userInfo })
             }
         }
@@ -884,7 +902,6 @@ initializeDatabase().then(() => {
             }
 
 
-
         } catch (error) {
 
             res.send({ ok: false, errMessage: error })
@@ -893,8 +910,12 @@ initializeDatabase().then(() => {
     })
 
 }).catch(err => {
+
     console.error("Failed to initialize database", err);
-    process.exit(1);
+    // process.exit(1);
+    app.use((req, res, next) => {
+        res.status(500).send("<h2>Internal Server Error</h2>");
+    });
 })
 
 
