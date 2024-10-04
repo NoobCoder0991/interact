@@ -4,12 +4,14 @@ const { HfInference } = require("@huggingface/inference");
 const inference = new HfInference(process.env.HUGGING_FACE_API_TOKEN);
 
 
+
+
 async function* getAIResponse(db, userid, query) {
     try {
         const userData = await db.collection("user_data").findOne({ userid }, { projection: { _id: 0, username: 1 } });
 
         const messages = [];
-        messages.push({ role: "system", content: `Client Name : ${userData.username}` })
+        messages.push({ role: "system", content: `User : ${userData.username}` })
         messages.push({ role: 'user', content: query });
 
 

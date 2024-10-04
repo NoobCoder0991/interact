@@ -46,6 +46,7 @@
 }
 
 
+
 ::-webkit-scrollbar {
     width: 2px;
 }
@@ -954,7 +955,7 @@ body.light-mode .chat-search-input {
     flex-direction: column;
     flex-grow: 1;
     height: 100%;
-    width: 100%;
+    width: 0;
     background-color: var(--body-color-dim);
 
 }
@@ -1035,8 +1036,6 @@ body.light-mode .chat-background {
     overflow: hidden;
     /* Hide overflowing content */
     margin-bottom: 5px;
-    line-height: 1.5;
-
 }
 
 .message-container {
@@ -1052,10 +1051,7 @@ body.light-mode .chat-background {
 
 }
 
-.photo-container {
-    padding: 8px;
 
-}
 
 .my-message .file-container {
 
@@ -1067,6 +1063,7 @@ body.light-mode .chat-background {
 .my-message a,
 .friend-message a {
     color: var(--accent-bright);
+    color: #FFEB3B;
     font-weight: bold;
     text-decoration: none;
 }
@@ -1392,9 +1389,15 @@ body.light-mode .selected-message {
 
 }
 
+.bottom-wrapper {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
 .chat-input-wrapper {
     display: flex;
-    position: sticky;
     align-items: center;
     justify-content: space-around;
     padding: 3px 10px;
@@ -1996,7 +1999,8 @@ body.light-mode .friend-name {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding: 0.5% 1%;
+    /* padding: 0.5% 1%; */
+    padding: 10px;
     background-color: var(--body-color);
     max-height: 15%;
     display: none;
@@ -2039,7 +2043,8 @@ body.light-mode .reply-message {
 .file-details {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: center;
+    align-items: center;
     font-size: small;
     color: var(--light-color);
 }
@@ -2052,6 +2057,7 @@ body.light-mode .file-details {
 .file-content-inner {
     display: flex;
     align-items: center;
+    justify-content: center;
     padding: 10px 0;
 }
 
@@ -2059,6 +2065,10 @@ body.light-mode .file-details {
     font-size: xx-large;
     margin-right: 10px;
     height: 35px;
+}
+
+.file-send-container .file-icon {
+    display: none;
 }
 
 .file-icon-image {
@@ -2126,13 +2136,11 @@ body.light-mode .file-preview {
     overflow: hidden;
     /* width: min(350px, 50%);
     max-width: 350px; */
+    text-align: center;
     text-overflow: ellipsis;
     color: var(--sharp-color);
 }
 
-body.light-mode .file-name {
-    color: var(--sharp-color-light-mode);
-}
 
 .file-actions {
     display: flex;
@@ -2461,18 +2469,19 @@ body.light-mode .delete-message-option {
     cursor: pointer;
 }
 
+emoji-picker {
+    width: 100%;
+}
+
 #emoji-picker {
     position: absolute;
     display: flex;
     flex-direction: column;
-    top: -205px;
+    bottom: 100%;
     left: 1px;
-    width: 300px;
-    height: 200px;
     background-color: var(--body-color);
     border: 3px solid var(--dark-container-color);
     z-index: 1000;
-    animation: 0.2s test;
 }
 
 body.light-mode #emoji-picker {
@@ -2492,8 +2501,7 @@ body.light-mode #emoji-picker {
     font-size: large;
     padding: 8px 10px;
     border-radius: 5px;
-    /* border: 1px solid var(--border-color-light); */
-    box-sizing: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
     font-size: 1rem;
     overflow: hidden;
     cursor: auto;
@@ -2678,33 +2686,54 @@ body.light-mode .active-content:hover {
     bottom: 0;
     top: 0;
     z-index: 10000;
-    background-color: rgba(0, 0, 0, 0.3);
+    /* background-color: rgba(0, 0, 0, 0.3); */
     display: none;
+}
+
+.file-send-wrapper-inner {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 10px 5px;
+    align-items: flex-end;
+    display: flex;
+    top: 0;
+    z-index: 10000;
+
 }
 
 .file-send-container {
     display: flex;
     flex-direction: column;
-    position: absolute;
+    /* position: absolute; */
     background-color: var(--dark-sharp-color);
     bottom: 100%;
-    left: 0;
-    bottom: 0;
+    left: 10px;
+    bottom: 10px;
+    right: 10px;
     width: min(500px, 100%);
-    /* max-height: 500px; */
     padding: 20px 0;
     z-index: 100;
-    box-shadow: 0px 0px 2px var(--border-color-light);
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid #aaa;
+    border-top: 1px solid #aaa;
 }
 
-body.light-mode .file-send-container {
+.file-send-container-bottom {
+    padding: 10px;
+}
 
-    background-color: var(--dark-sharp-color-light-mode);
-    box-shadow: 0px 0px 2px var(--border-color-light-light-mode);
+.remove-file-send-container {
+    float: right;
+    align-self: flex-end;
+    padding: 0 10px;
+    font-size: x-large;
+    cursor: pointer;
 }
 
 #preview {
-    height: 250px;
+    height: 300px;
     position: relative;
     width: 100%;
     display: flex;
@@ -2720,9 +2749,9 @@ body.light-mode .file-send-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 3px 5px;
-    margin-top: 5%;
-    background-color: var(--container-color);
+    /* padding: 3px 5px; */
+    margin-top: 15px;
+    /* background-color: var(--container-color); */
 }
 
 body.light-mode .file-caption {
@@ -2733,10 +2762,11 @@ body.light-mode .file-caption {
 
 
 .caption-input-element {
-    background-color: var(--container-color);
+    /* background-color: var(--container-color); */
     border: none;
-    width: 100%;
+    flex-grow: 1;
     resize: none;
+    padding: 10px;
     font-family: ui-sans-serif, -apple-system, system-ui, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
@@ -2744,10 +2774,16 @@ body.light-mode .caption-input-element {
     background-color: var(--container-color-light-mode);
 }
 
+.caption-input {
+    display: flex;
+}
+
 .file-send-button {
     background-color: var(--accent-bright);
     color: var(--sharp-color);
     padding: 8px;
+    float: right;
+    margin-top: 10px;
     border-radius: 3px;
     cursor: pointer;
 }
@@ -3116,6 +3152,96 @@ a {
         opacity: 1.1;
     }
 
+}
+
+/* Reply Icon */
+.icon-reply {
+    color: #1E90FF;
+    /* DodgerBlue */
+}
+
+/* Copy Text Icon */
+.icon-copytext {
+    color: #32CD32;
+    /* LimeGreen */
+}
+
+/* Forward Icon */
+.icon-forward {
+    color: #FF8C00;
+    /* DarkOrange */
+}
+
+/* Delete Icon */
+.icon-delete {
+    color: #DC143C;
+    /* Crimson */
+}
+
+/* Select Icon */
+.icon-select {
+    color: #FFD700;
+    /* Gold */
+}
+
+.alert-wrapper {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10001;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: none;
+    padding: 10px;
+
+}
+
+.alert-container {
+    background-color: var(--container-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 25px;
+    max-width: 500px;
+}
+
+.alert-title,
+.alert-message {
+    align-self: flex-start;
+}
+
+.alert-message {
+    margin-bottom: 20px;
+}
+
+.alert-actions {
+    display: flex;
+    width: 100%;
+}
+
+.alert-action {
+    flex: 1;
+    border-radius: 5px;
+    padding: 8px 20px;
+}
+
+.alert-ok {
+    background-color: var(--accent-color);
+    color: white;
+    margin-right: 5px;
+}
+
+.alert-cancel {
+    margin-left: 5px;
+}
+
+.warning-alert-button {
+    background-color: #b12626;
 }
 
 
