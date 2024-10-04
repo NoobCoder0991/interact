@@ -2506,57 +2506,6 @@
                 newContainer.classList.add('active-chat-container');
 
 
-<<<<<<< HEAD
-                    let date = formatDate(message.time);
-                    if (currentDate == undefined || currentDate != date) {
-                        let dateContainer = chatInfo.cloneNode(true);
-                        dateContainer.classList.add('date-info');
-
-                        let messageDate = getRelativeDate(message.time);
-
-                        dateContainer.innerHTML = messageDate;
-
-                        document
-                            .getElementsByClassName("chat-container")[0]
-                            .appendChild(dateContainer);
-                    }
-                    if (
-                        !unread &&
-
-                        message.status == 0 &&
-                        message.sender == currentFriendId
-                    ) {
-                        unread = true;
-                        unreadElement.innerHTML = `${unreadCount} unread messages`;
-                        document
-                            .getElementsByClassName("chat-container")[0]
-                            .appendChild(unreadElement);
-                        unreadCount++;
-
-                    }
-
-
-                    if (message.type == 'send') {
-
-                        writeTextMessage(message.message, message.time, message.sender == myUserid, true, message.state == 0, message.status == 1, message.replyIndex, true);
-                    }
-                    else if (message.type == 'file') {
-                        writeFileMessage(message.file_details, message.message, message.time, message.sender == myUserid, true, message.state == 0, message.status == 1, message.replyIndex, true);
-                        downloadFileFromServer(message.fileId, message.file_details.name, message.file_details.type)
-                        fileMessageIndex++;
-
-                    }
-
-
-                    currentDate = date;
-                }
-                if (unreadCount) {
-                    unreadElement.innerHTML = `${unreadCount} unread messages`;
-
-                }
-
-=======
->>>>>>> optimized
             }
 
             let messageInput = document.getElementsByClassName(
