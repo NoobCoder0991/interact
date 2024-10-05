@@ -508,7 +508,6 @@ body.light-mode .searched-chat-profile-gender {
 .recent-message-chat {
     display: flex;
     align-items: center;
-    justify-content: center;
     min-height: 8vh;
     cursor: pointer;
     padding: 2vh;
@@ -735,7 +734,7 @@ body.light-mode .loading-user-name {
     font-size: small;
     text-wrap: nowrap;
     overflow: hidden;
-    max-width: 17vw;
+    /* max-width: 17vw; */
     color: var(--faint-color);
     text-overflow: ellipsis;
 
@@ -868,6 +867,7 @@ body.light-mode .loading-profile-image-element {
     flex-direction: column;
     justify-content: space-around;
     height: 100%;
+    width: 0;
     flex-grow: 1;
 }
 
@@ -1808,6 +1808,10 @@ body.light-mode .loading-new-messages {
     display: flex;
     flex-direction: column;
     height: 100%;
+    text-wrap: nowrap;
+    position: absolute;
+    right: 10px;
+    top: 10px;
 
 }
 
@@ -3307,9 +3311,9 @@ a {
         width: 100%;
     }
 
-    .last-message-content {
+    /* .last-message-content {
         max-width: 60vw;
-    }
+    } */
 
     .notifications-wrapper {
         flex-grow: 1;
