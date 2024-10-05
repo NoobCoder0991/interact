@@ -728,6 +728,7 @@ body.light-mode .loading-user-name {
 .last-message {
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 
 .last-message-content {
@@ -738,6 +739,13 @@ body.light-mode .loading-user-name {
     color: var(--faint-color);
     text-overflow: ellipsis;
 
+}
+
+.last-message-details {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 body.light-mode .last-message-content {
@@ -812,6 +820,7 @@ body.light-mode .last-message-time {
 
 .blue-tick {
     color: var(--blue-tick-color);
+    color: #91dd49;
     display: none;
 }
 
@@ -1783,6 +1792,7 @@ body.light-mode .nav-profile {
     color: white;
     font-weight: bold;
     display: none;
+    padding: 0px 5px;
 }
 
 body.light-mode .new-messages {
@@ -1804,20 +1814,7 @@ body.light-mode .loading-new-messages {
     background-color: var(--loading-color-light-mode);
 }
 
-.test {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    text-wrap: nowrap;
-    position: absolute;
-    right: 10px;
-    top: 10px;
 
-}
-
-.test>div {
-    flex-grow: 1;
-}
 
 .loading-test {
     display: flex;
@@ -2315,7 +2312,7 @@ body.light-mode .typing {
 
 .typing-indicator {
     font-size: small;
-    color: var(--accent-bright);
+    color: var(--accent-color);
     font-weight: bold;
     display: none;
 }
@@ -2326,7 +2323,7 @@ body.light-mode .typing-indicator {
 
 .typing-indicator-2 {
     font-size: small;
-    color: var(--accent-bright);
+    color: var(--accent-color);
     font-weight: bold;
     display: none;
 }

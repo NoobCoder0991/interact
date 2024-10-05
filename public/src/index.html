@@ -834,7 +834,7 @@
 
             if (data.sender == myid) {
                 writeFileMessage(data.file_details, data.message, data.time, true, true, false, false, data.replyIndex, true);
-                downloadFileFromServer(data.fileId, data.file_details.name, data.file_details.type)
+                downloadFileMessage(data.fileId, data.file_details.name, data.file_details.type)
                 sentMessageNotify.play();
                 let container = document.getElementsByClassName(
                     "recent-messages-container"
@@ -861,7 +861,7 @@
                     writePhotoMessage(parentContainer, data.file_details, data.message, data.time, false, false, false, false, data.replyIndex, true)
 
                 }
-                downloadFileFromServer(parentContainer, data.fileId, data.file_details.name, data.file_details.type, data.type == 'photo')
+                downloadFileMessage(parentContainer, data.fileId, data.file_details.name, data.file_details.type, data.type == 'photo')
                 receivedMessageNotify.play();
                 ws.send(
                     JSON.stringify({ type: "chat-opened", recepient: data.sender })
@@ -903,7 +903,7 @@
                         writePhotoMessage(parentContainer, data.file_details, data.message, data.time, false, false, false, false, data.replyIndex, triggerDownload = false)
                     }
 
-                    downloadFileFromServer(parentContainer, data.fileId, data.file_details.name, data.file_details.type, data.type == 'photo')
+                    downloadFileMessage(parentContainer, data.fileId, data.file_details.name, data.file_details.type, data.type == 'photo')
                 }
                 let element = document.getElementsByClassName("new-messages")[index];
                 let currentUnreadMessages =
@@ -1087,12 +1087,12 @@
             let targetContainer = document.getElementsByClassName('recent-message-chat')[index];
             if (targetContainer) {
                 if (data.typeStatus == true) {
-                    targetContainer.getElementsByClassName('last-message')[0].style.display = 'none'
+                    targetContainer.getElementsByClassName('last-message-details')[0].style.display = 'none'
                     targetContainer.getElementsByClassName('typing-indicator-2')[0].style.display = 'flex'
 
                 }
                 else {
-                    targetContainer.getElementsByClassName('last-message')[0].style.display = 'flex'
+                    targetContainer.getElementsByClassName('last-message-details')[0].style.display = 'flex'
                     targetContainer.getElementsByClassName('typing-indicator-2')[0].style.display = 'none'
 
                 }
@@ -2383,21 +2383,22 @@
                 <div class="user-info">
                     <div class="user-name">
                         <div class="username">${data.username}</div>
-                    </div>
-                    <div class="last-message">
-                        <div class="last-message-status">
-                            <i class="message-tick fas fa-check-circle">   
-                            </i>
+                        <div class='last-message-time'></div>
                         </div>
-                        <div class="last-message-content">${(lastMessageContent)}</div>
-                    </div>
-                    <div class="typing-indicator-2">typing...</div>
+                        <div class="last-message">
+                            <div class="last-message-details">
+                                <div class="last-message-status">
+                                    <i class="message-tick fas fa-check-circle"></i>
+                                </div>
+                                <div class="last-message-content">${(lastMessageContent)}</div>
+
+                            </div>
+                            <div class="typing-indicator-2">typing...</div>
+                            <div class="new-messages"></div>
+                        </div>
 
                     </div>
-                    <div class='test'>
-                            <div class='last-message-time'></div>
-                            <div class="new-messages"></div>
-                    </div>
+                 
             `;
 
         if (lastMessage) {
@@ -3196,7 +3197,7 @@
         parent.scrollTop = centerOffset;
     }
 
-    async function downloadFileFromServer(container, fileId, fileName, fileType, isPhoto) {
+    async function downloadFileMessage(container, fileId, fileName, fileType, isPhoto) {
         try {
             const fileIndex = container.getElementsByClassName('file-message').length - 1;
             const photoIndex = container.getElementsByClassName('photo-message').length - 1;
@@ -3861,12 +3862,12 @@
             else if (message.type == 'file') {
 
                 writeFileMessage(container, message.file_details, message.message, message.time, message.sender == myid, true, message.state == 0, message.status == 1, message.replyIndex, true);
-                downloadFileFromServer(container, message.fileId, message.file_details.name, message.file_details.type)
+                downloadFileMessage(container, message.fileId, message.file_details.name, message.file_details.type)
 
             }
             else if (message.type == 'photo') {
                 writePhotoMessage(container, message.file_details, message.message, message.time, message.sender == myid, true, message.state == 0, message.status == 1, message.replyIndex, true);
-                downloadFileFromServer(container, message.fileId, message.file_details.name, message.file_details.type, true)
+                downloadFileMessage(container, message.fileId, message.file_details.name, message.file_details.type, true)
             }
 
 
