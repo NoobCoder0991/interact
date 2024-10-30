@@ -1,3 +1,5 @@
+
+//  Importing important libraries and files 
 const express = require('express');
 const { createServer, get } = require('http');
 const { join } = require('path');
@@ -24,31 +26,23 @@ initializeDatabase().then(() => {
     server = app.listen(port, '0.0.0.0', () => {
         console.log(`Server running at http://0.0.0.0:${port}`)
     })
-
-
     // Middleware to parse JSON and URL-encoded bodies
     app.use(express.static(join(__dirname, '/public')));
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
 
-    // Middleware for cookies and sessions
+    // Middleware for creating session for users
     const sessionMiddleware = session({
-        // store: new RedisStore({ client }),
         secret: 'ddfd58d8f5d53#@%hgg55$#',
         resave: false,
         saveUninitialized: false,
         cookie: {
-            secure: false, // Set to true if using HTTPS
-            maxAge: 3600000 // Session expiration time in milliseconds (1 hour in this example)
+            secure: true,
+            maxAge: 3600000
         }
     });
     app.use(sessionMiddleware);
     app.use(cookieParser());
-    //request a test notification
-
-    const { db, gfs } = getDatabase();
-
-
 
     //subscribing the push notifcations user
     app.post('/subscribe', async (req, res) => {
@@ -109,8 +103,6 @@ initializeDatabase().then(() => {
             res.status(500).json({ err: 'Internal Server Error' });
         }
     });
-
-
 
 
     const onlineUsers = {}
@@ -189,9 +181,7 @@ initializeDatabase().then(() => {
 
                 }
 
-
             })
-
 
             //sending message
             app.post('/message', async (req, res) => {
@@ -218,8 +208,7 @@ initializeDatabase().then(() => {
                     await db.collection('chats').insertOne(newConversation)
                 }
 
-                // ws.send(JSON.stringify({ type: 'message-received', index: data.index }))
-
+                res.send({ ok: true })
                 if (recepients && recepients.length) {
 
                     for (let recepient of recepients) {
@@ -241,7 +230,6 @@ initializeDatabase().then(() => {
                     }
                 }
 
-                res.send({ ok: true })
             })
 
             app.post('/message-ai', async (req, res) => {
@@ -267,11 +255,11 @@ initializeDatabase().then(() => {
                     // AI
                     const query = data.message;
                     let responseMessage = "";
-                    res.setHeader('Content-Type', 'text/plain');
-                    res.setHeader('Transfer-Encoding', 'chunked');
 
                     try {
                         // Stream the response from the AI function
+                        res.setHeader('Content-Type', 'text/plain');
+                        res.setHeader('Transfer-Encoding', 'chunked');
                         for await (const chunk of ai.getAIResponse(db, data.sender, query)) {
                             if (chunk) {
                                 if (chunk.ok) {
@@ -282,13 +270,14 @@ initializeDatabase().then(() => {
                                 else {
                                     res.send({ ok: false, errMessage: chunk.errMessage });
                                     res.end();
+                                    return;
                                 }
 
                             }
                         }
 
                         if (responseMessage.length == 0) {
-                            res.status(500).send({ ok: false, errMessage: "API didn't respond" })
+                            res.send({ ok: false, errMessage: "API didn't respond" })
                             res.end();
                         }
                         else {
@@ -302,14 +291,13 @@ initializeDatabase().then(() => {
 
                         res.end(); // End the response when all chunks are sent
                     } catch (error) {
-                        console.log(error);
-                        res.status(500).send({ ok: false, errMessage: error });
+                        res.send({ ok: false, errMessage: error });
                     }
 
                     return; // Ensure no further code executes if the condition is true
                 }
 
-                res.status(400).send({ ok: false, errMessage: 'Invalid request' });
+                res.send({ ok: false, errMessage: 'Invalid request' });
             });
 
             // File upload route
@@ -429,8 +417,18 @@ initializeDatabase().then(() => {
     app.get("/signup", (req, res) => {
         res.sendFile(join(__dirname, "/public/src/signup.html"));
     });
-    app.get("/login", (req, res) => {
-        res.sendFile(join(__dirname, "/public/src/login.html"));
+    app.get("/login", async (req, res) => {
+        const { db, gfs } = getDatabase();
+        const sessionId = req.session.sessionId;
+
+        const user = await db.collection("session_tokens").findOne({ session_id: sessionId });
+        if (user) {
+            res.redirect('/home')
+        }
+
+        else {
+            res.sendFile(join(__dirname, "/public/src/login.html"));
+        }
     });
 
     app.get("/home", isAuthenticated, (req, res) => {

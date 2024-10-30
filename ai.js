@@ -34,7 +34,7 @@ async function* getAIResponse(db, userid, query) {
             console.error("Request timed out");
         }
         else {
-            console.error("Error occurred while fetching AI response:", error);
+            // console.error("Error occurred while fetching AI response:", error);
             yield { ok: false, errMessage: error }; // Yield an empty string or a specific error message if needed
 
         }

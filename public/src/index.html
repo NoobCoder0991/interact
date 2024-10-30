@@ -25,7 +25,29 @@
 
 
 
+
 <body>
+
+    <div class="forward-message-wrapper hide">
+        <div class="forward-message-container">
+            <span> <i class="fas fa-share"></i>
+                Forwarding from <span class="forwarding-from-name">Suma</span></span>
+            <h2 class="forward-message-title">Forward To...</h2>
+            <div class="forward-container-search">
+                <input type="text" class="input forward-container-search-element" placeholder="Search">
+            </div>
+            <button class=" button forward-button disabled-forward-button" onclick="forwardMessage()" disabled>
+                Forward
+            </button>
+            <div class="forward-friends-container">
+                <div class="forward-friends">
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
 
     <div class="alert-wrapper"></div>
 
@@ -125,7 +147,7 @@
                 <span class="fas fa-comment"></span>
                 &nbsp;
 
-                <span class="nav-option-content">Rooms</span>
+                <span class="nav-option-content">Groups</span>
             </div>
             <div class="nav-option">
                 <span class="fas fa-random"></span>
@@ -161,6 +183,7 @@
             <div class="nav-user-icon fas fa-user"></div>
             <div class="nav-username"></div>
         </div>
+        <div onclick="toggleFullScreen(this)" class=" fas fa-expand full-screen"></div>
     </div>
     <div class="main">
 
@@ -496,7 +519,7 @@
                         <div class="message-menu-icon icon-copytext fas fa-copy"></div>
                         <div class="message-menu-content">Copy Text</div>
                     </div>
-                    <div class="message-menu-option forward-option">
+                    <div class="message-menu-option forward-option" onclick="preForwardMesssage()">
                         <div class="message-menu-icon icon-forward fas fa-share"></div>
                         <div class="message-menu-content">Forward</div>
                     </div>
@@ -629,6 +652,9 @@
 
 <script>
 
+
+
+
     //setting theme according to user prefernce or sysstem theme
 
     var theme = localStorage.getItem('theme');
@@ -642,7 +668,6 @@
         document.getElementById('css-file').setAttribute('href', `../src/index-${defaultTheme}.css`)
 
     }
-
 
     var selectedFile;
     var selectedFormData;
@@ -720,7 +745,7 @@
             activeElement.getElementsByClassName(
                 "last-message-status"
             )[0].classList.remove('blue-tick');
-            activeElement.getElementsByClassName("last-message-content")[0].innerHTML = `<i class="fas ${fileType == 'file' ? 'fa-file-alt' : 'fa-image'}"></i>` + `${caption.length ? caption : selectedFile.name}`;
+            activeElement.getElementsByClassName("last-message-content")[0].innerHTML = `<i class="fas ${fileType == 'file' ? 'fa-file-alt' : 'fa-image'}"></i>` + `${caption.length ? (caption) : selectedFile.name}`;
 
             activeElement.getElementsByClassName("last-message-time")[0].innerHTML =
                 formatTime(date.getHours(), date.getMinutes());
@@ -729,7 +754,9 @@
             ).indexOf(activeElement);
             container.insertBefore(activeElement, container.firstChild);
             scrollToChild(container, activeElement);
+            moveToFront(userInfo.friends, index);
             moveToFront(userInfo.friendUsernames, index);
+            moveToFront(userInfo.colors, index);
             removeUnreadMessagesTag();
             document.getElementsByClassName("chat-search-container")[0].innerHTML =
                 "";
@@ -823,10 +850,10 @@
             }
             if (data.type == 'file') {
 
-                activeElement.getElementsByClassName("last-message-content")[0].innerHTML = '<i class="fas fa-file-alt"></i> ' + `${data.message.length ? data.message : data.file_details.name} `;
+                activeElement.getElementsByClassName("last-message-content")[0].innerHTML = '<i class="fas fa-file-alt"></i> ' + `${data.message.length ? (data.message) : data.file_details.name} `;
             }
             else {
-                activeElement.getElementsByClassName("last-message-content")[0].innerHTML = '<i class="fas fa-image"></i> ' + `${data.message.length ? data.message : data.file_details.name} `;
+                activeElement.getElementsByClassName("last-message-content")[0].innerHTML = '<i class="fas fa-image"></i> ' + `${data.message.length ? (data.message) : data.file_details.name} `;
             }
 
             activeElement.getElementsByClassName("last-message-time")[0].innerHTML =
@@ -873,6 +900,7 @@
                 scrollToChild(container, activeElement);
                 moveToFront(userInfo.friends, index ? index : index1);
                 moveToFront(userInfo.friendUsernames, index ? index : index1);
+                moveToFront(userInfo.colors, index ? index : index1);
                 activeElement.getElementsByClassName(
                     "last-message-status"
                 )[0].style.display = "none";
@@ -919,6 +947,7 @@
                 scrollToChild(container, activeElement);
                 moveToFront(userInfo.friends, index ? index : index1);
                 moveToFront(userInfo.friendUsernames, index ? index : index1);
+                moveToFront(userInfo.colors, index ? index : index1);
                 activeElement.getElementsByClassName(
                     "last-message-status"
                 )[0].style.display = "none";
@@ -943,7 +972,7 @@
             }
             activeElement.getElementsByClassName(
                 "last-message-content"
-            )[0].innerHTML = message.message;
+            )[0].innerHTML = (message.message);
             activeElement.getElementsByClassName("last-message-time")[0].innerHTML =
                 formatTime(message.time.hours, message.time.mins);
 
@@ -967,7 +996,7 @@
             } else if (message.sender == currentFriendId) {
                 const parentContainer = document.getElementsByClassName(`chat-container-${message.sender}`)[0];
                 updateDateInfoContainers(parentContainer, message.time);
-                writeTextMessage(parentContainer, message.message, message.time, message.sender == myid, false, false, false, message.replyIndex);
+                writeTextMessage(parentContainer, message.message, message.time, message.sender == myid, false, false, false, message.replyIndex, message.forwarded);
                 receivedMessageNotify.play();
                 ws.send(
                     JSON.stringify({ type: "chat-opened", recepient: message.sender })
@@ -979,6 +1008,7 @@
                 scrollToChild(container, activeElement);
                 moveToFront(userInfo.friends, index ? index : index1);
                 moveToFront(userInfo.friendUsernames, index ? index : index1);
+                moveToFront(userInfo.colors, index ? index : index1);
                 activeElement.getElementsByClassName(
                     "last-message-status"
                 )[0].style.display = "none";
@@ -999,7 +1029,7 @@
                         unreadContainer.textContent = `1 unread messages`
                         parentContainer.appendChild(unreadContainer);
                     }
-                    writeTextMessage(parentContainer, message.message, message.time, message.sender == myid, false, false, false, message.replyIndex);
+                    writeTextMessage(parentContainer, message.message, message.time, message.sender == myid, false, false, false, message.replyIndex, message.forwarded);
                 }
 
                 let element = document.getElementsByClassName("new-messages")[index];
@@ -1016,6 +1046,7 @@
                 scrollToChild(container, activeElement);
                 moveToFront(userInfo.friends, index ? index : index1);
                 moveToFront(userInfo.friendUsernames, index ? index : index1);
+                moveToFront(userInfo.colors, index ? index : index1);
                 activeElement.getElementsByClassName(
                     "last-message-status"
                 )[0].style.display = "none";
@@ -1108,6 +1139,7 @@
     var selectedMessageIndex;
     var messageSelection = false;
     var selectedMessages = [];
+    var forwardFriends = [];
     var streamingResponse = false;
     var streamingIndex = -1;
     var autoScroll = true;
@@ -1163,12 +1195,15 @@
                             if (userInfo.friendUsernames) {
 
                                 userInfo.friendUsernames.push(chats[i].username);
+                                userInfo.colors.push(chats[i].color);
                             }
                             else {
 
                                 userInfo.friendUsernames = [chats[i].username]
+                                userInfo.colors = [chats[i].color]
                             }
                             createRecentMessage(chats[i]);
+
                         }
                     }
 
@@ -1179,6 +1214,7 @@
                         document.getElementsByClassName("loading-chats")[0].style.display =
                             "none";
                         document.getElementsByClassName('loading-chats-failed')[0].classList.remove('hide')
+                        console.log(error)
 
                     });
 
@@ -1277,7 +1313,7 @@
             messageInput.focus;
         }
         else if (e.key == "Enter") {
-            DisplaySentMessage(messageInput.value);
+            DisplaySentMessage(currentFriendId, messageInput.value, false);
         }
     });
 
@@ -1291,7 +1327,7 @@
         document.getElementsByClassName("send-message-icon")[0];
     messageSendButton.addEventListener("click", async (e) => {
         if (messageInput.value.trim() != "") {
-            DisplaySentMessage(messageInput.value);
+            DisplaySentMessage(currentFriendId, messageInput.value, false);
         }
     });
     document
@@ -1300,7 +1336,7 @@
             document.getElementsByClassName("empty-chat")[0].style.display = "none";
             document.getElementsByClassName("chat-container")[0].style.display =
                 "flex";
-            DisplaySentMessage("Hello");
+            DisplaySentMessage(currentFriendId, "Hello", false);
         });
 
     function displayErrorMessage(message) {
@@ -1346,7 +1382,7 @@
                 document.getElementsByClassName(
                     "navbar"
                 )[0].classList.remove('hide')
-                loadChats(event.state.contentId, event.state.index);
+                loadChats(event.state.contentId);
             }
         } else {
             document
@@ -1413,14 +1449,8 @@
     });
 
     window.addEventListener("click", (e) => {
-        if (
-            !document
-                .getElementsByClassName("message-menu-wrapper")[0]
-                .contains(e.target)
-        ) {
-            document.getElementsByClassName(
-                "message-menu-wrapper"
-            )[0].classList.remove('show');
+        if (!document.getElementsByClassName("message-menu-wrapper")[0].contains(e.target) && document.getElementsByClassName("message-menu-wrapper")[0].classList.contains('show')) {
+            document.getElementsByClassName("message-menu-wrapper")[0].classList.remove('show');
 
             document.getElementsByClassName(`chat-container-wrapper`)[0].style.overflow =
                 "auto";
@@ -1474,6 +1504,20 @@
         }
     });
 
+    document.getElementsByClassName("forward-message-wrapper")[0].addEventListener("click", e => {
+        if (!document.getElementsByClassName('forward-message-container')[0].contains(e.target)) {
+            customAlert("Discard Forwarding?", "This action will dicard forwarding of selected message(s)", "Cancel", "Discard", discardForwarding, false);
+        }
+    })
+
+    function discardForwarding() {
+        document.getElementsByClassName("forward-message-wrapper")[0].classList.add("hide");
+        document.getElementsByClassName("forward-friends")[0].innerHTML = "";
+        document.getElementsByClassName("chat-container-wrapper")[0].style.overflow = 'auto';
+        selectedMessageIndex = null;
+        forwardFriends = [];
+    }
+
 
     async function sendPostRequest(url, data) {
         try {
@@ -1513,46 +1557,105 @@
         let data = { type: 'file', sender, receiver, time, message, file_details: details, index }
         formData.append('data', JSON.stringify(data));
 
-        fetch('/upload', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(async (data) => {
-                if (data.ok) {
-                    const chunks = await chunkFile(fileDetails, 255 * 1024);
-                    for (const chunk of chunks) {
-                        storeFileChunk(db, data.fileId, chunk)
+        // fetch('/upload', {
+        //     method: 'POST',
+        //     body: formData
+        // })
+        //     .then(response => response.json())
+        //     .then(async (data) => {
+        //         if (data.ok) {
+        //             const chunks = await chunkFile(fileDetails, 255 * 1024);
+        //             for (const chunk of chunks) {
+        //                 storeFileChunk(db, data.fileId, chunk)
+        //             }
+
+        //             document.getElementsByClassName('my-message')[data.index].getElementsByClassName('file-actions')[0].classList.add('show')
+        //             document.getElementsByClassName('my-message')[data.index].getElementsByClassName('file-loader')[0].classList.add('hide')
+
+        //             const thisMessage = document.getElementsByClassName('my-message')[index];
+        //             thisMessage.getElementsByClassName('not-sent')[0].style.display = 'none'
+        //             thisMessage.getElementsByClassName('message-tick')[0].style.display = 'flex'
+
+        //             const activeElement = document.getElementsByClassName(
+        //                 "recent-active-message"
+        //             )[0];
+
+        //             activeElement.getElementsByClassName(
+        //                 "last-message-status"
+        //             )[0].style.display = "flex";
+        //             activeElement
+        //                 .getElementsByClassName("message-tick")[0]
+        //                 .classList.remove("blue-tick");
+
+
+        //         }
+        //         else {
+        //             alert('Error uploading the file')
+        //         }
+        //     })
+        //     .catch(err => {
+        //         // alert('Error sending the post Request:', err)
+        //         throw new Error(err)
+        //     })
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/upload', true);
+
+        // Track upload progress
+        parentContainer.getElementsByClassName('download-bar')[0].style.display = 'flex';
+        xhr.upload.onprogress = (event) => {
+            if (event.lengthComputable) {
+                const percentComplete = (event.loaded / event.total) * 100;
+                const messageElement = parentContainer.getElementsByClassName('my-message')[index];
+                console.log(`Upload progress: ${percentComplete.toFixed(2)}%`);
+                console.log(parentContainer.getElementsByClassName('bar')[0])
+                parentContainer.getElementsByClassName('bar')[0].style.width = percentComplete.toFixed(2) + '%';
+                // Update a progress bar here if needed
+            }
+        };
+
+        // Track completion
+        xhr.onload = async () => {
+            // parentContainer.getElementsByClassName('download-bar')[0].style.display = 'none';
+
+            if (xhr.status === 200) {
+                try {
+                    const data = JSON.parse(xhr.responseText);
+                    if (data.ok) {
+                        const chunks = await chunkFile(fileDetails, 255 * 1024); // Adjust chunk size if necessary
+                        for (const chunk of chunks) {
+                            await storeFileChunk(db, data.fileId, chunk); // Assuming storeFileChunk is async
+                        }
+
+                        // Display success UI updates
+                        const messageElement = parentContainer.getElementsByClassName('my-message')[data.index];
+                        messageElement.getElementsByClassName('file-actions')[0].classList.add('show');
+                        messageElement.getElementsByClassName('file-loader')[0].classList.add('hide');
+
+                        // Update message tick status
+                        messageElement.getElementsByClassName('not-sent')[0].style.display = 'none';
+                        messageElement.getElementsByClassName('message-tick')[0].style.display = 'flex';
+
+                        const activeElement = document.getElementsByClassName("recent-active-message")[0];
+                        activeElement.getElementsByClassName("last-message-status")[0].style.display = "flex";
+                        activeElement.getElementsByClassName("message-tick")[0].classList.remove("blue-tick");
+
+                        console.log("Upload and chunking complete!");
+                    } else {
+                        alert('Error uploading the file');
                     }
-
-                    document.getElementsByClassName('my-message')[data.index].getElementsByClassName('file-actions')[0].classList.add('show')
-                    document.getElementsByClassName('my-message')[data.index].getElementsByClassName('file-loader')[0].classList.add('hide')
-
-                    const thisMessage = document.getElementsByClassName('my-message')[index];
-                    thisMessage.getElementsByClassName('not-sent')[0].style.display = 'none'
-                    thisMessage.getElementsByClassName('message-tick')[0].style.display = 'flex'
-
-                    const activeElement = document.getElementsByClassName(
-                        "recent-active-message"
-                    )[0];
-
-                    activeElement.getElementsByClassName(
-                        "last-message-status"
-                    )[0].style.display = "flex";
-                    activeElement
-                        .getElementsByClassName("message-tick")[0]
-                        .classList.remove("blue-tick");
-
-
+                } catch (error) {
+                    console.error("Error handling upload response:", error);
                 }
-                else {
-                    alert('Error uploading the file')
-                }
-            })
-            .catch(err => {
-                // alert('Error sending the post Request:', err)
-                throw new Error(err)
-            })
+            } else {
+                console.error("Upload failed with status:", xhr.status);
+            }
+        };
+
+        // Send the formData
+        xhr.send(formData);
+
+
 
     }
 
@@ -1582,8 +1685,13 @@
             body: formData
         })
             .then(response => response.json())
-            .then(data => {
+            .then(async data => {
                 if (data.ok) {
+
+                    const chunks = await chunkFile(fileDetails, 255 * 1024);
+                    for (const chunk of chunks) {
+                        storeFileChunk(db, data.fileId, chunk)
+                    }
 
                     const thisMessage = document.getElementsByClassName('my-message')[index];
                     thisMessage.getElementsByClassName('not-sent')[0].style.display = 'none'
@@ -1599,8 +1707,6 @@
                     activeElement
                         .getElementsByClassName("message-tick")[0]
                         .classList.remove("blue-tick");
-
-
                 }
                 else {
                     alert('Error uploading the file')
@@ -1614,16 +1720,20 @@
     }
 
 
-    async function sendMessage(sender, receiver, message, date, replyIndex) {
+    async function sendMessage(sender, receiver, message, date, replyIndex, forwarded) {
         let time = {
             year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate(), hours: date.getHours(), mins: date.getMinutes(),
         };
 
+        await loadChats(receiver);
+
         const parentContainer = document.getElementsByClassName(`chat-container-${receiver}`)[0];
+        console.log("Parent container : ", parentContainer)
+        console.log("Parent container class", `chat-container-${receiver}`)
         updateDateInfoContainers(parentContainer, time);
-        let index = writeTextMessage(parentContainer, message, time, true, false, false, false, selectedMessageIndex);
+        let index = writeTextMessage(parentContainer, message, time, true, false, false, false, replyIndex, forwarded);
         const messageData = {
-            type: "send", sender: myid, receiver: currentFriendId, message, time, index, status: 0, replyIndex
+            type: "send", sender: myid, receiver: currentFriendId, message, time, index, status: 0, replyIndex, forwarded
         }
 
         if (receiver == -1) {
@@ -1673,7 +1783,6 @@
                         if (done) {
                             const messageContainer = document.getElementsByClassName('friend-message')[streamingIndex];
                             messageContainer.getElementsByClassName("generating-cursor")[0].style.display = 'none'
-
                             break;
 
                         }
@@ -1708,8 +1817,9 @@
                     }
 
                 } catch (error) {
+                    console.error(error)
 
-                    chatErrorMessage("hello")
+                    createChatErrorMessage(error)
 
                 }
 
@@ -1720,7 +1830,7 @@
 
             } catch (error) {
 
-                createChatErrorMessage('Failed to fetch.')
+                createChatErrorMessage(error)
 
             }
             return;
@@ -1825,7 +1935,7 @@
             <div class="file-container">
                  <div class="file-content">
                     <div class='file-preview'></div>
-                    <div class="file-content-inner">
+                    <div class="file-content-inner-2">
                         <div class="file-icon">
                         <img src="../assets/images/${map[extension] || 'unknown'}-icon.png" class='file-icon-image'>
 
@@ -1889,10 +1999,7 @@
             </div>
 
                 
-            </div>
-        
-      
-                    `;
+            </div>`;
 
         messageContainer.innerHTML = htm;
         if (!triggerDownload) {
@@ -2005,7 +2112,20 @@
             </div>
             <div class="file-container">
                  <div class="file-content">
-                    <div class='photo-container' style="height:${Math.min((36 / 100) * window.innerHeight, fileDetails.photoDimensions.height)}px"></div>
+                    <div class='progress-wrapper'>
+                        <div class="progress-container">
+                            <svg class="progress-svg" viewBox="0 0 120 120">
+                                <circle class="progress-circle-bg" cx="60" cy="60" r="50" />
+                                <circle class="progress-circle" cx="60" cy="60" r="50" />
+                                </svg>
+                                <span class="progress-percent"></span>
+                            </div>
+                            <span class="progressText">Please wait</span>
+
+                    </div>
+                    <div class='photo-container' style="height:${Math.min((36 / 100) * window.innerHeight, fileDetails.photoDimensions.height)}px">
+
+                    </div>
                 </div>
             </div>
             <div class="message-container">
@@ -2040,6 +2160,7 @@
                     `;
 
         messageContainer.innerHTML = htm;
+        setProgress(messageContainer, 0);
         if (!triggerDownload) {
 
             let photoContainer = messageContainer.getElementsByClassName('photo-container')[0];
@@ -2139,7 +2260,7 @@
                     messageOuterContainer.classList.add("selected-message")
                     let len = selectedMessages.length;
                     document.getElementsByClassName('delete-count')[0].textContent = `(${len})`
-                    document.getElementsByClassName('forward-count')[0].textContent = `(${len})`
+                    document.getElementsByClassNFame('forward-count')[0].textContent = `(${len})`
                     document.getElementsByClassName('copy-count')[0].textContent = `(${len})`
                 }
             }
@@ -2226,7 +2347,7 @@
         }
     }
 
-    function writeTextMessage(parentContainer, message, date, myMessage, sent, delivered, seen, replyIndex) {
+    function writeTextMessage(parentContainer, message, date, myMessage, sent, delivered, seen, replyIndex, forwarded) {
 
         let targetMessage;
         let targetMessageContent;
@@ -2273,16 +2394,20 @@
 
 
         let htm = ` 
-        <div  class="message-wrapper">
+        <div  class="message-wrapper">  
+            <div class='forwarded-tag' style="display: ${forwarded == true ? 'flex' : 'none'};">
+                <i class="fas fa-share"></i> <i>&nbsp; Forwarded</i>
+            </div>
             <div class="replying-to-wrapper"  style="display: ${targetMessage ? 'flex' : 'none'};">
                 <div class="replying-to" border-left: ${targetMessage && targetMessage.classList.contains('my-message') ? "5px solid var(--accent-bright)" : "5px solid #e707a0"}">
-                    <div class="replying-to-username" style="color:${targetMessage && targetMessage.classList.contains('my-message') ? "var(--accent-color)" : "#e707a0"}">${targetMessage && targetMessage.classList.contains('my-message') ? userInfo.username : document.getElementsByClassName('friend-username')[0].textContent}</div>
+                    <div class="replying-to-username" style="color:${targetMessage && targetMessage.classList.contains('my-message') ? "var(--accent-color)" : "#e707a0"}">${targetMessage && targetMessage.classList.contains('my-message') ? userInfo.username + " (You)" : document.getElementsByClassName('friend-username')[0].textContent}</div>
                     <div class="replying-to-content">${targetMessage ? targetMessageContent : ""}</div>
                 </div>
             </div>
 
             <div class="message-container">
                 <div class="message-content">
+                 
                     <span class="message-content-inner">
                         ${(processMessageContent(message))}
 
@@ -2328,6 +2453,7 @@
         let index = Array.from(
             document.getElementsByClassName("my-message")
         ).indexOf(messageContainer);
+        swipeReplyBehaviour(messageContainer)
         addListenersToMessage(messageOuterContainer, messageContainer);
         enableCodeCopy(messageContainer);
         scrollToBottom();
@@ -2425,11 +2551,10 @@
         return container;
     }
 
-    async function loadChats(friendId, index) {
+    async function loadChats(friendId) {
         document.getElementsByClassName("chat-container-wrapper")[0].style.scrollBehavior = 'auto'
-        const container = document.getElementsByClassName(
-            "recent-messages-container"
-        )[0];
+        const container = document.getElementsByClassName("recent-messages-container")[0];
+        const index = userInfo.friends.indexOf(friendId);
         document.getElementsByClassName("message-input-element")[0].focus();
         let activeMessage = container.getElementsByClassName(
             "recent-active-message"
@@ -2437,9 +2562,7 @@
         if (activeMessage.length) {
             activeMessage[0].classList.remove("recent-active-message");
         }
-        container
-            .getElementsByClassName("recent-message-chat")
-        [index].classList.add("recent-active-message");
+        container.getElementsByClassName("recent-message-chat")[index].classList.add("recent-active-message");
 
         const currentContainer = document.getElementsByClassName(`chat-container-${friendId}`);
         if (currentContainer.length) {
@@ -2534,7 +2657,7 @@
             index
         ].style.display = "none";
         element.classList.remove("blinky-chat");
-        loadChats(userid, index).then((data) => {
+        loadChats(userid).then((data) => {
             ws.send(
                 JSON.stringify({
                     type: "chat-opened",
@@ -2728,7 +2851,7 @@
         )[0].style.display = "flex";
     }
 
-    async function DisplaySentMessage(message, code) {
+    async function DisplaySentMessage(receiver, message, forwarded) {
         if (message != "" && streamingResponse == false) {
             const messageInput = document.getElementsByClassName(
                 "message-input-element"
@@ -2741,10 +2864,8 @@
             }, 0);
 
             const date = new Date();
-            let time = { year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate(), hours: date.getHours(), mins: date.getMinutes() };
-
             //Need to insert date info and update others if the previous message was not send today
-            await sendMessage(myid, currentFriendId, message, date, selectedMessageIndex);
+            await sendMessage(myid, receiver, message, date, forwarded == true ? null : selectedMessageIndex, forwarded);
             let container = document.getElementsByClassName(
                 "recent-messages-container"
             )[0];
@@ -2758,18 +2879,12 @@
             activeElement.getElementsByClassName(
                 "last-message-status"
             )[0].classList.remove('blue-tick');
-            if (code) {
 
-                activeElement.getElementsByClassName(
-                    "last-message-content"
-                )[0].innerHTML = "<i class='fas fa-code'></i> code";
-            }
-            else {
-                activeElement.getElementsByClassName(
-                    "last-message-content"
-                )[0].innerHTML = message;
+            activeElement.getElementsByClassName(
+                "last-message-content"
+            )[0].innerHTML = (message);
 
-            }
+
             activeElement.getElementsByClassName("last-message-time")[0].innerHTML =
                 formatTime(date.getHours(), date.getMinutes());
             const index = Array.from(
@@ -2778,6 +2893,7 @@
             container.insertBefore(activeElement, container.firstChild);
             moveToFront(userInfo.friends, index);
             moveToFront(userInfo.friendUsernames, index);
+            moveToFront(userInfo.colors, index);
             scrollToChild(container, activeElement);
             messageInput.value = "";
             removeUnreadMessagesTag();
@@ -2904,6 +3020,9 @@
             });
         } else {
             addFriend.innerHTML = '<i class="fas fa-comment"></i> Message';
+            addFriend.addEventListener("click", e => {
+                loadChats(info.userid)
+            })
         }
         searchedFriend.appendChild(addFriend);
 
@@ -3084,7 +3203,7 @@
             }
 
         }
-        replyMessageWrapper.getElementsByClassName('reply-message-content')[0].innerHTML = trimToMaxLength(messageText, 200)
+        replyMessageWrapper.getElementsByClassName('reply-message-content')[0].innerHTML = (messageText)
         replyMessageWrapper.style.display = 'flex'
         document.getElementsByClassName('message-menu-wrapper')[0].classList.remove('show')
         document.getElementsByClassName("chat-container-wrapper")[0].style.overflow = 'auto'
@@ -3154,7 +3273,7 @@
     }
 
     function selectMessages() {
-        let chatContainer = document.getElementsByClassName('chat-container')[0]
+        let chatContainer = document.getElementsByClassName('active-chat-container')[0]
         messageSelection = true;
         selectedMessages.push(selectedMessageIndex)
         document.getElementsByClassName('message-outer-container')[selectedMessageIndex].classList.add('selected-message');
@@ -3240,6 +3359,11 @@
                             container.getElementsByClassName('size-downloaded')[fileIndex].textContent = getStandardSize(receivedSize)
                             container.getElementsByClassName('total-size')[fileIndex].textContent = "/" + getStandardSize(totalSize)
                             container.getElementsByClassName('bar')[fileIndex].style.width = progress + "%";
+                        }
+                        else {
+                            container.getElementsByClassName('progressText')[photoIndex].textContent = `${getStandardSize(receivedSize)} / ${getStandardSize(totalSize)}`;
+                            container.getElementsByClassName('progress-percent')[photoIndex].textContent = progress + '%';
+                            setProgress(container.getElementsByClassName('photo-message')[photoIndex], progress)
                         }
 
                     } else {
@@ -3613,7 +3737,7 @@
 
         if (text.trim().length) {
             text = '```' + text + '```';
-            DisplaySentMessage(text, true);
+            DisplaySentMessage(currentFriendId, text, false);
             document.getElementsByClassName('code-wrapper')[0].classList.add('hide')
         }
     }
@@ -3680,17 +3804,15 @@
                 //inside backticks
                 const highlighted = highlightCode(fragments[i]);
                 const lang = highlighted.language
-                html += `<pre> <div class = 'code-tools'> <div>${lang}</div> <div class="copy-code"> <i class="fas fa-copy"></i> Copy code</div> </div><code>` + highlighted.value + "</code></pre>";
+                html += `<pre> <div class = 'code-tools'> <div>${lang ? lang : 'Unknown Language'}</div> <div class="copy-code"> <i class="fas fa-copy"></i> Copy code</div> </div><code>` + highlighted.value + "</code></pre>";
 
             }
             else {
                 let text = getGoodHTML(escapeHtml(fragments[i]));
-                // text = convertToMarkdownLinks(text)
                 text = markdownToHtml(text);
+                // text = parseTable(text);
                 try {
-                    // text = Autolinker.link(text, {
-                    //     newWindow: true, stripPrefix: false, urls: { schemeMatches: true, wwwMatches: true, tldMatches: true }, email: true, phone: true
-                    // });
+
                     text = Autolinker.link(text, {
                         newWindow: true,
                         stripPrefix: false,
@@ -3702,12 +3824,23 @@
                             const url = match.getAnchorHref();
 
                             // Only add the warning to external links
-                            if (match.getType() === 'url' && new URL(url).origin !== window.location.origin) {
-                                // Return the custom anchor tag with the warning function
-                                return `<a href="${url}" onClick="filterLinks(event, '${url}')">${match.getAnchorText()}</a>`;
+                            if (match.getType() === 'url') {
+                                try {
+                                    const matchOrigin = new URL(url).origin;
+                                    if (matchOrigin !== window.location.origin) {
+                                        // Return the custom anchor tag with the warning function
+                                        return `<a class='link-button' href="${url}" onClick="filterLinks(event, '${url}')">${match.getAnchorText()}</a>`;
+                                    }
+                                } catch (error) {
+                                    console.error("Invalid URL:", url, error);
+                                }
                             }
+
+                            // Return the default anchor for internal links or if no condition matched
+                            return match.getAnchorHtml(); // Ensure to return something valid
                         }
                     });
+
 
                 } catch (error) {
 
@@ -3734,6 +3867,7 @@
 
         // Convert italic: *text* or _text_
         text = text.replace(/\*(.*?)\*/g, '<i>$1</i>');
+        text = text.replace(/\==(.*?)\==/g, '<important>$1</important>');
         // text = text.replace(/_(.*?)_/g, '<i>$1</i>');
 
         // Convert strikethrough: ~~text~~
@@ -3741,39 +3875,51 @@
         text = text.replace(/`(.*?)`/g, '<code>$1</code >');
 
         // Convert links: [text](url)
-        text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
+        text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a class="link-button" href="$2" onClick="filterLinks(event,\'$2\')">$1</a>');
 
 
         return text;
     }
+    function parseTable(text) {
+        // Regular expression to find text between [table] and [/table]
+        const regex = /\[table\]([\s\S]*?)\[\/table\]/;
+        const match = text.match(regex);
 
-    function convertToMarkdownLinks(text) {
-        // Regex pattern to match URLs that start with http, https, www, or a domain and may include paths
-        const urlPattern = /(?<!\]\()((https?:\/\/[^\s\[\]()]+|www\.[^\s\[\]()]+|[^\s\[\]()]+(?:\.[a-z]{2,})(?:\/[^\s]*)?))(?!\()/gi;
-        const markdownPattern = /\[([^\]]+)\]\((https?:\/\/[^\s]+)\)/gi;
-
-        // Function to check if a URL is valid
-        function isValidLink(link) {
-            const validEndings = [".com", ".org", ".net", ".edu", ".gov", ".io", ".co", ".us", ".uk"];
-            if (link.startsWith("https://www.")) {
-                return true;
-            }
-            return validEndings.some(ending => link.endsWith(ending));
+        if (!match) {
+            console.log("No table found.");
+            return;
         }
 
-        // Replace raw URLs with Markdown links
-        return text.replace(urlPattern, (match) => {
-            // Ensure the match is not part of an existing Markdown link
-            const surroundingText = text.slice(Math.max(text.indexOf(match) - 20, 0), text.indexOf(match) + match.length + 20);
-            if (markdownPattern.test(surroundingText)) {
-                return match;
+        // Extract the CSV text
+        const csvText = match[1].trim();
+
+        // Split the CSV text into rows
+        const rows = csvText.split('|').map(row => row.split(',').map(cell => cell.trim()));
+
+        // Create HTML table
+        let htmlTable = '<table border="1">';
+
+        // Treat the first row as the header
+        const headerRow = rows[0];
+        htmlTable += '<tr>';
+        for (const header of headerRow) {
+            htmlTable += `<th>${header}</th>`;  // Use <th> for headers
+        }
+        htmlTable += '</tr>';
+
+        // Create rows for the rest of the table
+        for (let i = 1; i < rows.length; i++) {
+            htmlTable += '<tr>';
+            for (const cell of rows[i]) {
+                htmlTable += `<td>${cell}</td>`;  // Use <td> for normal data cells
             }
+            htmlTable += '</tr>';
+        }
 
-            // Convert raw URL to Markdown link
-            return isValidLink(match) ? `[${match}](${match})` : match;
-        });
+        htmlTable += '</table>';
+
+        return htmlTable;
     }
-
 
 
     function copyHTML(html, element) {
@@ -3857,7 +4003,7 @@
             }
 
             if (message.type == 'send') {
-                writeTextMessage(container, message.message, message.time, message.sender == myid, true, message.state == 0, message.status == 1, message.replyIndex, true);
+                writeTextMessage(container, message.message, message.time, message.sender == myid, true, message.state == 0, message.status == 1, message.replyIndex, message.forwarded);
             }
             else if (message.type == 'file') {
 
@@ -3874,6 +4020,86 @@
         }
         return container;
 
+    }
+
+    function createForwardFriendElement(name, status, id, color) {
+        // Create the outer container
+        const forwardFriend = document.createElement('div');
+        forwardFriend.className = 'forward-friend';
+
+        // Create the inner container for friend info
+        const forwardFriendInfo = document.createElement('div');
+        forwardFriendInfo.className = 'forward-friend-info';
+
+        // Create the profile image container
+        const forwardFriendProfileImage = document.createElement('div');
+        forwardFriendProfileImage.style.backgroundColor = color;
+        forwardFriendProfileImage.className = 'forward-friend-profile-image';
+        forwardFriendProfileImage.textContent = name.toUpperCase()[0];
+
+        // Create the profile details container
+        const forwardFriendProfileDetails = document.createElement('div');
+        forwardFriendProfileDetails.className = 'forward-friend-profile-details';
+
+        // Create the profile name element
+        const forwardFriendProfileName = document.createElement('div');
+        forwardFriendProfileName.className = 'forward-friend-profile-name';
+        forwardFriendProfileName.textContent = name;
+
+        // Create the profile status element
+        const forwardFriendProfileStatus = document.createElement('div');
+        forwardFriendProfileStatus.className = 'forward-friend-profile-status';
+        forwardFriendProfileStatus.textContent = status;
+
+        // Append profile name and status to profile details
+        forwardFriendProfileDetails.appendChild(forwardFriendProfileName);
+        forwardFriendProfileDetails.appendChild(forwardFriendProfileStatus);
+
+        // Append profile image and details to the friend info container
+        forwardFriendInfo.appendChild(forwardFriendProfileImage);
+        forwardFriendInfo.appendChild(forwardFriendProfileDetails);
+
+        // Create the checkbox container
+        const forwardCheckBox = document.createElement('div');
+        forwardCheckBox.className = 'forward-check-box';
+
+        // Create the checkbox element
+        const forwardCheckboxElement = document.createElement('input');
+        forwardCheckboxElement.className = 'forward-checkbox-element';
+        forwardCheckboxElement.type = 'checkbox';
+
+        // Append the checkbox to the checkbox container
+        forwardCheckBox.appendChild(forwardCheckboxElement);
+
+        // Append the friend info and checkbox to the outer container
+        forwardFriend.appendChild(forwardFriendInfo);
+        forwardFriend.appendChild(forwardCheckBox);
+
+
+
+
+        forwardFriend.addEventListener("click", e => {
+            if (forwardCheckboxElement.checked == true) {
+                forwardCheckboxElement.checked = false;
+                forwardFriends = forwardFriends.filter(item => item != id);
+                if (forwardFriends.length == 0) {
+                    document.getElementsByClassName("forward-button")[0].disabled = true;
+                    document.getElementsByClassName("forward-button")[0].classList.add("disabled-forward-button")
+
+                }
+            }
+            else {
+
+                forwardCheckboxElement.checked = true;
+                forwardFriends.push(id);
+                document.getElementsByClassName("forward-button")[0].disabled = false;
+                document.getElementsByClassName("forward-button")[0].classList.remove("disabled-forward-button")
+
+            }
+        })
+
+        // Return the outer container
+        return forwardFriend;
     }
 
 
@@ -3902,7 +4128,7 @@
             const childRect = child.getBoundingClientRect();
 
             // Check if the top of the child is at or above the top of the parent
-            if (childRect.top >= parentRect.top && childRect.top <= parentRect.bottom) {
+            if (childRect.bottom >= parentRect.top && childRect.bottom <= parentRect.bottom) {
                 return child;  // Return the first visible child at the top
             }
         }
@@ -3981,6 +4207,127 @@
         }
         customAlert("External Website", `This link will take to an external website: <b>${url}</b>`, "Cancel", "Visit link", visit, true);
     }
+
+    let startX = 0;
+    let currentX = 0;
+    let startY = 0;
+    let currentY = 0;
+    function swipeReplyBehaviour(message) {
+
+        message.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        });
+
+
+        message.addEventListener('touchmove', (e) => {
+            currentX = e.touches[0].clientX;
+            currentY = e.touches[0].clientX;
+            const distance = currentX - startX;
+
+            const translateDistance = Math.min(distance, 100);
+
+            if (distance > 50 && currentY - startY < 2) { // Only move if swiping right
+                message.style.transform = `translateX(${translateDistance}px)`;
+            }
+        });
+
+
+        message.addEventListener('touchend', (e) => {
+
+
+            if (currentX - startX > 100 && currentY - startY < 2) {
+                const parentContainer = document.getElementsByClassName("active-chat-container")[0];
+                let overallIndex = Array.from(parentContainer.getElementsByClassName("message")).indexOf(message);
+                selectedMessageIndex = overallIndex;
+                document.getElementsByClassName('message-input-element')[0].focus();
+
+                replyMessage();
+
+            }
+            message.style.transform = `translateX(0)`;
+            startX = 0;
+            currentX = 0;
+            startY = 0;
+            currentY = 0;
+
+        });
+    }
+
+    function setProgress(messageContainer, percent) {
+        const circle = messageContainer.getElementsByClassName('progress-circle')[0];
+        const radius = circle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference - (percent / 100) * circumference;
+
+        circle.style.strokeDashoffset = offset;
+        // document.getElementById('progressText').textContent = `${percent}%`;
+    }
+
+
+    function toggleFullScreen(element) {
+        if (!document.fullscreenElement) {
+            // Enter full screen
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) { // Firefox
+                document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari, and Opera
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
+                document.documentElement.msRequestFullscreen();
+            }
+            element.classList.remove('fa-expand');
+            element.classList.add('fa-compress');
+        } else {
+            // Exit full screen
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) { // Firefox
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) { // Chrome, Safari, and Opera
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { // IE/Edge
+                document.msExitFullscreen();
+            }
+            element.classList.remove('fa-compress');
+            element.classList.add('fa-expand');
+        }
+    }
+
+    function preForwardMesssage() {
+
+        document.getElementsByClassName("message-menu-wrapper")[0].classList.remove("show")
+
+        const outerContainer = document.getElementsByClassName('forward-message-wrapper')[0];
+
+        document.getElementsByClassName("forwarding-from-name")[0].textContent = userInfo.friendUsernames[userInfo.friends.indexOf(currentFriendId)];
+
+        const users = userInfo.friendUsernames;
+        for (let i = 0; i < users.length; i++) {
+            const container = createForwardFriendElement(users[i], "Hey there I am using Interact.", userInfo.friends[i], userInfo.colors[i]);
+            outerContainer.getElementsByClassName("forward-friends")[0].appendChild(container);
+        }
+
+        outerContainer.classList.remove('hide');
+    }
+
+
+    async function forwardMessage() {
+
+        // user can only forward text messages, not files or photos(may be i implement it in future!)
+
+        const activeChatContainer = document.getElementsByClassName("active-chat-container")[0];
+        const messageText = activeChatContainer.getElementsByClassName('message-content-inner')[selectedMessageIndex].innerText;
+
+        for (let friend of forwardFriends) {
+            await DisplaySentMessage(friend, messageText, true);
+        }
+        discardForwarding();
+
+    }
+
+
 
 </script>
 

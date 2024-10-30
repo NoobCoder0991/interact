@@ -1,81 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Circular Progress Bar</title>
+    <title>Move Child to Front Animation</title>
     <style>
         body {
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
+            background-color: #e0e0e0;
         }
-
-        .progress-container {
+        
+        .parent {
+            display: flex;
+            flex-direction: column; /* Stacks children vertically */
             position: relative;
-            width: 120px;
-            height: 120px;
+            width: 200px; /* Set a fixed width for demonstration */
         }
 
-        .progress-svg {
-            transform: rotate(-90deg);
-            /* Rotate to start the progress from the top */
+        .child {
+            padding: 20px;
+            margin: 10px;
+            background-color: #f0f0f0;
+            transition: transform 0.3s ease, z-index 0s ease; /* Smooth transition for transform */
         }
 
-        .progress-circle-bg {
-            fill: none;
-            stroke: #e6e6e6;
-            /* Background color */
-            stroke-width: 8;
+        .child.moving {
+            transform: translateY(-50px); /* Moves the child up */
+            z-index: 1; /* Bring to front */
         }
 
-        .progress-circle {
-            fill: none;
-            stroke: #3498db;
-            /* Progress color */
-            stroke-width: 8;
-            stroke-dasharray: 314;
-            /* Circumference of the circle */
-            stroke-dashoffset: 0;
-            transition: stroke-dashoffset 0.5s linear;
-        }
-
-        #progressText {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 20px;
-            color: #333;
-            font-weight: bold;
+        button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
         }
     </style>
 </head>
-
 <body>
-    <div class="progress-container">
-        <svg class="progress-svg" viewBox="0 0 120 120">
-            <circle class="progress-circle-bg" cx="60" cy="60" r="50" />
-            <circle class="progress-circle" cx="60" cy="60" r="50" />
-        </svg>
-        <span id="progressText">0%</span>
+
+    <div class="parent">
+        <div class="child child1">Child 1</div>
+        <div class="child child2">Child 2</div>
+        <div class="child child1">Child 3</div>
+        <div class="child child2">Child 4</div>
     </div>
 
-    <script>
-        function setProgress(percent) {
-            const circle = document.querySelector('.progress-circle');
-            const radius = circle.r.baseVal.value;
-            const circumference = 2 * Math.PI * radius;
-            const offset = circumference - (percent / 100) * circumference;
+    <button onclick="moveToFront(2)">Move Child 3 to Front</button>
 
-            circle.style.strokeDashoffset = offset;
-            document.getElementById('progressText').textContent = `${percent}%`;
+    <script>
+        function moveToFront(index) {
+            const parent = document.querySelector('.parent');
+            const children = Array.from(parent.children);
+
+            // Remove the class from all children
+            children.forEach(child => child.classList.remove('moving'));
+
+            // Append the selected child to the parent to move it to the front
+            const selectedChild = children[index];
+            parent.appendChild(selectedChild); // Move it to the end of the DOM
+
+            // Use setTimeout to trigger the transition after moving
+            setTimeout(() => {
+                selectedChild.classList.add('moving'); // Add the class to animate
+            }, 10); // Small delay to ensure the element is appended first
         }
     </script>
 </body>
-
 </html>
