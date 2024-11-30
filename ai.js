@@ -4,45 +4,46 @@ const { HfInference } = require("@huggingface/inference");
 const inference = new HfInference(process.env.HUGGING_FACE_API_TOKEN);
 
 
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
+async function* getAIResponse(db, userid, prompt) {
+    const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms)); // Helper function for delays
+    const chunkSize = 15; // Desired size for each smaller chunk
+    const streamDelay = 100; // Delay in milliseconds between chunks
 
-async function* getAIResponse(db, userid, query) {
     try {
+        const model = genAI.getGenerativeModel({ model: "models/gemini-1.5-flash-8b" });
         const userData = await db.collection("user_data").findOne({ userid }, { projection: { _id: 0, username: 1 } });
 
-        const messages = [];
-        messages.push({ role: "system", content: `User : ${userData.username}` })
-        messages.push({ role: 'user', content: query });
+        const message = `role:system, content: User: ${userData.username}, role:user, content:${prompt}`;
 
+        // Request object for the streaming call
+        const resultStream = await model.generateContentStream((message));
 
-        // Stream the response from the inference API
-        for await (const chunk of inference.chatCompletionStream({
-            // model: "meta-llama/Meta-Llama-3-8B-Instruct",
-            model: 'mistralai/Mistral-Nemo-Instruct-2407',
-            messages: messages,
-            max_tokens: 800,
-        })) {
-            // Extract and yield content from each chunk
-            const content = chunk.choices[0]?.delta?.content || "";
+        // The iterable stream provides chunks of data as they arrive
+        for await (const chunk of resultStream.stream) {
+            const content = chunk.text();
             if (content) {
-                yield { ok: true, content };
+                let start = 0;
+
+                // Split the large chunk into smaller pieces and stream them
+                while (start < content.length) {
+                    const smallChunk = content.slice(start, start + chunkSize);
+                    yield { ok: true, content: smallChunk };
+                    start += chunkSize;
+
+                    // Introduce a delay to simulate streaming
+                    await delay(streamDelay);
+                }
             }
         }
-
     } catch (error) {
-        if (error.name == "AbortError") {
-            console.error("Request timed out");
-        }
-        else {
-            // console.error("Error occurred while fetching AI response:", error);
-            yield { ok: false, errMessage: error }; // Yield an empty string or a specific error message if needed
-
-        }
+        console.error(error);
+        yield { ok: false, errMessage: error.message || "Unknown error occurred" };
     }
-
 }
-
-
 
 
 module.exports = { getAIResponse };

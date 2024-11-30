@@ -137,32 +137,43 @@ body {
     align-items: center;
     flex-grow: 1;
     font-size: large;
-    height: 100%;
+    height: 70%;
     border-radius: 5px;
-    margin: 0 1%;
+    padding: 2px;
+    margin: 0 5px;
     flex-grow: 1;
+    background-color: var(--container-color);
     z-index: 20;
+    cursor: default;
+    transition: 0.2s;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.05);
+}
+
+
+
+.search-people:hover {
+    background-color: rgb(53, 51, 51);
+
 }
 
 
 
 .search-people-element {
-    border: 1px solid var(--border-color-light);
-    background-color: var(--navbar-color);
-    padding: 0 1%;
+    border: none;
+    /* background-color: var(--container-color); */
+    background: transparent;
+    /* padding: 0 15px; */
+    padding: 5px 0;
     outline: none;
-    height: 80%;
+    /* height: 80%; */
     transition: 0.2s;
     width: 100%;
     color: white;
-    border-radius: 5px;
+    border-radius: 2px;
     transition: border-color 0.3s;
 }
 
-.search-people-element:focus {
 
-    border: 1px solid var(--sharp-color);
-}
 
 .search-people-cross-button {
     cursor: pointer;
@@ -322,25 +333,50 @@ query {
     align-items: center;
 }
 
-.friend-search-container {
+
+.friend-search-wrapper {
     display: flex;
-    position: absolute;
-    max-height: 50vh;
-    top: 100%;
-    width: 100%;
-    overflow: auto;
     flex-direction: column;
-    transition: 0.1s;
-    border: 1px solid #ddd;
-    background-color: var(--body-color);
-    z-index: 100;
-    border-radius: 5px;
-    box-sizing: border-box;
+    position: absolute;
+    width: 100%;
+    top: 0;
     display: none;
 }
 
 
+.friend-search-container {
+    display: flex;
+    /* position: absolute; */
+    max-height: 50vh;
+    top: 100%;
+    top: 0;
+    width: 100%;
+    /* padding: 10px; */
+    overflow: auto;
+    flex-direction: column;
+    transition: 0.1s;
+    /* border: 1px solid #ddd; */
+    background-color: var(--body-color);
+    z-index: 100;
+    /* border-radius: 5px; */
+    box-sizing: border-box;
+    /* display: none; */
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+}
 
+.search-people-2 {
+    display: flex;
+    align-items: center;
+    background-color: var(--body-color);
+    padding: 5px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.search-label {
+    padding: 0 3px;
+    margin-right: 3px;
+    font-weight: bold;
+}
 
 
 .searched-friend {
@@ -1110,7 +1146,7 @@ body.light-mode .friend-message .file-container {
     align-items: center;
     justify-content: center;
     margin: 5px 0;
-    display: none;
+    /* display: none; */
 }
 
 .file-downloader.show {
@@ -1319,8 +1355,9 @@ body.light-mode .replying-to-username {
 
 .chat-container--1 .message {
     max-width: 100%;
-    /* font-family: "JetBrains Mono", monospace; */
+
 }
+
 
 
 
@@ -1467,9 +1504,12 @@ body.light-mode .message-input-element {
 .send-message-icon {
     font-size: large;
     margin: 0 1%;
-
-    padding: 1%;
+    width: 2rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
     cursor: pointer;
+    color: black;
+    background-color: #fff;
 }
 
 .settings {
@@ -2267,13 +2307,20 @@ body.light-mode .left-loader {
 }
 
 .reply-cancel-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
     font-size: large;
     background-color: var(--sharp-color);
     font-size: large;
-    padding: 5px 10px;
+    height: 1.8rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
     color: black;
     margin-left: 25px;
+
+
 }
 
 .typing {
@@ -2993,7 +3040,7 @@ pre {
 code {
     padding: 5px 10px;
     font-family: "Fira Code", monospace;
-    font-family: "JetBrains Mono", monospace;
+    /* font-family: "JetBrains Mono", monospace; */
     font-optical-sizing: auto;
     font-size: small;
 }

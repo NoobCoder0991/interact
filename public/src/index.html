@@ -32,7 +32,7 @@
         <div class="forward-message-container">
             <span> <i class="fas fa-share"></i>
                 Forwarding from <span class="forwarding-from-name">Suma</span></span>
-            <h2 class="forward-message-title">Forward To...</h2>
+            <h2 class="forward-message-title">Forward To</h2>
             <div class="forward-container-search">
                 <input type="text" class="input forward-container-search-element" placeholder="Search">
             </div>
@@ -129,7 +129,6 @@
         </div>
 
         <div class="logo">
-            <!-- <i class="fas fa-paper-plane"></i> -->
             <img src="../assets/images/good-logo.png" alt="" class="logo-image" />
             <div class="logo-title">Interact</div>
         </div>
@@ -164,15 +163,35 @@
             </div>
         </div>
 
-        <div class="search-people">
-            <input type="text" placeholder="Search People" class="search-people-element"
-                oninput="searchFriends(this.value)" />
-            <div class="search-people-cross-button fas fa-times " style="display: none;"
-                onclick="document.getElementsByClassName('search-people-element')[0].value='';this.style.display='none';document.getElementsByClassName('friend-search-container')[0].style.display='none'">
+        <div class="search-people"
+            onclick="document.getElementsByClassName('friend-search-wrapper')[0].style.display='flex'; document.getElementsByClassName('search-people-element')[0].focus();">
+
+            <i class="fas fa-search">&nbsp;</i>
+            <span>Search friends</span>
+            <div class="friend-search-wrapper">
+                <div class="search-people-2">
+                    <div class="search-label"
+                        onclick="event.stopPropagation(); document.getElementsByClassName('friend-search-wrapper')[0].style.display='none'">
+                        <i class="fas fa-arrow-left"></i>
+                    </div>
+                    <input type="text" placeholder="Search People" class="search-people-element"
+                        oninput="searchFriends(this.value)" />
+                    <div class="search-people-cross-button fas fa-times " style="display: none;"
+                        onclick=" event.stopPropagation(); document.getElementsByClassName('search-people-element')[0].value='';document.getElementsByClassName('friend-search-wrapper')[0].style.display='none';document.getElementsByClassName('friend-search-container')[0].style.display='none'">
+                    </div>
+                </div>
+
+                <div class="friend-search-container">
+
+                </div>
+
             </div>
-            <div class="friend-search-container">
-            </div>
+
         </div>
+
+
+
+
 
         <div class="search-people-mobile">
             <i class="fas fa-search"></i>
@@ -556,7 +575,7 @@
                         </div>
 
                         <div class="reply-cancel-button"
-                            onclick="document.getElementsByClassName('reply-message-wrapper')[0].style.display='none'">
+                            onclick="document.getElementsByClassName('reply-message-wrapper')[0].style.display='none';selectedMessageIndex=null">
                             <i class="fas fa-times"></i>
                         </div>
                     </div>
@@ -622,7 +641,7 @@
                         <textarea type="text" class="input message-input-element" placeholder="Message"
                             rows="1"></textarea>
                     </div>
-                    <div class="fas fa-paper-plane send-message-icon"></div>
+                    <div class="fas fa-arrow-right send-message-icon"></div>
                 </div>
 
             </div>
@@ -652,9 +671,6 @@
 
 <script>
 
-
-
-
     //setting theme according to user prefernce or sysstem theme
 
     var theme = localStorage.getItem('theme');
@@ -664,6 +680,7 @@
         document.getElementById('css-file').setAttribute('href', `../src/index-${theme}.css`)
     }
     else {
+        console.log("Hello world this is me shafaat hussian khan")
         const defaultTheme = systemPrefersDark ? 'dark' : 'light';
         document.getElementById('css-file').setAttribute('href', `../src/index-${defaultTheme}.css`)
 
@@ -1449,6 +1466,9 @@
     });
 
     window.addEventListener("click", (e) => {
+        if (!document.getElementsByClassName("search-people")[0].contains(e.target)) {
+            document.getElementsByClassName("friend-search-wrapper")[0].style.display = 'none';
+        }
         if (!document.getElementsByClassName("message-menu-wrapper")[0].contains(e.target) && document.getElementsByClassName("message-menu-wrapper")[0].classList.contains('show')) {
             document.getElementsByClassName("message-menu-wrapper")[0].classList.remove('show');
 
@@ -1598,18 +1618,23 @@
         //         throw new Error(err)
         //     })
 
+
+
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/upload', true);
 
         // Track upload progress
-        parentContainer.getElementsByClassName('download-bar')[0].style.display = 'flex';
+        const messageContainer = document.getElementsByClassName("my-message")[index];
+        messageContainer.getElementsByClassName('file-downloader')[0].classList.add("show");
+        messageContainer.getElementsByClassName('file-downloader')[0].classList.remove("hide");
+        messageContainer.getElementsByClassName("total-size")[0].textContent = "/" + getStandardSize(fileDetails.size)
         xhr.upload.onprogress = (event) => {
             if (event.lengthComputable) {
                 const percentComplete = (event.loaded / event.total) * 100;
-                const messageElement = parentContainer.getElementsByClassName('my-message')[index];
                 console.log(`Upload progress: ${percentComplete.toFixed(2)}%`);
-                console.log(parentContainer.getElementsByClassName('bar')[0])
-                parentContainer.getElementsByClassName('bar')[0].style.width = percentComplete.toFixed(2) + '%';
+                messageContainer.getElementsByClassName("size-downloaded")[0].textContent = getStandardSize(event.loaded)
+
+                messageContainer.getElementsByClassName('bar')[0].style.width = percentComplete.toFixed(2) + '%';
                 // Update a progress bar here if needed
             }
         };
@@ -1628,9 +1653,12 @@
                         }
 
                         // Display success UI updates
-                        const messageElement = parentContainer.getElementsByClassName('my-message')[data.index];
+                        const messageElement = parentContainer.getElementsByClassName('my-message')[index];
                         messageElement.getElementsByClassName('file-actions')[0].classList.add('show');
                         messageElement.getElementsByClassName('file-loader')[0].classList.add('hide');
+
+                        messageElement.getElementsByClassName('file-downloader')[0].classList.remove("show");
+                        messageElement.getElementsByClassName('file-downloader')[0].classList.add("hide");
 
                         // Update message tick status
                         messageElement.getElementsByClassName('not-sent')[0].style.display = 'none';
@@ -1959,7 +1987,8 @@
                         </div>
                         <div class="progress-details">
                             <div class="size-downloaded">0 B</div>
-                            <div class="total-size">/calculating...</div>
+                            
+                            <div class="total-size">/0 B</div>
                         </div>
                     </div>
 
@@ -2954,23 +2983,18 @@
 
     async function searchFriends(query) {
         let inputElement = document.getElementsByClassName('search-people-element')[0];
-        // inputElement.style.borderBottom = 'none'
-        // inputElement.style.borderBottomLeftRadius = '0'
-        // inputElement.style.borderBottomRightRadius = '0'
+
         let str = query.trim();
-        let container = document.getElementsByClassName(
-            "friend-search-container"
-        )[0];
+        let wrapper = document.getElementsByClassName("friend-search-wrapper")[0];
+        let container = document.getElementsByClassName("friend-search-container")[0];
 
 
         if (!str.length) {
-            container.style.display = "none";
+            // wrapper.style.display = "none";
             document.getElementsByClassName(
                 "search-people-cross-button"
             )[0].style.display = "none";
-            // inputElement.style.border = '1px solid #ddd'
-            // inputElement.style.borderBottomLeftRadius = '5px'
-            // inputElement.style.borderBottomRightRadius = '5px'
+
 
         } else {
             container.innerHTML =

@@ -1,8 +1,5 @@
 const Fuse = require('fuse.js');
 
-
-
-
 function match(query, references, threshold) {
     const options = {
         includeScore: true,

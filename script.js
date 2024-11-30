@@ -22,13 +22,17 @@ const port = process.env.PORT || 3000;
 /**Initilizing the database and running the server */
 
 var server;
+
 initializeDatabase().then(() => {
     server = app.listen(port, '0.0.0.0', () => {
         console.log(`Server running at http://0.0.0.0:${port}`)
     })
     // Middleware to parse JSON and URL-encoded bodies
     app.use(express.static(join(__dirname, '/public')));
+    // makes the files in the public directory accessible via HTTP requests, without needing 
+    // explicit routing
     app.use(express.json());
+    // Parses incoming JSON payloads in the request body
     app.use(express.urlencoded({ extended: true }));
 
     // Middleware for creating session for users
@@ -37,10 +41,11 @@ initializeDatabase().then(() => {
         resave: false,
         saveUninitialized: false,
         cookie: {
-            secure: true,
+            secure: false,
             maxAge: 3600000
         }
     });
+
     app.use(sessionMiddleware);
     app.use(cookieParser());
 
@@ -64,6 +69,8 @@ initializeDatabase().then(() => {
         }
 
     })
+
+
     // Get file by ID
     app.post('/files/id/', async (req, res) => {
         const { db, gfs } = getDatabase();
@@ -199,7 +206,6 @@ initializeDatabase().then(() => {
                 let update = { $push: { messages: data } }
                 let currentConvo = await db.collection('chats').findOne(query);
                 if (currentConvo) {
-
                     await db.collection('chats').updateOne(query, update)
                 }
 
@@ -209,6 +215,7 @@ initializeDatabase().then(() => {
                 }
 
                 res.send({ ok: true })
+
                 if (recepients && recepients.length) {
 
                     for (let recepient of recepients) {
@@ -252,6 +259,7 @@ initializeDatabase().then(() => {
                         let newConversation = { participants: [data.sender, data.receiver], messages: [data] }
                         await db.collection('chats').insertOne(newConversation)
                     }
+
                     // AI
                     const query = data.message;
                     let responseMessage = "";
@@ -362,7 +370,7 @@ initializeDatabase().then(() => {
                         filename: req.file.originalname
                     });
                 } catch (err) {
-                    throw new Error(err)
+                    console.error(err);
                     res.status(500).json({ ok: false, message: 'File upload failed', error: err });
                 }
             });
@@ -435,8 +443,13 @@ initializeDatabase().then(() => {
         res.sendFile(join(__dirname, "/public/src/index.html"));
     });
 
+    app.get("/chat/:id", (req, res) => {
+        res.redirect("/home");
+    })
+
     app.get("*", (req, res, next) => {
-        res.redirect('/home')
+
+        res.sendFile(join(__dirname, "/public/src/not_found.html"));
     })
 
 

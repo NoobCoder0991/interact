@@ -10,6 +10,7 @@
   "author": "shafaat",
   "license": "ISC",
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
     "@huggingface/inference": "^2.8.0",
     "connect-mongo": "^5.1.0",
     "connect-redis": "^7.1.1",

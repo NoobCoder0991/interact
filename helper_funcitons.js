@@ -18,7 +18,6 @@ function moveToFront(array, index) {
 
 async function reorderFriends(db, sender, receiver) {
 
-
     const userData = await db.collection('user_data').findOne({ userid: sender }, { projection: { _id: 0, userid: 0, username: 0 } });
     const friendArr = userData.friends
     const index = friendArr.indexOf(receiver);
