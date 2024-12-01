@@ -2755,8 +2755,6 @@ async function downloadFileMessage(container, fileId, fileName, fileType, isPhot
 
         const blob = new Blob(chunks, { type: fileType });
         const link = URL.createObjectURL(blob)
-        const data = JSON.stringify({ fileName, link })
-        localStorage.setItem(fileId, data)
         if (!isPhoto) {
             container.getElementsByClassName('file-downloader')[fileIndex].classList.add("hide")
             container.getElementsByClassName('file-downloader')[fileIndex].classList.remove("show")
@@ -2774,8 +2772,7 @@ async function downloadFileMessage(container, fileId, fileName, fileType, isPhot
 
 async function downloadCachedFile(url, fileName) {
 
-    let arr = fileName.split(".");
-    const extension = arr[arr.length - 1];
+    const extension = fileName.split(".").pop();
 
     if (url && fileName) {
 
@@ -2898,32 +2895,6 @@ function previewFile(container, file, receivePreview, isPhoto) {
                 }
 
 
-            }
-
-            reader.readAsArrayBuffer(file)
-        }
-
-        else if (file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && false) {
-            reader.onload = function (e) {
-                mammoth.convertToHtml({ arrayBuffer: e.target.result })
-                    .then(function (result) {
-                        const html = result.value;
-                        const docPreview = document.createElement('div')
-                        docPreview.innerHTML = html
-                        if (receivePreview) {
-
-                            canvas.classList.add('preview-element-alt')
-                        }
-                        else {
-
-                            canvas.classList.add('preview-element')
-                        } container.appendChild(docPreview)
-                    })
-                    .catch(function (err) {
-                        const message = document.createElement('p');
-                        message.textContent = 'Error Reading Word Document!'
-                        container.appendChild(message)
-                    })
             }
 
             reader.readAsArrayBuffer(file)
