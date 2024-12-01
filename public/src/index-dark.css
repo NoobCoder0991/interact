@@ -105,17 +105,16 @@ body {
 
 }
 
-
-
-
-
 .profile {
     display: flex;
     cursor: pointer;
     justify-self: flex-end;
     font-size: large;
-    width: 5vh;
-    height: 5vh;
+    /* width: 5vh;
+    height: 5vh; */
+    width: 30px;
+    /* padding: 8px; */
+    aspect-ratio: 1;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1349,12 +1348,14 @@ body.light-mode .replying-to-username {
     transition: transform 0.4s ease, opacity 0.4s ease;
     cursor: default;
     color: var(--sharp-color);
-    user-select: none;
+    /* user-select: none; */
     overflow: hidden;
 }
 
-.chat-container--1 .message {
-    max-width: 100%;
+.chat-container--1 .friend-message {
+    /* max-width: 70%; */
+    justify-self: center;
+    border-radius: 5px;
 
 }
 
@@ -3046,7 +3047,6 @@ code {
 }
 
 .code-tools {
-    font-family: ui-sans-serif, -apple-system, system-ui, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
     display: flex;
     background-color: #252525;
     padding: 5px 10px;
@@ -3583,7 +3583,60 @@ important {
     align-items: center;
 }
 
+.theme-choose-wrapper {
+    position: relative;
+}
+
+.theme-select-icon {
+    cursor: pointer;
+    font-size: large;
+    margin: 5px;
+}
+
+.theme-choose-container {
+    position: absolute;
+    z-index: 10000;
+    top: 0;
+    right: 0;
+    /* min-width: 200px; */
+    display: flex;
+    flex-direction: column;
+    /* background-color: red; */
+    background-color: var(--body-color);
+    padding: 5px;
+
+}
+
+.theme-choose-container.hide {
+    display: none;
+}
+
+.theme-option {
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    cursor: pointer;
+    text-wrap: nowrap;
+    margin: 5px 0;
+}
+
+.theme-icon {
+    margin-right: 5px;
+}
+
+.theme-option:hover {
+    background-color: var(--active-color);
+}
+
+.chosen-theme {
+    background-color: var(--active-color);
+}
+
 @media screen and (max-width:900px) {
+    .message {
+        user-select: none;
+    }
+
     .code-preview {
         display: none;
     }

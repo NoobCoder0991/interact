@@ -716,32 +716,23 @@ initializeDatabase().then(() => {
 
             if (user) {
 
-                const friendData = await db.collection('user_data').findOne({ userid: friendId }, { projection: { _id: 0, gender: 0, friends: 0, color: 0 } });
+
                 const userData = await db.collection('user_data').findOne({ userid: user.userid }, { projection: { _id: 0, username: 1 } })
-                if (friendData.notifications) {
-                    let currentRequests = friendData.notifications
-                    currentRequests.push({ userid: user.userid, username: userData.username, type: 1, seen: false, accepted: false })
 
-                    await db.collection('user_data').updateOne({ userid: friendId }, { $set: { 'notifications': currentRequests } })
-
-                }
-                else {
-
-                    await db.collection('user_data').updateOne({ userid: friendId }, { $set: { 'notifications': [{ userid: user.userid, username: userData.username, type: 1, seen: false, accepted: false }] } })
-                }
-
-
+                const newNotification = { userid: user.userid, username: userData.username, type: 1, seen: false, accepted: false };
+                await db.collection("user_data").updateOne({ userid: friendId }, { $push: { notifications: newNotification } });
                 res.send({ ok: true })
-
-
             }
 
             else {
+
                 res.send({ ok: false, errMessage: "Not authorized" })
             }
 
 
         } catch (error) {
+
+            console.error(error)
 
             res.send({ ok: false, errMessage: "Internal server error: " + error })
 
@@ -789,19 +780,8 @@ initializeDatabase().then(() => {
 
                 const userData = await db.collection('user_data').findOne({ userid: user.userid }, { projection: { notifications: 1 } });
                 let currentNotfications = userData.notifications;
-                let newNotifications = [];
-                if (currentNotfications) {
-                    for (let notification of currentNotfications) {
-                        let copy = { ...notification }
-                        copy.seen = true;
-                        newNotifications.push(copy)
-                    }
-
-                    await db.collection('user_data').updateOne({ userid: user.userid }, { $set: { notifications: newNotifications } })
-                }
-
-
                 res.send({ ok: true, friendRequests: currentNotfications })
+                await db.collection("user-data").update({ userid: user.userid, "notifications.seen": false }, { $set: { "notifications.$[].seen": true } })
 
 
             } else {
@@ -810,9 +790,7 @@ initializeDatabase().then(() => {
 
             }
         } catch (error) {
-
-            throw new Error(error)
-
+            console.err(error)
             res.send({ ok: false, errMessage: "Internal server error: " + error })
 
         }
@@ -833,36 +811,15 @@ initializeDatabase().then(() => {
 
                 const userData = await db.collection("user_data").findOne({ userid: user.userid }, { projection: { _id: 0, notifications: 1, friends: 1, username: 1 } })
 
-                let currentRequests = userData.notifications;
+                await db.collection("user_data").updateOne({ userid: user.userid }, { $push: { friends: friendId } });
+                await db.collection("user_data").updateOne({ userid: user.userid, "notifications.userid": friendId }, { $set: { "notifications.$.accepted": true } })
 
-                let currentFriends = userData.friends
-                currentFriends.push(friendId)
-
-                for (let request of currentRequests) {
-                    if (request.userid == friendId) {
-                        request.accepted = true;
-                        break;
-                    }
-                }
-
-                await db.collection('user_data').updateOne({ userid: user.userid }, { $set: { notifications: currentRequests } })
-                await db.collection('user_data').updateOne({ userid: user.userid }, { $set: { friends: currentFriends } })
 
                 //friend friends
+                await db.collection("user_data").updateOne({ userid: friendId }, { $push: { friends: user.userid } });
 
-                const friendData = await db.collection("user_data").findOne({ userid: friendId }, { projection: { _id: 0, friends: 1, notifications: 1 } })
-                let friendFriends = friendData.friends;
-
-                let currentNotfications = friendData.notifications
-                friendFriends.push(user.userid)
-                if (currentNotfications) {
-                    await db.collection('user_data').updateOne({ userid: friendId }, { $set: { notifications: currentNotfications.push({ userid: user.userid, username: userData.username, type: 2, seen: false }) } })
-                }
-                else {
-                    await db.collection('user_data').updateOne({ userid: friendId }, { $set: { notifications: [{ userid: user.userid, username: userData.username, type: 2, seen: false }] } })
-
-                }
-                await db.collection('user_data').updateOne({ userid: friendId }, { $set: { friends: friendFriends } })
+                const newNotification = { userid: user.userid, username: userData.username, type: 2, seen: false };
+                await db.collection("user_data").updateOne({ userid: friendId }, { $push: { notifications: newNotification } })
 
 
                 res.send({ ok: true })
@@ -877,6 +834,8 @@ initializeDatabase().then(() => {
 
 
         } catch (error) {
+
+            console.error(error)
 
             res.send({ ok: false, errMessage: error })
 
