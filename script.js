@@ -268,6 +268,8 @@ initializeDatabase().then(() => {
                         // Stream the response from the AI function
                         res.setHeader('Content-Type', 'text/plain');
                         res.setHeader('Transfer-Encoding', 'chunked');
+                        // const oldSummary = await db.collection("chats").findOne({ participants: { $all: [data.sender, -1] } }, { projection: { _id: 0, summary: 1 } })
+
                         for await (const chunk of ai.getAIResponse(db, data.sender, query)) {
                             if (chunk) {
                                 if (chunk.ok) {
@@ -295,12 +297,18 @@ initializeDatabase().then(() => {
                             responseData.receiver = data.sender
                             responseData.message = responseMessage;
                             await db.collection('chats').updateOne(databaseQuery, { $push: { messages: responseData } })
+
+                            // const summary = await ai.createSummary(oldSummary.summary ? oldSummary.summary : "", responseMessage);
+                            // await db.collection("chats").updateOne({ participants: { $all: [data.sender, -1] } }, { $set: { summary } })
+
                         }
 
                         res.end(); // End the response when all chunks are sent
                     } catch (error) {
+                        console.log(error)
                         res.send({ ok: false, errMessage: error });
                     }
+
 
                     return; // Ensure no further code executes if the condition is true
                 }
@@ -569,8 +577,7 @@ initializeDatabase().then(() => {
                         { userid: friend },
                         { projection: { _id: 0 } }
                     );
-                    const messages = await db.collection('chats').findOne(
-                        { participants: { $all: [user.userid, friend] } }, { projection: { _id: 0, participants: 0 } });
+
 
                     const result = await db.collection('chats').aggregate([
                         { $match: { participants: { $all: [user.userid, friend] } } }, // Find the chat document

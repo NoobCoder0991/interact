@@ -1,0 +1,3 @@
+{
+  "ignore": ["path/to/file.js", "public/*"]
+}
